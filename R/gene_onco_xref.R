@@ -30,23 +30,23 @@ get_gox_data <- function(cache_dir = NULL,
   md5checksum_package <-
     geneOncoXREF:::db_id_ref[geneOncoXREF:::db_id_ref$name == db,]$md5Checksum
 
-  gencode <- NULL
+  dat <- NULL
   if(file.exists(fname_local) & overwrite == F){
-    gencode <- readRDS(fname_local)
+    dat <- readRDS(fname_local)
     if(!is.null(dat[['records']]) & !is.null(dat[['metadata']])){
       lgr::lgr$info(paste0(
         "Reading from cache_dir = '", cache_dir, "', argument overwrite = F"))
       lgr::lgr$info(paste0("Object 'gene_",db,"' sucessfully loaded"))
       if(db == 'gencode'){
         lgr::lgr$info(paste0(
-          "Retrieved ", nrow(dat[['records']][['grch37']]), " records for",
+          "Retrieved n = ", nrow(dat[['records']][['grch37']]), " records for",
           " genome build grch37"))
         lgr::lgr$info(paste0(
-          "Retrieved ", nrow(dat[['records']][['grch38']]), " transcript records for",
+          "Retrieved n = ", nrow(dat[['records']][['grch38']]), " records for",
           " genome build grch38"))
       }else{
         lgr::lgr$info(paste0(
-          "Retrieved ", nrow(dat[['records']][['grch37']]), " records"))
+          "Retrieved n = ", nrow(dat[['records']]), " records"))
       }
     }
 
@@ -76,14 +76,14 @@ get_gox_data <- function(cache_dir = NULL,
 
         if(db == 'gencode'){
           lgr::lgr$info(paste0(
-            "Retrieved ", nrow(dat[['records']][['grch37']]), " records for",
+            "Retrieved n = ", nrow(dat[['records']][['grch37']]), " records for",
             " genome build grch37"))
           lgr::lgr$info(paste0(
-            "Retrieved ", nrow(dat[['records']][['grch38']]), " transcript records for",
+            "Retrieved n = ", nrow(dat[['records']][['grch38']]), " records for",
             " genome build grch38"))
         }else{
           lgr::lgr$info(paste0(
-            "Retrieved ", nrow(dat[['records']][['grch37']]), " records"))
+            "Retrieved ", nrow(dat[['records']]), " records"))
         }
       }
     }else{
@@ -93,4 +93,5 @@ get_gox_data <- function(cache_dir = NULL,
     }
 
   }
+  return(dat)
 }
