@@ -13,7 +13,7 @@ The goal of **geneOncoXREF** is to offer an R package that simplifies the proces
 
 ### Installation
 
-`remotes::install_github('sigven/geneOncoXREF', ref = 'dev')`
+`remotes::install_github('sigven/geneOncoXREF')`
 
 ### Usage
 
@@ -21,7 +21,7 @@ The package offers currently five different functions, that each retrieves a spe
 
 -   `get_basic()` - retrieves basic, non-transcript-specific gene annotations. Includes tumor suppressor gene/oncogene/driver annotations from multiple resources, NCBI gene summary descriptions, as well as multiple predictions/scores when it comes to gene indispensability and loss-of-function tolerance
 
--   `get_gencode()` - retrieves two datasets ( *grch37* and *grch38* ) with human gene transcripts from GENCODE, including cross-references to RefSeq, [UniProt](https://www.uniprot.org) and [APPRIS](https://appris.bioinfo.cnio.es/#/), and [MANE](https://www.ncbi.nlm.nih.gov/refseq/MANE/)
+-   `get_gencode()` - retrieves two datasets ( *grch37* and *grch38* ) with human gene transcripts from GENCODE, including cross-references to RefSeq, [UniProt](https://www.uniprot.org), [APPRIS](https://appris.bioinfo.cnio.es/#/), and [MANE](https://www.ncbi.nlm.nih.gov/refseq/MANE/)
 
 -   `get_alias()` - retrieves a list of gene synonyms, indicating which synonyms are ambiguous or nonambiguous (with respect to primary gene symbols)
 

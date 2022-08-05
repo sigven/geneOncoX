@@ -4,3 +4,7 @@
 ^rlogging.log
 ^renv
 ^.bumpversion.cfg
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
