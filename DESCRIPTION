@@ -1,0 +1,34 @@
+Package: geneOncoXREF
+Type: Package
+Title: Human gene annotations for the oncology domain
+Version: 0.1.0
+Date: 2022-08-05
+Authors@R: person(given = "Sigve", family = "Nakken", role = c("aut", "cre"),
+             email = "sigven@ifi.uio.no",
+             comment = c(ORCID = "0000-0001-8468-2050"))
+Maintainer: Sigve Nakken <sigven@ifi.uio.no>
+Description: A small collection of datasets relevant for gene annotations in the
+    context of cancer. Datasets contain basic gene annotations, tumor suppressor,
+    oncogene, driver gene annotations, as well as genes involved in cancer 
+    predisposition. A collection of gene panels used in clinical cancer diagnostics
+    are further provided.
+URL: https://github.com/sigven/geneOncoXREF
+BugReports: https://github.com/sigven/geneOncoXREF/issues
+Depends: 
+    R (>= 4.1)
+biocViews: 
+Imports: 
+    googledrive,
+    lgr,
+    tools
+Suggests: 
+    testthat (>= 3.1.0),
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr 
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.1
+Roxygen: list(markdown = TRUE)
+Config/testthat/edition: 3

@@ -1,0 +1,236 @@
+
+source("data-raw/utils_driver_annotation.R")
+source("data-raw/utils_predisposition_annotation.R")
+source("data-raw/utils_gencode_annotation.R")
+source("data-raw/utils_other.R")
+
+metadata <- list()
+for(elem in c('basic','predisposition','panels','alias','gencode')){
+  metadata[[elem]] <- as.data.frame(openxlsx::read.xlsx(
+    "data-raw/metadata.xlsx", sheet = elem, colNames = T) |>
+      dplyr::mutate(version = dplyr::if_else(
+        is.na(version) &
+          (abbreviation == "ncbi" |
+             abbreviation == "other" |
+             abbreviation == "appris"),
+        as.character(Sys.Date()),
+        as.character(version)
+      ))
+  )
+}
+
+gene_info <- get_gene_info_ncbi() |>
+  dplyr::select(entrezgene, symbol, gene_biotype,
+                synonyms, name,
+                ensembl_gene_id, hgnc_id) |>
+  dplyr::distinct()
+
+gene_panels <- list()
+gene_panels$metadata <- metadata[['panels']]
+gene_panels$records <- dplyr::bind_rows(
+  get_panel_app_genes(gene_info = gene_info, build = 'grch37'),
+  get_panel_app_genes(gene_info = gene_info, build = 'grch38')
+)
+
+gene_alias <- list()
+gene_alias$metadata <- metadata[['alias']]
+gene_alias$records <- get_gene_aliases_ncbi(gene_info = gene_info)
+
+gene_gencode <- list()
+gene_gencode$records <- list()
+gene_gencode$metadata <- metadata[['gencode']]
+
+gene_gencode$records[['grch38']] <- gencode_get_transcripts(
+  build = "grch38",
+  gene_info = gene_info,
+  gencode_version = 41,
+  uniprot_version = "2022_03",
+  gene_alias = gene_alias)
+gene_gencode$records[['grch37']] <- gencode_get_transcripts(
+  build = "grch37",
+  gene_info = gene_info,
+  gencode_version = 19,
+  uniprot_version = "2022_03",
+  gene_alias = gene_alias)
+
+gene_summary <- get_function_summary_ncbi(gene_df = gene_info)
+
+cgc_som <- get_cancer_gene_census()
+cgc_gl <- get_cancer_gene_census(origin = "germline")
+cgc <- cgc_som |>
+  dplyr::full_join(
+    cgc_gl,
+    by = c("cgc_moi","cgc_tsg","entrezgene","cgc_oncogene")) |>
+  dplyr::mutate(cgc_somatic = dplyr::if_else(
+    is.na(cgc_somatic),
+    as.logical(FALSE),
+    as.logical(cgc_somatic)
+  )) |>
+  dplyr::mutate(cgc_germline = dplyr::if_else(
+    is.na(cgc_germline),
+    as.logical(FALSE),
+    as.logical(cgc_germline)
+  )) |>
+  dplyr::select(-cgc_moi)
+
+intogen_drivers <- get_intogen_driver_genes()
+fp_drivers <- get_curated_fp_cancer_genes(gene_info = gene_info)
+ncg <- get_network_of_cancer_genes()
+tso500 <- get_tso500(gene_info = gene_info, gene_alias = gene_alias)
+dna_repair <- get_dna_repair_genes(gene_info = gene_info)
+cancermine_genes <- get_cancermine_genes()
+signaling_genes <- get_signaling_pathway_genes(gene_info = gene_info)
+dbnsfp_annotations <- get_dbnsfp_gene_annotations()
+
+gene_basic <- list()
+gene_basic$metadata <- metadata[['basic']]
+
+gene_basic$records <- gene_info |>
+  dplyr::select(-ensembl_gene_id) |>
+  dplyr::left_join(gene_summary) |>
+  dplyr::left_join(cgc) |>
+  dplyr::left_join(ncg) |>
+  dplyr::left_join(intogen_drivers) |>
+  dplyr::left_join(fp_drivers) |>
+  dplyr::left_join(dna_repair) |>
+  dplyr::left_join(tso500) |>
+  dplyr::left_join(signaling_genes) |>
+  dplyr::left_join(cancermine_genes) |>
+  dplyr::left_join(dbnsfp_annotations) |>
+  dplyr::mutate(cancermine_n_cit_oncogene = dplyr::if_else(
+    is.na(cancermine_n_cit_oncogene),
+    as.integer(0),
+    as.integer(cancermine_n_cit_oncogene))) |>
+  dplyr::mutate(cancermine_n_cit_tsg = dplyr::if_else(
+    is.na(cancermine_n_cit_tsg),
+    as.integer(0),
+    as.integer(cancermine_n_cit_tsg))) |>
+  dplyr::mutate(cancermine_n_cit_driver = dplyr::if_else(
+    is.na(cancermine_n_cit_driver),
+    as.integer(0),
+    as.integer(cancermine_n_cit_driver))) |>
+  dplyr::mutate(cgc_somatic = dplyr::if_else(
+    is.na(cgc_somatic),
+    as.logical(FALSE),
+    as.logical(cgc_somatic)
+  )) |>
+  dplyr::mutate(cgc_germline = dplyr::if_else(
+    is.na(cgc_germline),
+    as.logical(FALSE),
+    as.logical(cgc_germline)
+  )) |>
+  dplyr::mutate(ncg_tsg = dplyr::if_else(
+    is.na(ncg_tsg),
+    as.logical(FALSE),
+    as.logical(ncg_tsg)
+  )) |>
+  dplyr::mutate(cgc_tsg = dplyr::if_else(
+    is.na(cgc_tsg),
+    as.logical(FALSE),
+    as.logical(cgc_tsg)
+  )) |>
+  dplyr::mutate(cgc_oncogene = dplyr::if_else(
+    is.na(cgc_oncogene),
+    as.logical(FALSE),
+    as.logical(cgc_oncogene)
+  )) |>
+  dplyr::mutate(ncg_tsg = dplyr::if_else(
+    is.na(ncg_tsg),
+    as.logical(FALSE),
+    as.logical(ncg_tsg)
+  )) |>
+  dplyr::mutate(ncg = dplyr::if_else(
+    is.na(ncg),
+    as.logical(FALSE),
+    as.logical(ncg)
+  )) |>
+  dplyr::mutate(ncg_oncogene = dplyr::if_else(
+    is.na(ncg_oncogene),
+    as.logical(FALSE),
+    as.logical(ncg_oncogene)
+  )) |>
+  dplyr::mutate(bailey2018_fp_driver = dplyr::if_else(
+    is.na(bailey2018_fp_driver),
+    as.logical(FALSE),
+    as.logical(bailey2018_fp_driver)
+  )) |>
+  dplyr::select(-synonyms)
+  # dplyr::filter(
+  #   !is.na(gene_biotype) &
+  #     (gene_biotype == "protein-coding" |
+  #        gene_biotype == "ncRNA" |
+  #        gene_biotype == "pseudo"))
+
+gene_predisposition <- list()
+gene_predisposition[['metadata']] <- metadata$predisposition
+gene_predisposition[['records']] <-
+  get_predisposition_genes(gene_info = gene_info,
+                           gene_panels = gene_panels)
+
+## clean up
+rm(cgc_gl)
+rm(cgc)
+rm(cgc_som)
+rm(intogen_drivers)
+rm(fp_drivers)
+rm(dna_repair)
+rm(signaling_genes)
+rm(cancermine_genes)
+rm(tso500)
+rm(gene_summary)
+rm(gene_info)
+rm(dbnsfp_annotations)
+rm(metadata)
+rm(ncg)
+
+
+version_minor_bumped <- paste0(
+  "0.",
+  as.character(as.integer(substr(as.character(packageVersion("geneOncoXREF")),3,3)) + 1),
+  ".0")
+
+gd_records <- list()
+db <- list()
+db[['basic']] <- gene_basic
+db[['gencode']] <- gene_gencode
+db[['alias']] <- gene_alias
+db[['predisposition']] <- gene_predisposition
+db[['panels']] <- gene_panels
+
+googledrive::drive_auth_configure(api_key = Sys.getenv("GD_KEY"))
+
+for(elem in c('basic','predisposition','panels','alias','gencode')){
+
+  saveRDS(db[[elem]],
+        file=paste0("data-raw/gd_local/gene_",elem,"_v", version_minor_bumped,".rds"))
+
+  (gd_records[[elem]] <- googledrive::drive_upload(
+    paste0("data-raw/gd_local/gene_", elem, "_v", version_minor_bumped,".rds"),
+    paste0("geneOncoXREF/gene_", elem, "_v", version_minor_bumped,".rds")
+  ))
+
+}
+
+db_id_ref <- dplyr::bind_rows(
+  dplyr::select(as.data.frame(gd_records$basic), name, id),
+  dplyr::select(as.data.frame(gd_records$alias), name, id),
+  dplyr::select(as.data.frame(gd_records$panels), name, id),
+  dplyr::select(as.data.frame(gd_records$gencode), name, id),
+  dplyr::select(as.data.frame(gd_records$predisposition), name, id)) |>
+  dplyr::rename(gid = id,
+                filename = name) |>
+  dplyr::mutate(name = stringr::str_replace(
+    stringr::str_replace(filename,"_v\\S+$",""),
+    "gene_","")) |>
+  dplyr::mutate(date = Sys.Date(),
+                pVersion = version_minor_bumped)
+db_id_ref$md5Checksum <- NA
+for(elem in c('basic','predisposition','panels','alias','gencode')){
+
+  db_id_ref[db_id_ref$name == elem,]$md5Checksum <-
+    gd_records[[elem]]$drive_resource[[1]]$md5Checksum
+}
+
+usethis::use_data(db_id_ref, internal = T, overwrite = T)
+
+

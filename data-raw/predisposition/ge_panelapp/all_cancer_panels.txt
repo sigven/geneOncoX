@@ -1,0 +1,43 @@
+name	id
+Adult solid tumours cancer susceptibility	245
+Adult solid tumours for rare disease	391
+Bladder cancer pertinent cancer susceptibility	208
+Brain cancer pertinent cancer susceptibility	166
+Breast cancer pertinent cancer susceptibility	55
+Childhood solid tumours cancer susceptibility	259
+Colorectal cancer pertinent cancer susceptibility	244
+Endometrial cancer pertinent cancer susceptibility	271
+Familial Tumours Syndromes of the central & peripheral Nervous system	167
+Familial breast cancer	158
+Familial melanoma	522
+Familial prostate cancer	318
+Familial rhabdomyosarcoma	290
+GI tract tumours	254
+Genodermatoses with malignancies	201
+Haematological malignancies cancer susceptibility	59
+Haematological malignancies for rare disease	407
+Head and neck cancer pertinent cancer susceptibility	115
+Inherited MMR deficiency (Lynch Syndrome)	503
+Inherited non-medullary thyroid cancer	171
+Inherited ovarian cancer (without breast cancer)	143
+Inherited pancreatic cancer	524
+Inherited polyposis	504
+Inherited predisposition to acute myeloid leukaemia (AML)	525
+Inherited predisposition to GIST	523
+Inherited renal cancer	521
+Inherited phaeochromocytoma and paraganglioma	97
+Melanoma pertinent cancer susceptibility	133
+Multiple endocrine tumours	36
+Multiple monogenic benign skin tumors	558
+Neuroendocrine cancer pertinent cancer susceptibility	183
+Neurofibromatosis Type 1	255
+Ovarian cancer pertinent cancer susceptibility	117
+Parathyroid Cancer	86
+Prostate cancer pertinent cancer susceptibility	17
+Renal cancer pertinent cancer susceptibility	154
+Rhabdoid tumour predisposition	600
+Sarcoma cancer susceptibility	217
+Sarcoma susceptibility	734
+Thyroid cancer pertinent cancer susceptibility	421
+Tumour predisposition - childhood onset	243
+Upper gastrointestinal cancer pertinent cancer susceptibility	273
