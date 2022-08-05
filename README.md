@@ -27,8 +27,22 @@ The package offers currently five different functions, that each retrieves a spe
 
 -   `get_predisposition()` - retrieves a list of genes of relevance for cancer predisposition, utilizing multiple resources, including Cancer Gene Census, Genomics England PanelApp, [TCGA's PanCancer study](https://pubmed.ncbi.nlm.nih.gov/29625052/), and others.
 
--   `get_panels()` - retrieves a collection of > 40 different panels for various
-cancer conditions, as found in Genomics England PanelApp
+-   `get_panels()` - retrieves a collection of \> 40 different panels for various cancer conditions, as found in Genomics England PanelApp
+
+Each dataset comes with a `metadata` object that lists URLs, citations, and versions used.
+
+### IMPORTANT NOTE
+
+If you use the dataset provided with this package, make sure you properly cite the original publications of the resources integrated in **geneOncoX**, i.e.:
+
+1.  IntOGen - [Martínez-Jiménez et al., Nat Rev Cancer, 2020](https://pubmed.ncbi.nlm.nih.gov/32778778/)
+2.  CancerMine - [Lever et al., Nat Methods, 2019](https://pubmed.ncbi.nlm.nih.gov/31110280/)
+3.  Network of Cancer Genes - [Repana et al., Genome Biol, 2019](https://pubmed.ncbi.nlm.nih.gov/30606230/)
+4.  Cancer Gene Census - [Sondka et al., Nat Rev Cancer, 2018](https://pubmed.ncbi.nlm.nih.gov/30293088/)
+5.  DNA repair genes database - [Woods et al., Science, 2001](https://pubmed.ncbi.nlm.nih.gov/11181991/)
+6.  dbNSFP - [Liu et al., Genome Med, 2020](https://pubmed.ncbi.nlm.nih.gov/33261662/)
+7.  Genomics England PanelApp - [Martin et al., Nat Genet, 2019](https://pubmed.ncbi.nlm.nih.gov/31676867/)
+8.  GENCODE - [Frankish et al., Nucleic Acids Res, 2021](https://pubmed.ncbi.nlm.nih.gov/33270111)
 
 ### Contact
 
