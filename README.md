@@ -1,8 +1,8 @@
-## geneOncoXREF - cancer gene annotations
+## geneOncoX - cancer gene annotations
 
-The goal of **geneOncoXREF** is to offer an R package that simplifies the process of gene annotation in cancer sequencing projects. The package offers a few pre-processed datasets, along with metadata, that the user can retrieve and use for their own projects or set-ups. Technically, the package utilizes the [googledrive](https://googledrive.tidyverse.org/) R package to download the pre-processed and documented datasets to a local cache directory provided by the user.
+The goal of **geneOncoX** is to offer an R package that simplifies the process of gene annotation in cancer sequencing projects. The package offers a few pre-processed datasets, along with metadata, that the user can retrieve and use for their own projects or set-ups. Technically, the package utilizes the [googledrive](https://googledrive.tidyverse.org/) R package to download the pre-processed and documented datasets to a local cache directory provided by the user.
 
-**geneOncoXREF** integrates a number of existing resources when it comes to cancer-relevant gene annotations, including, but not limited to:
+**geneOncoX** integrates a number of existing resources when it comes to cancer-relevant gene annotations, including, but not limited to:
 
 -   [IntOGen](https://www.intogen.org/download) - catalog mutational driver genes
 -   [Network of Cancer Genes](http://ncg.kcl.ac.uk/) - collection of curated cancer genes
@@ -13,7 +13,7 @@ The goal of **geneOncoXREF** is to offer an R package that simplifies the proces
 
 ### Installation
 
-`remotes::install_github('sigven/geneOncoXREF')`
+`remotes::install_github('sigven/geneOncoX')`
 
 ### Usage
 

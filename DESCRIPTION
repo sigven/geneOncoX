@@ -1,4 +1,4 @@
-Package: geneOncoXREF
+Package: geneOncoX
 Type: Package
 Title: Human gene annotations for the oncology domain
 Version: 0.2.0
@@ -12,9 +12,9 @@ Description: A small collection of datasets relevant for gene annotations in the
     oncogene, driver gene annotations, as well as genes involved in cancer 
     predisposition. A collection of gene panels used in clinical cancer diagnostics
     are further provided.
-URL: https://github.com/sigven/geneOncoXREF,
-    https://sigven.github.io/geneOncoXREF/
-BugReports: https://github.com/sigven/geneOncoXREF/issues
+URL: https://github.com/sigven/geneOncoX,
+    https://sigven.github.io/geneOncoX/
+BugReports: https://github.com/sigven/geneOncoX/issues
 Depends: 
     R (>= 4.1)
 biocViews: 
