@@ -1,10 +1,10 @@
 ## geneOncoX
 
-The goal of **geneOncoX** is to offer an R package that simplifies the process of gene annotation in cancer sequencing projects. The package offers a few pre-processed datasets, along with metadata, that the user can retrieve and use for their own projects or set-ups. Technically, the package utilizes the [googledrive](https://googledrive.tidyverse.org/) R package to download the pre-processed and documented datasets to a local cache directory provided by the user.
+The goal of **geneOncoX** is to offer an R package that simplifies the process of gene annotation in cancer sequencing projects. The package offers a few pre-processed datasets, along with metadata, that the user can retrieve and use for their own projects or set-ups. The package utilizes the [googledrive](https://googledrive.tidyverse.org/) R package to download the pre-processed and documented datasets to a local cache directory provided by the user.
 
 **geneOncoX** integrates a number of existing resources when it comes to cancer-relevant gene annotations, including, but not limited to:
 
--   [IntOGen](https://www.intogen.org/download) - catalog mutational driver genes
+-   [IntOGen](https://www.intogen.org/download) - compendium of mutational cancer driver genes
 -   [Network of Cancer Genes](http://ncg.kcl.ac.uk/) - collection of curated cancer genes
 -   [CancerMine](http://bionlp.bcgsc.ca/cancermine/) - text-mined predictions of tumor suppressor genes, proto-oncogenes and cancer drivers
 -   [Cancer Gene Census](https://cancer.sanger.ac.uk/census) - manually curated resource on cancer genes (soma and germline)
@@ -17,7 +17,7 @@ The goal of **geneOncoX** is to offer an R package that simplifies the process o
 
 ### Usage
 
-The package offers currently five different functions, that each retrieves a specific dataset that can be of use for gene annotation purposes.
+The package offers (currently) five different functions, that each retrieves a specific dataset that can be of use for gene annotation purposes.
 
 -   [`get_basic()`](https://sigven.github.io/geneOncoX/reference/get_basic.html) - retrieves basic, non-transcript-specific gene annotations. Includes tumor suppressor gene/oncogene/driver annotations from multiple resources, NCBI gene summary descriptions, as well as multiple predictions/scores when it comes to gene indispensability and loss-of-function tolerance
 
@@ -29,9 +29,10 @@ The package offers currently five different functions, that each retrieves a spe
 
 -   [`get_panels()`](https://sigven.github.io/geneOncoX/reference/get_panels.html) - retrieves a collection of \> 40 different panels for various cancer conditions, as found in Genomics England PanelApp
 
-Technically, each dataset comes as a list with  
- * a `metadata` data frame that lists URLs, citations, and versions of underlying resources
- * a `records` data frame that contains the actual gene/transcript annotations
+Technically, each dataset comes as a list with
+
+-   a `metadata` data frame that lists URLs, citations, and versions of underlying resources
+-   a `records` data frame that contains the actual gene/transcript annotations
 
 ### IMPORTANT NOTE
 
