@@ -68,11 +68,11 @@
   <main id="main" class="col-md-9"><div class="section level2">
 <h2 id="geneoncox">geneOncoX<a class="anchor" aria-label="anchor" href="#geneoncox"></a>
 </h2>
-<p>The goal of <strong>geneOncoX</strong> is to offer an R package that simplifies the process of gene annotation in cancer sequencing projects. The package offers a few pre-processed datasets, along with metadata, that the user can retrieve and use for their own projects or set-ups. Technically, the package utilizes the <a href="https://googledrive.tidyverse.org/" class="external-link">googledrive</a> R package to download the pre-processed and documented datasets to a local cache directory provided by the user.</p>
+<p>The goal of <strong>geneOncoX</strong> is to offer an R package that simplifies the process of gene annotation in cancer sequencing projects. The package offers a few pre-processed datasets, along with metadata, that the user can retrieve and use for their own projects or set-ups. The package utilizes the <a href="https://googledrive.tidyverse.org/" class="external-link">googledrive</a> R package to download the pre-processed and documented datasets to a local cache directory provided by the user.</p>
 <p><strong>geneOncoX</strong> integrates a number of existing resources when it comes to cancer-relevant gene annotations, including, but not limited to:</p>
 <ul>
 <li>
-<a href="https://www.intogen.org/download" class="external-link">IntOGen</a> - catalog mutational driver genes</li>
+<a href="https://www.intogen.org/download" class="external-link">IntOGen</a> - compendium of mutational cancer driver genes</li>
 <li>
 <a href="http://ncg.kcl.ac.uk/" class="external-link">Network of Cancer Genes</a> - collection of curated cancer genes</li>
 <li>
@@ -92,7 +92,7 @@
 <div class="section level3">
 <h3 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h3>
-<p>The package offers currently five different functions, that each retrieves a specific dataset that can be of use for gene annotation purposes.</p>
+<p>The package offers (currently) five different functions, that each retrieves a specific dataset that can be of use for gene annotation purposes.</p>
 <ul>
 <li><p><a href="https://sigven.github.io/geneOncoX/reference/get_basic.html"><code>get_basic()</code></a> - retrieves basic, non-transcript-specific gene annotations. Includes tumor suppressor gene/oncogene/driver annotations from multiple resources, NCBI gene summary descriptions, as well as multiple predictions/scores when it comes to gene indispensability and loss-of-function tolerance</p></li>
 <li><p><a href="https://sigven.github.io/geneOncoX/reference/get_gencode.html"><code>get_gencode()</code></a> - retrieves two datasets ( <em>grch37</em> and <em>grch38</em> ) with human gene transcripts from GENCODE, including cross-references to RefSeq, <a href="https://www.uniprot.org" class="external-link">UniProt</a>, <a href="https://appris.bioinfo.cnio.es/#/" class="external-link">APPRIS</a>, and <a href="https://www.ncbi.nlm.nih.gov/refseq/MANE/" class="external-link">MANE</a></p></li>
@@ -100,8 +100,11 @@
 <li><p><a href="https://sigven.github.io/geneOncoX/reference/get_predisposition.html"><code>get_predisposition()</code></a> - retrieves a list of genes of relevance for cancer predisposition, utilizing multiple resources, including Cancer Gene Census, Genomics England PanelApp, <a href="https://pubmed.ncbi.nlm.nih.gov/29625052/" class="external-link">TCGA’s PanCancer study</a>, and others.</p></li>
 <li><p><a href="https://sigven.github.io/geneOncoX/reference/get_panels.html"><code>get_panels()</code></a> - retrieves a collection of &gt; 40 different panels for various cancer conditions, as found in Genomics England PanelApp</p></li>
 </ul>
-<p>Technically, each dataset comes as a list with<br>
-* a <code>metadata</code> data frame that lists URLs, citations, and versions of underlying resources * a <code>records</code> data frame that contains the actual gene/transcript annotations</p>
+<p>Technically, each dataset comes as a list with</p>
+<ul>
+<li>a <code>metadata</code> data frame that lists URLs, citations, and versions of underlying resources</li>
+<li>a <code>records</code> data frame that contains the actual gene/transcript annotations</li>
+</ul>
 </div>
 <div class="section level3">
 <h3 id="important-note">IMPORTANT NOTE<a class="anchor" aria-label="anchor" href="#important-note"></a>
