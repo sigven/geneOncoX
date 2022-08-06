@@ -1,4 +1,4 @@
-## geneOncoX - cancer gene annotations
+## geneOncoX
 
 The goal of **geneOncoX** is to offer an R package that simplifies the process of gene annotation in cancer sequencing projects. The package offers a few pre-processed datasets, along with metadata, that the user can retrieve and use for their own projects or set-ups. Technically, the package utilizes the [googledrive](https://googledrive.tidyverse.org/) R package to download the pre-processed and documented datasets to a local cache directory provided by the user.
 
@@ -19,21 +19,23 @@ The goal of **geneOncoX** is to offer an R package that simplifies the process o
 
 The package offers currently five different functions, that each retrieves a specific dataset that can be of use for gene annotation purposes.
 
--   `get_basic()` - retrieves basic, non-transcript-specific gene annotations. Includes tumor suppressor gene/oncogene/driver annotations from multiple resources, NCBI gene summary descriptions, as well as multiple predictions/scores when it comes to gene indispensability and loss-of-function tolerance
+-   [`get_basic()`](https://sigven.github.io/geneOncoX/reference/get_basic.html) - retrieves basic, non-transcript-specific gene annotations. Includes tumor suppressor gene/oncogene/driver annotations from multiple resources, NCBI gene summary descriptions, as well as multiple predictions/scores when it comes to gene indispensability and loss-of-function tolerance
 
--   `get_gencode()` - retrieves two datasets ( *grch37* and *grch38* ) with human gene transcripts from GENCODE, including cross-references to RefSeq, [UniProt](https://www.uniprot.org), [APPRIS](https://appris.bioinfo.cnio.es/#/), and [MANE](https://www.ncbi.nlm.nih.gov/refseq/MANE/)
+-   [`get_gencode()`](https://sigven.github.io/geneOncoX/reference/get_gencode.html) - retrieves two datasets ( *grch37* and *grch38* ) with human gene transcripts from GENCODE, including cross-references to RefSeq, [UniProt](https://www.uniprot.org), [APPRIS](https://appris.bioinfo.cnio.es/#/), and [MANE](https://www.ncbi.nlm.nih.gov/refseq/MANE/)
 
--   `get_alias()` - retrieves a list of gene synonyms, indicating which synonyms are ambiguous or nonambiguous (with respect to primary gene symbols)
+-   [`get_alias()`](https://sigven.github.io/geneOncoX/reference/get_alias.html) - retrieves a list of gene synonyms, indicating which synonyms are ambiguous or nonambiguous (with respect to primary gene symbols)
 
--   `get_predisposition()` - retrieves a list of genes of relevance for cancer predisposition, utilizing multiple resources, including Cancer Gene Census, Genomics England PanelApp, [TCGA's PanCancer study](https://pubmed.ncbi.nlm.nih.gov/29625052/), and others.
+-   [`get_predisposition()`](https://sigven.github.io/geneOncoX/reference/get_predisposition.html) - retrieves a list of genes of relevance for cancer predisposition, utilizing multiple resources, including Cancer Gene Census, Genomics England PanelApp, [TCGA's PanCancer study](https://pubmed.ncbi.nlm.nih.gov/29625052/), and others.
 
--   `get_panels()` - retrieves a collection of \> 40 different panels for various cancer conditions, as found in Genomics England PanelApp
+-   [`get_panels()`](https://sigven.github.io/geneOncoX/reference/get_panels.html) - retrieves a collection of \> 40 different panels for various cancer conditions, as found in Genomics England PanelApp
 
-Each dataset comes with a `metadata` object that lists URLs, citations, and versions used.
+Technically, each dataset comes as a list with  
+ * a `metadata` data frame that lists URLs, citations, and versions of underlying resources
+ * a `records` data frame that contains the actual gene/transcript annotations
 
 ### IMPORTANT NOTE
 
-If you use the dataset provided with this package, make sure you properly cite the original publications of the resources integrated in **geneOncoX**, i.e.:
+If you use the datasets provided with **geneOncoX**, make sure you properly cite the original publications of the resources integrated, i.e.:
 
 1.  IntOGen - [Martínez-Jiménez et al., Nat Rev Cancer, 2020](https://pubmed.ncbi.nlm.nih.gov/32778778/)
 2.  CancerMine - [Lever et al., Nat Methods, 2019](https://pubmed.ncbi.nlm.nih.gov/31110280/)
