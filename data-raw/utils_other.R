@@ -11,7 +11,7 @@ get_gene_info_ncbi <- function(
       col_select = c(1,2,3,5,6,9,10),
       progress = F, col_names = F))
   }else{
-    rlogging::message(
+    lgr::lgr$error(
       paste0("Cannot read gene_info - download not available: ",
              remote_url))
   }
@@ -82,7 +82,7 @@ get_gene_info_ncbi <- function(
 
   attributes(gene_info)$spec <- NULL
 
-  rlogging::message(paste0("Parsed n = ", nrow(gene_info),
+  lgr::lgr$info(paste0("Parsed n = ", nrow(gene_info),
                            " genes from NCBI's Gene resource (datestamp = ",
                            datestamp,")"))
 
@@ -194,9 +194,7 @@ get_function_summary_ncbi <- function(
         dplyr::bind_rows(ncbi_gene_summary,
                          res)
     }
-
     i <- i + 300
-    #cat(i,'\n')
 
   }
 
@@ -257,6 +255,7 @@ get_function_summary_ncbi <- function(
 get_tso500 <- function(gene_info = NULL,
                        gene_alias = NULL){
 
+  lgr::lgr$info("Retrieve genes covered by Illumina's TSO500 panel")
   tso500_all <- openxlsx::read.xlsx(
     "data-raw/tso500/journal.pone.0260089.s001.xlsx", sheet = "ST3")
 
@@ -343,12 +342,13 @@ get_tso500 <- function(gene_info = NULL,
 
 get_dna_repair_genes <- function(gene_info = NULL){
 
+  lgr::lgr$info("Retrieve genes in DNA repair genes database")
   all_genes <- readr::read_tsv(
     file.path(
       "data-raw",
       "predisposition",
       "ge_panelapp",
-      "dna_repair_genes_pertinent_cancer_susceptibility.tsv"
+      "dna_repair.tsv"
     ), show_col_types = F
   ) |>
     janitor::clean_names() |>
@@ -393,9 +393,9 @@ get_dna_repair_genes <- function(gene_info = NULL){
 
 get_dbnsfp_gene_annotations <- function(){
 
-  rlogging::message("Retrieving gene damage scores/OMIM annotation from dbNSFP_gene")
+  lgr::lgr$info("Retrieving gene damage scores/OMIM annotation from dbNSFP_gene")
   dbnsfp_gene <- read.table(
-    file=gzfile(file.path("data-raw","dbnsfp", "dbNSFP4.2_gene.gz")), sep="\t",
+    file=gzfile(file.path("data-raw","dbnsfp", "dbNSFP_gene.gz")), sep="\t",
     header = T, stringsAsFactors = F, na.strings = c(".",""), comment.char="",
     quote = NULL) |>
     janitor::clean_names() |>

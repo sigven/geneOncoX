@@ -14,7 +14,7 @@ get_intogen_driver_genes <- function(){
                        intogen_phenotype = paste(unique(cancer_type),collapse="&"),
                        .groups = "drop")
   )
-  rlogging::message(paste0("Parsed n = ", nrow(intogen_drivers),
+  lgr::lgr$info(paste0("Parsed n = ", nrow(intogen_drivers),
                            " predicted driver genes (Intogen)"))
 
   return(intogen_drivers)
@@ -39,7 +39,7 @@ get_curated_fp_cancer_genes <- function(
     dplyr::select(-symbol)
   return(fp_cancer_drivers)
 
-  rlogging::message(paste0("Parsed n = ", nrow(fp_cancer_drivers),
+  lgr::lgr$info(paste0("Parsed n = ", nrow(fp_cancer_drivers),
                            " false positive driver genes (TCGA, Bailey et al., Cell, 2018"))
 
 
@@ -76,7 +76,7 @@ get_tcga_driver_genes <- function(){
       dplyr::summarise(tcga_driver = paste(name_freq, collapse = "&"), .groups = "drop") |>
       dplyr::filter(tcga_driver != 'PANCAN:0'))
 
-  rlogging::message(paste0("Parsed n = ", nrow(tcga_drivers),
+  lgr::lgr$info(paste0("Parsed n = ", nrow(tcga_drivers),
                            " predicted driver genes (TCGA, Bailey et al., Cell, 2018"))
 
 
@@ -160,11 +160,11 @@ get_signaling_pathway_genes <- function(gene_info){
       dplyr::summarise(sanchezvega2018_signaling_pathway_short = paste(unique(signaling_pathway),collapse="&"),
                        sanchezvega2018_signaling_pathway = stringi::stri_enc_toascii(paste(unique(pathway),collapse="&")), .groups = "drop")) |>
     dplyr::left_join(
-      dplyr::select(gene_info, symbol, entrezgene)
+      dplyr::select(gene_info, symbol, entrezgene), by = "symbol"
     ) |>
     dplyr::select(-c(symbol, sanchezvega2018_signaling_pathway_short))
 
-  rlogging::message(paste0("Parsed n = ", nrow(signaling_genes),
+  lgr::lgr$info(paste0("Parsed n = ", nrow(signaling_genes),
                            " genes with pathway signalling annotation (TCGA, Sanchez-Vega et al., Cell, 2018"))
 
   return(signaling_genes)
@@ -244,7 +244,7 @@ get_cancer_gene_census <- function(
                        tumour_types_somatic))
   }
 
-  rlogging::message(paste0("Parsed n = ", nrow(cosmic_cgc),
+  lgr::lgr$info(paste0("Parsed n = ", nrow(cosmic_cgc),
                            " genes in COSMIC's Cancer Gene Census (version ",
                            cgc_version,") - ", origin, " context"))
 
@@ -282,8 +282,8 @@ get_network_of_cancer_genes <- function(ncg_version = "7.0"){
     )) |>
     dplyr::distinct()
 
-  rlogging::message(paste0("Found n = ", nrow(ncg),
-                           " oncogenes/tumor suppressor genes in Network of Cancer Genes (version ",
+  lgr::lgr$info(paste0("Found n = ", nrow(ncg),
+                           " cancer-relvant genes (drivers, proto-oncogenes, tumor suppressors) in Network of Cancer Genes (version ",
                            ncg_version,")"))
   return(ncg)
 
@@ -401,7 +401,7 @@ get_cancermine_genes <- function(cancermine_version = "47"){
   )
 
 
-  rlogging::message("Retrieving known proto-oncogenes/tumor suppressor genes from CancerMine")
+  lgr::lgr$info("Retrieving known proto-oncogenes/tumor suppressor genes from CancerMine")
   oncogene <- as.data.frame(
     readr::read_tsv(cancermine_collated_fname,
                     col_names = T,na ="-",
@@ -455,8 +455,8 @@ get_cancermine_genes <- function(cancermine_version = "47"){
     nrow()
 
   cancermine_full <- cdriver |>
-    dplyr::full_join(tsgene) |>
-    dplyr::full_join(oncogene) |>
+    dplyr::full_join(tsgene, by = "entrezgene") |>
+    dplyr::full_join(oncogene, by = "entrezgene") |>
     dplyr::rename(cancermine_pmid_driver = pmids_cdriver,
                   cancermine_pmid_tsg = pmids_tsgene,
                   cancermine_pmid_oncogene = pmids_oncogene,

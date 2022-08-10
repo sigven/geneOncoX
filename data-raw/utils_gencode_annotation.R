@@ -21,28 +21,7 @@ get_transcript_appris_annotation <-
           'ensembl_transcript_id',
           'principal_isoform_flag'))
 
-    # if(build == 'grch38'){
-    #   appris <- appris |>
-    #     magrittr::set_colnames(
-    #       c('symbol',
-    #         'ensembl_gene_id',
-    #         'ensembl_transcript_id',
-    #         'ccds',
-    #         'principal_isoform_flag',
-    #         'mane_select')) |>
-    #     dplyr::select(-c(symbol, ccds, mane_select))
-    # }else{
-    #   appris <- appris |>
-    #     magrittr::set_colnames(
-    #       c('symbol',
-    #         'ensembl_gene_id',
-    #         'ensembl_transcript_id',
-    #         'ccds',
-    #         'principal_isoform_flag')) |>
-    #     dplyr::select(-c(symbol, ccds))
-    # }
-
-    rlogging::message(paste0("A total of ",nrow(appris)," transcripts with APPRIS principal isoform annotations were parsed"))
+    lgr::lgr$info(paste0("A total of ",nrow(appris)," transcripts with APPRIS principal isoform annotations were parsed"))
 
     return(appris)
   }
@@ -59,7 +38,7 @@ gencode_get_transcripts <-
 
 
     gencode_ftp_url <- "ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/"
-    rlogging::message(paste0("Retrieving GENCODE transcripts - version ",
+    lgr::lgr$info(paste0("Retrieving GENCODE transcripts - version ",
                              gencode_version,", build ",build))
 
     remote_gtf <-
@@ -119,14 +98,14 @@ gencode_get_transcripts <-
       dplyr::distinct()
 
     #
-    rlogging::message(paste0("A total of ",nrow(gencode)," transcripts parsed"))
+    lgr::lgr$info(paste0("A total of ",nrow(gencode)," transcripts parsed"))
 
     ## include regulatory region (for VEP annotation)
     if(append_regulatory_region == T){
 
       suppressPackageStartupMessages(library(BSgenome.Hsapiens.UCSC.hg19))
       suppressPackageStartupMessages(library(BSgenome.Hsapiens.UCSC.hg38))
-      rlogging::message("Parameter 'append_regulatory_region' is TRUE: expanding transcript start/end with 5kb (for VEP consequence compliance)")
+      lgr::lgr$info("Parameter 'append_regulatory_region' is TRUE: expanding transcript start/end with 5kb (for VEP consequence compliance)")
       chromosome_lengths <- data.frame(
         'chrom' = head(names(GenomeInfoDb::seqlengths(BSgenome.Hsapiens.UCSC.hg19)),25),
         'chrom_length' = head(GenomeInfoDb::seqlengths(BSgenome.Hsapiens.UCSC.hg19),25),
@@ -238,7 +217,7 @@ gencode_get_transcripts <-
       )
 
 
-    rlogging::message(paste0("A total of ",nrow(gencode)," valid transcripts remaining"))
+    lgr::lgr$info(paste0("A total of ",nrow(gencode)," valid transcripts remaining"))
 
     return(gencode)
 
@@ -513,7 +492,7 @@ gencode_resolve_xrefs <- function(
 get_uniprot_map <- function(
     uniprot_version = "2022_03"){
 
-  rlogging::message("Retrieving UniProtKB annotation")
+  lgr::lgr$info("Retrieving UniProtKB annotation")
   withr::local_options(timeout = max(30000000, getOption("timeout")))
 
   remote_idmapping_dat_fname <-
@@ -557,7 +536,7 @@ get_uniprot_map <- function(
       dplyr::summarise(uniprot_id = paste(unique(name), collapse="&"),
                        .groups = "drop") |>
       dplyr::rename(uniprot_acc = acc))
-  rlogging::message("A total of ",nrow(up_id_acc)," UniProt protein accessions were parsed")
+  lgr::lgr$info("A total of ",nrow(up_id_acc)," UniProt protein accessions were parsed")
 
 
   ## UniProt accession to refseq mRNA
@@ -598,7 +577,9 @@ sort_bed_regions <- function(unsorted_regions){
   sorted_regions <- NULL
   assertable::assert_colnames(
     unsorted_regions,c('start','end'),only_colnames = F, quiet = T)
-  if("chrom" %in% colnames(unsorted_regions) & "start" %in% colnames(unsorted_regions) & "end" %in% colnames(unsorted_regions)){
+  if("chrom" %in% colnames(unsorted_regions) & 
+     "start" %in% colnames(unsorted_regions) & 
+     "end" %in% colnames(unsorted_regions)){
     chrOrder <- paste0('chr',c(as.character(c(1:22)),"X","Y","M"))
     unsorted_regions$chrom <- factor(unsorted_regions$chrom, levels=chrOrder)
     unsorted_regions <- unsorted_regions[order(unsorted_regions$chrom),]

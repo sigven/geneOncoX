@@ -4,6 +4,7 @@ source("data-raw/utils_predisposition_annotation.R")
 source("data-raw/utils_gencode_annotation.R")
 source("data-raw/utils_other.R")
 
+## get metadata from metadata.xlsx
 metadata <- list()
 for(elem in c('basic','predisposition','panels','alias','gencode')){
   metadata[[elem]] <- as.data.frame(openxlsx::read.xlsx(
@@ -18,6 +19,10 @@ for(elem in c('basic','predisposition','panels','alias','gencode')){
       ))
   )
 }
+
+## set logging layout
+lgr::lgr$appenders$console$set_layout(
+  lgr::LayoutFormat$new(timestamp_fmt = "%Y-%m-%d %T"))
 
 gene_info <- get_gene_info_ncbi() |>
   dplyr::select(entrezgene, symbol, gene_biotype,
@@ -184,9 +189,10 @@ rm(metadata)
 rm(ncg)
 
 
+## upload to Google Drive
 version_minor_bumped <- paste0(
   "0.",
-  as.character(as.integer(substr(as.character(packageVersion("geneOncoXREF")),3,3)) + 1),
+  as.character(as.integer(substr(as.character(packageVersion("geneOncoX")),3,3)) + 1),
   ".0")
 
 gd_records <- list()
@@ -206,7 +212,7 @@ for(elem in c('basic','predisposition','panels','alias','gencode')){
 
   (gd_records[[elem]] <- googledrive::drive_upload(
     paste0("data-raw/gd_local/gene_", elem, "_v", version_minor_bumped,".rds"),
-    paste0("geneOncoXREF/gene_", elem, "_v", version_minor_bumped,".rds")
+    paste0("geneOncoX/gene_", elem, "_v", version_minor_bumped,".rds")
   ))
 
 }

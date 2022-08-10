@@ -25,7 +25,7 @@
 #'   \item \emph{abbreviation} - abbreviation used in column names of records
 #'  }
 #'
-#' \bold{records} - A data frame with 75,323 rows and 56 columns:
+#' \bold{records} - A data frame with 75,342 rows and 56 columns:
 #' \itemize{
 #'   \item \emph{entrezgene} - NCBI Entrez identifier
 #'   \item \emph{symbol} - primary gene symbol

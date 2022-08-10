@@ -1,4 +1,4 @@
-#' Function that retrieves geneOncoXREF data from Google Drive
+#' Function that retrieves geneOncoX data from Google Drive
 #'
 #' @param cache_dir Local directory for data download
 #' @param overwrite Logical indicating if local cache should be overwritten
@@ -20,15 +20,15 @@ get_gox_data <- function(cache_dir = NULL,
   fname_local <- file.path(
     cache_dir,
     paste0("gene_",db,"_v",
-           geneOncoXREF:::db_id_ref[geneOncoXREF:::db_id_ref$name == db,]$pVersion,
+           geneOncoX:::db_id_ref[geneOncoX:::db_id_ref$name == db,]$pVersion,
            '.rds')
   )
 
   fname_gd <- googledrive::as_id(
-    geneOncoXREF:::db_id_ref[geneOncoXREF:::db_id_ref$name == db,]$gid)
+    geneOncoX:::db_id_ref[geneOncoX:::db_id_ref$name == db,]$gid)
 
   md5checksum_package <-
-    geneOncoXREF:::db_id_ref[geneOncoXREF:::db_id_ref$name == db,]$md5Checksum
+    geneOncoX:::db_id_ref[geneOncoX:::db_id_ref$name == db,]$md5Checksum
 
   dat <- NULL
   if(file.exists(fname_local) & overwrite == F){

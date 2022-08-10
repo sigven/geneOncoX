@@ -1,7 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^data-raw
-^rlogging.log
 ^renv
 ^.bumpversion.cfg
 ^_pkgdown\.yml$

@@ -2,7 +2,7 @@ get_panel_app_genes <-
   function(gene_info = NULL,
            build = "grch37"){
 
-    rlogging::message("Retrieving Genomics England virtual gene panels - cancer phenotypes")
+    lgr::lgr$info("Retrieving Genomics England virtual gene panels - cancer phenotypes")
 
     panel_id_file <-
       file.path('data-raw',

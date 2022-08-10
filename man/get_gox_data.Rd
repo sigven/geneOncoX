@@ -2,7 +2,7 @@
 % Please edit documentation in R/gene_onco_xref.R
 \name{get_gox_data}
 \alias{get_gox_data}
-\title{Function that retrieves geneOncoXREF data from Google Drive}
+\title{Function that retrieves geneOncoX data from Google Drive}
 \usage{
 get_gox_data(cache_dir = NULL, overwrite = F, db = "alias")
 }
@@ -15,6 +15,6 @@ get_gox_data(cache_dir = NULL, overwrite = F, db = "alias")
 \item{db}{type of dataset to be retrieved}
 }
 \description{
-Function that retrieves geneOncoXREF data from Google Drive
+Function that retrieves geneOncoX data from Google Drive
 }
 \keyword{internal}
