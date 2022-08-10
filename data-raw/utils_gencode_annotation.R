@@ -182,6 +182,7 @@ gencode_get_transcripts <-
         mane_plus_clinical = transcript_mane_plus_clinical,
       ) |>
       dplyr::mutate(
+        chrom = as.character(chrom),
         entrezgene = as.integer(entrezgene),
         ensembl_version = ensembl_version,
         gencode_version = gencode_version,

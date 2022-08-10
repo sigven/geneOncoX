@@ -4,7 +4,7 @@
 \alias{get_panels}
 \title{Cancer gene panel collections}
 \usage{
-get_panels(cache_dir = NULL, overwrite = F)
+get_panels(cache_dir = NA, overwrite = F)
 }
 \arguments{
 \item{cache_dir}{Local directory for data download}

@@ -107,7 +107,6 @@ get_panel_app_genes <-
       dplyr::filter(ensembl_gene_id != "ENSG00000277027") |>
       dplyr::filter(ensembl_gene_id != "ENSG00000277925") |>
       dplyr::filter(ensembl_gene_id != "ENSG00000278815") |>
-      dplyr::mutate(genome_build = build) |>
       dplyr::mutate(
         gepa_moi2 = dplyr::if_else(
           stringr::str_detect(gepa_moi,"MONOALLELIC, autosomal or pseudoautosomal, NOT imprinted") |
@@ -120,6 +119,7 @@ get_panel_app_genes <-
         stringr::str_detect(gepa_moi,"BOTH monoallelic and biallelic"),
         "AD/AR",as.character(gepa_moi2))) |>
       dplyr::bind_rows(repair_genes_panel) |>
+      dplyr::mutate(genome_build = build) |>
       dplyr::select(-gepa_moi) |>
       dplyr::rename(gepa_moi = gepa_moi2) |>
       #dplyr::select(-gepa_moi) |>
@@ -398,7 +398,8 @@ get_predisposition_genes <- function(gene_info = NULL,
   cpg_collections[['TCGA_PANCAN_2018']] <- get_predisposition_genes_huang018(gene_info = gene_info)
   cpg_collections[['ACMG_SF']] <- get_acmg_secondary_findings(gene_info = gene_info) |>
     dplyr::select(entrezgene, inheritance, disease_phenotype) |>
-    dplyr::rename(moi = inheritance, phenotypes = disease_phenotype)
+    dplyr::rename(moi = inheritance, phenotypes = disease_phenotype) |>
+    dplyr::mutate(source = "ACMG_SF")
   cpg_collections[['OTHER']] <- get_curated_predisposition_genes(gene_info = gene_info) |>
     dplyr::select(-reference)
   cpg_collections[['CGC']] <- get_cancer_gene_census(origin = "germline") |>
@@ -436,7 +437,7 @@ get_predisposition_genes <- function(gene_info = NULL,
       dplyr::bind_rows(cpg_collections[['TCGA_PANCAN_2018']]) |>
       dplyr::bind_rows(cpg_collections[['OTHER']]) |>
       dplyr::bind_rows(cpg_collections[['PANEL_APP']]) |>
-      dplyr::bind_rows(cpg_collections[['ACMG_SF30']]) |>
+      dplyr::bind_rows(cpg_collections[['ACMG_SF']]) |>
       dplyr::filter(!is.na(entrezgene)) |>
       dplyr::mutate(moi = dplyr::if_else(
         is.na(moi),"",as.character(moi))) |>

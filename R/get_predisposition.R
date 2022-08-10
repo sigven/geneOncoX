@@ -9,6 +9,7 @@
 #' * \href{https://panelapp.genomicsengland.co.uk/}{Genomics England PanelApp}
 #' * \href{https://pubmed.ncbi.nlm.nih.gov/29625052/}{TCGA's PanCancer study}
 #' * \href{https://cancer.sanger.ac.uk/census}{Cancer Gene Census}
+#' * \href{https://www.mdanderson.org/documents/Labs/Wood-Laboratory/human-dna-repair-genes.html}{Human DNA repair genes}
 #' * Other/curated
 #'
 #' The dataset comes as a `list` object, with two elements:
@@ -34,7 +35,7 @@
 #'   \item \emph{abbreviation} - abbreviation used in column names of records
 #'  }
 #'
-#' \bold{records} - A data frame with 547 rows and 8 columns:
+#' \bold{records} - A data frame with 590 rows and 8 columns:
 #' \itemize{
 #'   \item \emph{symbol} - official gene symbol
 #'   \item \emph{entrezgene} - Entrez gene identifier

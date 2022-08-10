@@ -4,7 +4,7 @@
 \alias{get_predisposition}
 \title{Get human cancer predisposition genes}
 \usage{
-get_predisposition(cache_dir = NULL, overwrite = F)
+get_predisposition(cache_dir = NA, overwrite = F)
 }
 \arguments{
 \item{cache_dir}{Local directory for data download}
@@ -22,7 +22,7 @@ get_predisposition(cache_dir = NULL, overwrite = F)
 \item \emph{abbreviation} - abbreviation used in column names of records
 }
 
-\bold{records} - A data frame with 547 rows and 8 columns:
+\bold{records} - A data frame with 590 rows and 8 columns:
 \itemize{
 \item \emph{symbol} - official gene symbol
 \item \emph{entrezgene} - Entrez gene identifier
@@ -45,6 +45,7 @@ have been collected from multiple resources:
 \item \href{https://panelapp.genomicsengland.co.uk/}{Genomics England PanelApp}
 \item \href{https://pubmed.ncbi.nlm.nih.gov/29625052/}{TCGA's PanCancer study}
 \item \href{https://cancer.sanger.ac.uk/census}{Cancer Gene Census}
+\item \href{https://www.mdanderson.org/documents/Labs/Wood-Laboratory/human-dna-repair-genes.html}{Human DNA repair genes}
 \item Other/curated
 }
 

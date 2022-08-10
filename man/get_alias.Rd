@@ -4,7 +4,7 @@
 \alias{get_alias}
 \title{Get human gene aliases from NCBI}
 \usage{
-get_alias(cache_dir = NULL, overwrite = F)
+get_alias(cache_dir = NA, overwrite = F)
 }
 \arguments{
 \item{cache_dir}{Local directory for data download}

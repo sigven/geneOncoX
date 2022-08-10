@@ -42,6 +42,7 @@ get_gox_data <- function(cache_dir = NA,
   dat <- NULL
   if(file.exists(fname_local) & overwrite == F){
     dat <- readRDS(fname_local)
+    dat$fpath <- fname_local
     if(!is.null(dat[['records']]) & !is.null(dat[['metadata']])){
       lgr::lgr$info(paste0(
         "Reading from cache_dir = '", cache_dir, "', argument overwrite = F"))
@@ -76,6 +77,7 @@ get_gox_data <- function(cache_dir = NA,
 
     if(md5checksum_remote == md5checksum_local){
       dat <- readRDS(fname_local)
+      dat$fpath <- fname_local
       if(!is.null(dat[['records']]) & !is.null(dat[['metadata']])){
 
         lgr::lgr$info(paste0(

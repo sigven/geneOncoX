@@ -4,7 +4,7 @@
 \alias{get_basic}
 \title{Get basic cancer-relevant gene annotations}
 \usage{
-get_basic(cache_dir = NULL, overwrite = F)
+get_basic(cache_dir = NA, overwrite = F)
 }
 \arguments{
 \item{cache_dir}{Local directory for data download}

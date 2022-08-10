@@ -4,7 +4,7 @@
 \alias{get_gox_data}
 \title{Function that retrieves geneOncoX data from Google Drive}
 \usage{
-get_gox_data(cache_dir = NULL, overwrite = F, db = "alias")
+get_gox_data(cache_dir = NA, overwrite = F, db = "alias")
 }
 \arguments{
 \item{cache_dir}{Local directory for data download}
