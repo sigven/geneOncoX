@@ -29,7 +29,7 @@ The package offers (currently) five different functions, that each retrieves a s
 
 -   [`get_panels()`](https://sigven.github.io/geneOncoX/reference/get_panels.html) - retrieves a collection of \> 40 different panels for various cancer conditions, as found in Genomics England PanelApp
 
-Technically, each dataset comes as a list with
+Technically, each dataset comes as a `list` object in R with
 
 -   a `metadata` data frame that lists URLs, citations, and versions of underlying resources
 -   a `records` data frame that contains the actual gene/transcript annotations
