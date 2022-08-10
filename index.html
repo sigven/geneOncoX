@@ -100,7 +100,7 @@
 <li><p><a href="https://sigven.github.io/geneOncoX/reference/get_predisposition.html"><code>get_predisposition()</code></a> - retrieves a list of genes of relevance for cancer predisposition, utilizing multiple resources, including Cancer Gene Census, Genomics England PanelApp, <a href="https://pubmed.ncbi.nlm.nih.gov/29625052/" class="external-link">TCGA’s PanCancer study</a>, and others.</p></li>
 <li><p><a href="https://sigven.github.io/geneOncoX/reference/get_panels.html"><code>get_panels()</code></a> - retrieves a collection of &gt; 40 different panels for various cancer conditions, as found in Genomics England PanelApp</p></li>
 </ul>
-<p>Technically, each dataset comes as a list with</p>
+<p>Technically, each dataset comes as a <code>list</code> object in R with</p>
 <ul>
 <li>a <code>metadata</code> data frame that lists URLs, citations, and versions of underlying resources</li>
 <li>a <code>records</code> data frame that contains the actual gene/transcript annotations</li>
