@@ -8,14 +8,23 @@
 #' @keywords internal
 #'
 #'
-get_gox_data <- function(cache_dir = NULL,
+get_gox_data <- function(cache_dir = NA,
                          overwrite = F,
                          db = "alias"){
 
-  if(is.null(cache_dir) | !dir.exists(cache_dir)){
+  lgr::lgr$appenders$console$set_layout(
+    lgr::LayoutFormat$new(timestamp_fmt = "%Y-%m-%d %T"))
+  
+  if(is.na(cache_dir)){
     lgr::lgr$error(paste0("Argument cache_dir = '",
-                          cache_dir, "' is NULL or does not exist"))
+                          cache_dir, "' is not defined"))
   }
+  
+  if(!dir.exists(cache_dir)){
+    lgr::lgr$error(paste0("Argument cache_dir = '",
+                          cache_dir, "' does not exist"))
+  }
+  
 
   fname_local <- file.path(
     cache_dir,

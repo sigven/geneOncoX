@@ -52,7 +52,7 @@
 #' @export
 #'
 
-get_predisposition <- function(cache_dir = NULL, overwrite = F){
+get_predisposition <- function(cache_dir = NA, overwrite = F){
 
   dat <- get_gox_data(cache_dir = cache_dir,
                       overwrite = overwrite,
