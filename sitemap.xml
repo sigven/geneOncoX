@@ -13,6 +13,9 @@
     <loc>https://sigven.github.io/geneOncoX/index.html</loc>
   </url>
   <url>
+    <loc>https://sigven.github.io/geneOncoX/reference/create_virtual_panel_bed.html</loc>
+  </url>
+  <url>
     <loc>https://sigven.github.io/geneOncoX/reference/get_alias.html</loc>
   </url>
   <url>
@@ -32,5 +35,11 @@
   </url>
   <url>
     <loc>https://sigven.github.io/geneOncoX/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://sigven.github.io/geneOncoX/reference/sort_bed_regions.html</loc>
+  </url>
+  <url>
+    <loc>https://sigven.github.io/geneOncoX/reference/write_bed_file.html</loc>
   </url>
 </urlset>
