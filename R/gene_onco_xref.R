@@ -18,11 +18,13 @@ get_gox_data <- function(cache_dir = NA,
   if(is.na(cache_dir)){
     lgr::lgr$error(paste0("Argument cache_dir = '",
                           cache_dir, "' is not defined"))
+    return(0)
   }
   
   if(!dir.exists(cache_dir)){
     lgr::lgr$error(paste0("Argument cache_dir = '",
                           cache_dir, "' does not exist"))
+    return(0)
   }
   
 
