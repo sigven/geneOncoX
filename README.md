@@ -1,4 +1,6 @@
-## geneOncoX
+&nbsp;
+
+# geneOncoX <a href="https://sigven.github.io/geneOncoX/"><img src="man/figures/logo.png" align="right" height="130" width="113"/></a>
 
 The goal of **geneOncoX** is to offer an R package that simplifies the process of gene annotation in cancer sequencing projects. The package offers a few pre-processed datasets, along with metadata, that the user can retrieve and use for their own projects or set-ups. The package utilizes the [googledrive](https://googledrive.tidyverse.org/) R package to download the pre-processed and documented datasets to a local cache directory provided by the user.
 

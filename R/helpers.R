@@ -220,16 +220,17 @@ write_bed_file <- function(bed_data,
 #' @keywords internal
 #'
 assign_cancer_gene_evidence <- function(gox_basic = NULL,
-                                       min_citations_tsg = 15,
-                                       min_citations_oncogene = 15,
-                                       min_citations_driver = 10){
+                                        min_citations_tsg = 15,
+                                        min_citations_oncogene = 15,
+                                        min_citations_driver = 10){
   
   
   tsg_oncogene_evidence <- gox_basic$records |>
     dplyr::filter(ncg_oncogene == T |
                     ncg_tsg == T |
                     cgc_oncogene == T |
-                    cgc_tsg == T) |>
+                    cgc_tsg == T |
+                    cancermine_n_cit_driver > 0) |>
     dplyr::mutate(cancermine_onco_ts_citation_ratio = dplyr::if_else(
       !is.na(cancermine_n_cit_tsg),
       as.numeric(cancermine_n_cit_oncogene)/cancermine_n_cit_tsg,
@@ -261,7 +262,7 @@ assign_cancer_gene_evidence <- function(gox_basic = NULL,
       is.na(cancer_driver), 
       FALSE, 
       as.logical(cancer_driver))) |>
-
+    
     ## Ignore tsg classification if considerable more support
     ## for oncogene
     dplyr::mutate(tsg = dplyr::if_else(
@@ -392,5 +393,6 @@ assign_cancer_gene_evidence <- function(gox_basic = NULL,
   lgr::lgr$info(paste0("A total of n = ",nrow(n_ts)," classified tumor suppressor genes were retrieved from CancerMine/NCG/CGC"))
   lgr::lgr$info(paste0("A total of n = ",nrow(n_onc_ts)," genes were annotated with dual roles as tumor suppressor genes and oncogenes from CancerMine/NCG/CGC"))
   
+  return(tsg_oncogene_evidence)
   
 }
