@@ -90,9 +90,11 @@ with two elements:</p><ul><li><p><code>metadata</code> - a data frame with metad
 <li><p><em>citation</em> - publication to cite for annotation source (citation; PMID)</p></li>
 <li><p><em>version</em> - version used</p></li>
 <li><p><em>abbreviation</em> - abbreviation used in column names of records</p></li>
-</ul><p><b>records</b> - A data frame with 75,342 rows and 56 columns:</p><ul><li><p><em>entrezgene</em> - NCBI Entrez identifier</p></li>
+</ul><p><b>records</b> - A data frame with 75,346 rows and 57 columns:</p><ul><li><p><em>entrezgene</em> - NCBI Entrez identifier</p></li>
 <li><p><em>symbol</em> - primary gene symbol</p></li>
 <li><p><em>gene_biotype</em> - type of gene (ncRNA, protein-coding, or pseudo)</p></li>
+<li><p><em>name</em> - gene name</p></li>
+<li><p><em>other_designations</em> - other gene name designations</p></li>
 <li><p><em>hgnc_id</em> - HGNC gene identifier</p></li>
 <li><p><em>ncbi_function_summary</em> - gene function summary (NCBI Gene)</p></li>
 <li><p><em>cgc_tsg</em> - tumor suppressor gene (Cancer Gene Census)</p></li>
@@ -122,9 +124,9 @@ with two elements:</p><ul><li><p><code>metadata</code> - a data frame with metad
 <li><p><em>cancermine_n_cit_driver</em> - number of citations (PMIDs) that support a role for this as a driver (CancerMine)</p></li>
 <li><p><em>cancermine_n_cit_oncogene</em> - number of citations (PMIDs) that support a role for this as a proto-oncogene (CancerMine)</p></li>
 <li><p><em>cancermine_n_cit_tsg</em> - number of citations (PMIDs) that support a role for this as a tumor suppressor (CancerMine)</p></li>
-<li><p><em>cancermine_cit_driver</em> - citations for cancer driver support (all with prob &gt; 0.8, CancerMine)</p></li>
+<li><p><em>cancermine_cit_tsg</em> - citations for cancer driver support (all with prob &gt; 0.8, CancerMine)</p></li>
 <li><p><em>cancermine_cit_oncogene</em> - citations for proto-oncogene support (all with prob &gt; 0.8, max 50, CancerMine)</p></li>
-<li><p><em>cancermine_cit_tsg</em> - citations for tumor suppressor gene support (all with prob &gt; 0.8, CancerMine)</p></li>
+<li><p><em>cancermine_cit_driver</em> - citations for tumor suppressor gene support (all with prob &gt; 0.8, CancerMine)</p></li>
 <li><p><em>cancermine_cit_links_driver</em> - citation links for cancer driver support (50 most recent, CancerMine)</p></li>
 <li><p><em>cancermine_cit_links_oncogene</em> - citation links for proto-oncogene support (50 most recent, CancerMine)</p></li>
 <li><p><em>cancermine_cit_links_tsg</em> - citation links for tumor suppressor gene support (50 most recent, CancerMine)</p></li>
