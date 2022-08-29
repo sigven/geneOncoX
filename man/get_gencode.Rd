@@ -32,18 +32,18 @@ get_gencode(cache_dir = NA, overwrite = F)
 \item \emph{abbreviation} - abbreviation (e.g. used in column names of records)
 }
 
-\bold{records} - A list with one data frame per assembly ()
+\bold{records} - A list with one data frame per assembly
 \itemize{
 \item \emph{chrom} - chromosome
 \item \emph{start} - transcript start with 5kb padding (upstream)
 \item \emph{end} - transcript end with 5kb padding (downstream)
 \item \emph{transcript_start} - transcript start
 \item \emph{transcript_end} - transcript end
+\item \emph{strand} - strand
 \item \emph{ensembl_gene_id} - Ensembl gene identifier
 \item \emph{ensembl_transcript_id} - Ensembl transcript identifier
 \item \emph{ensembl_transcript_id_full} - Ensembl transcript identifier (with version)
 \item \emph{ensembl_protein_id} - Ensembl protein identifier
-\item \emph{strand} - strand
 \item \emph{symbol} - official gene symbol
 \item \emph{hgnc_id} - HGNC gene identifier
 \item \emph{entrezgene} - Entrez gene identifier

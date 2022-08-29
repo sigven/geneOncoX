@@ -26,7 +26,7 @@ lgr::lgr$appenders$console$set_layout(
 
 gene_info <- get_gene_info_ncbi() |>
   dplyr::select(entrezgene, symbol, gene_biotype,
-                synonyms, name,
+                synonyms, name, other_designations,
                 ensembl_gene_id, hgnc_id) |>
   dplyr::distinct()
 

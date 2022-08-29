@@ -537,7 +537,7 @@ get_uniprot_map <- function(
       dplyr::summarise(uniprot_id = paste(unique(name), collapse="&"),
                        .groups = "drop") |>
       dplyr::rename(uniprot_acc = acc))
-  lgr::lgr$info("A total of ",nrow(up_id_acc)," UniProt protein accessions were parsed")
+  lgr::lgr$info(paste0("A total of ",nrow(up_id_acc)," UniProt protein accessions were parsed"))
 
 
   ## UniProt accession to refseq mRNA

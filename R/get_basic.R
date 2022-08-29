@@ -25,11 +25,13 @@
 #'   \item \emph{abbreviation} - abbreviation used in column names of records
 #'  }
 #'
-#' \bold{records} - A data frame with 75,342 rows and 56 columns:
+#' \bold{records} - A data frame with 75,346 rows and 57 columns:
 #' \itemize{
 #'   \item \emph{entrezgene} - NCBI Entrez identifier
 #'   \item \emph{symbol} - primary gene symbol
 #'   \item \emph{gene_biotype} - type of gene (ncRNA, protein-coding, or pseudo)
+#'   \item \emph{name} - gene name
+#'   \item \emph{other_designations} - other gene name designations
 #'   \item \emph{hgnc_id} - HGNC gene identifier
 #'   \item \emph{ncbi_function_summary} - gene function summary (NCBI Gene)
 #'   \item \emph{cgc_tsg} - tumor suppressor gene (Cancer Gene Census)
@@ -59,9 +61,9 @@
 #'   \item \emph{cancermine_n_cit_driver} - number of citations (PMIDs) that support a role for this as a driver (CancerMine)
 #'   \item \emph{cancermine_n_cit_oncogene} - number of citations (PMIDs) that support a role for this as a proto-oncogene (CancerMine)
 #'   \item \emph{cancermine_n_cit_tsg} - number of citations (PMIDs) that support a role for this as a tumor suppressor (CancerMine)
-#'   \item \emph{cancermine_cit_driver} - citations for cancer driver support (all with prob > 0.8, CancerMine)
+#'   \item \emph{cancermine_cit_tsg} - citations for cancer driver support (all with prob > 0.8, CancerMine)
 #'   \item \emph{cancermine_cit_oncogene} - citations for proto-oncogene support (all with prob > 0.8, max 50, CancerMine)
-#'   \item \emph{cancermine_cit_tsg} - citations for tumor suppressor gene support (all with prob > 0.8, CancerMine)
+#'   \item \emph{cancermine_cit_driver} - citations for tumor suppressor gene support (all with prob > 0.8, CancerMine)
 #'   \item \emph{cancermine_cit_links_driver} - citation links for cancer driver support (50 most recent, CancerMine)
 #'   \item \emph{cancermine_cit_links_oncogene} - citation links for proto-oncogene support (50 most recent, CancerMine)
 #'   \item \emph{cancermine_cit_links_tsg} - citation links for tumor suppressor gene support (50 most recent, CancerMine)

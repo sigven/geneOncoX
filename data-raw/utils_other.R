@@ -8,7 +8,7 @@ get_gene_info_ncbi <- function(
     gene_info <- suppressWarnings(readr::read_tsv(
       remote_url, show_col_types = F, skip = 1,
       comment = "#", quote = "",
-      col_select = c(1,2,3,5,6,9,10),
+      col_select = c(1,2,3,5,6,9,10,14),
       progress = F, col_names = F))
   }else{
     lgr::lgr$error(
@@ -23,7 +23,8 @@ get_gene_info_ncbi <- function(
       synonyms = X5,
       symbol = X3,
       name = X9,
-      gene_biotype = X10) |>
+      gene_biotype = X10,
+      other_designations = X14) |>
     dplyr::mutate(
       ensembl_gene_id = stringr::str_replace(
         stringr::str_match(X6,"Ensembl:ENSG[0-9]{1,}"), "Ensembl:", "")) |>
@@ -69,7 +70,13 @@ get_gene_info_ncbi <- function(
     ## MMD2
     dplyr::filter(entrezgene != 100505381) |>
     ## MEMO1
-    dplyr::filter(entrezgene != 7795)
+    dplyr::filter(entrezgene != 7795) |>
+    dplyr::mutate(other_designations = dplyr::if_else(
+      !is.na(other_designations) &
+        other_designations == "-",
+      as.character(NA),
+      as.character(other_designations)
+    ))
 
   ## exclude entries with ambiguous gene symbols (multiple records)
   ambig_symbols <- gene_info |>
