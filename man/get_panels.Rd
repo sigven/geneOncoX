@@ -23,7 +23,7 @@ get_panels(cache_dir = NA, overwrite = F)
 \item \emph{abbreviation} - abbreviation used in column names of records
 }
 
-\bold{records} - A data frame with 2,564 rows and 13 columns:
+\bold{records} - A data frame with 2,566 rows and 13 columns:
 \itemize{
 \item \emph{genome_build} - human assembly build (grch37/grch38)
 \item \emph{id} - panel identifier (local)

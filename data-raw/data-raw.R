@@ -26,7 +26,7 @@ lgr::lgr$appenders$console$set_layout(
 
 gene_info <- get_gene_info_ncbi() |>
   dplyr::select(entrezgene, symbol, gene_biotype,
-                synonyms, name, other_designations,
+                synonyms, name, other_genename_designations,
                 ensembl_gene_id, hgnc_id) |>
   dplyr::distinct()
 
@@ -39,7 +39,9 @@ gene_panels$records <- dplyr::bind_rows(
 
 gene_alias <- list()
 gene_alias$metadata <- metadata[['alias']]
-gene_alias$records <- get_gene_aliases_ncbi(gene_info = gene_info)
+gene_alias$records <- get_gene_aliases_ncbi(
+  gene_info = gene_info,
+  path_data_raw = file.path(here::here(), "data-raw"))
 
 gene_gencode <- list()
 gene_gencode$records <- list()

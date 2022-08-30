@@ -23,19 +23,21 @@ get_alias(cache_dir = NA, overwrite = F)
 \item \emph{abbreviation} - abbreviation used in column names of records
 }
 
-\bold{records} - A data frame with 144,387 rows and 5 columns:
+\bold{records} - A data frame with 144,399 rows and 5 columns:
 \itemize{
 \item \emph{alias} - gene alias/synonym
 \item \emph{symbol} - primary symbol
 \item \emph{entrezgene} - Entrez gene identifier
 \item \emph{n_primary_map} - number of primary symbols linked to the alias
 \item \emph{ambiguous} - logical indicating if alias is ambiguous or not
+\item \emph{source} - source for gene synonyms (NCBI, custom)
 }
 }
 \description{
 A dataset that indicate ambiguous and unambiguous gene aliases/synonyms
-for human genes. The dataset comes as a \code{list} object,
-with two elements:
+for human genes. Gene aliases with less than three characters have been
+ignored, and a few custom aliases have been added (source = \code{custom}).
+The dataset comes as a \code{list} object, with two elements:
 \itemize{
 \item \code{metadata} - a data frame with metadata regarding annotation resources used
 \item \code{records} - a list with gene aliases indicating ambiguous/non-ambiguous state

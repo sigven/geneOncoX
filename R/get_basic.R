@@ -31,7 +31,7 @@
 #'   \item \emph{symbol} - primary gene symbol
 #'   \item \emph{gene_biotype} - type of gene (ncRNA, protein-coding, or pseudo)
 #'   \item \emph{name} - gene name
-#'   \item \emph{other_designations} - other gene name designations
+#'   \item \emph{other_genename_designations} - other gene name designations
 #'   \item \emph{hgnc_id} - HGNC gene identifier
 #'   \item \emph{ncbi_function_summary} - gene function summary (NCBI Gene)
 #'   \item \emph{cgc_tsg} - tumor suppressor gene (Cancer Gene Census)

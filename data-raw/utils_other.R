@@ -24,7 +24,7 @@ get_gene_info_ncbi <- function(
       symbol = X3,
       name = X9,
       gene_biotype = X10,
-      other_designations = X14) |>
+      other_genename_designations = X14) |>
     dplyr::mutate(
       ensembl_gene_id = stringr::str_replace(
         stringr::str_match(X6,"Ensembl:ENSG[0-9]{1,}"), "Ensembl:", "")) |>
@@ -71,11 +71,11 @@ get_gene_info_ncbi <- function(
     dplyr::filter(entrezgene != 100505381) |>
     ## MEMO1
     dplyr::filter(entrezgene != 7795) |>
-    dplyr::mutate(other_designations = dplyr::if_else(
-      !is.na(other_designations) &
-        other_designations == "-",
+    dplyr::mutate(other_genename_designations = dplyr::if_else(
+      !is.na(other_genename_designations) &
+        other_genename_designations == "-",
       as.character(NA),
-      as.character(other_designations)
+      as.character(other_genename_designations)
     ))
 
   ## exclude entries with ambiguous gene symbols (multiple records)
@@ -97,7 +97,8 @@ get_gene_info_ncbi <- function(
 
 }
 
-get_gene_aliases_ncbi <- function(gene_info){
+get_gene_aliases_ncbi <- function(gene_info,
+                                  path_data_raw = NULL){
 
   primary_to_primary_all <-
     gene_info |>
@@ -132,27 +133,42 @@ get_gene_aliases_ncbi <- function(gene_info){
       dplyr::inner_join(gene_synonyms, by = "alias") |>
       dplyr::select(alias, symbol, entrezgene,
                     n_primary_map) |>
-      dplyr::mutate(ambiguous = T)
+      dplyr::mutate(ambiguous = T,
+                    source = "NCBI") 
   )
 
   unambiguous_aliases <- gene_synonyms |>
     dplyr::inner_join(unique_aliases, by = "alias") |>
     dplyr::bind_rows(primary_to_primary_all) |>
     dplyr::filter(
-      !(symbol == "HRAS" & (alias == "KRAS" | alias == "c-K-ras" | alias == "c-Ki-ras"))) |>
+      !(alias == "PD-1" & symbol != "PDCD1")) |>
+    dplyr::filter(
+      !(symbol == "HRAS" & 
+          (alias == "KRAS" | 
+             alias == "c-K-ras" | 
+             alias == "c-Ki-ras"))) |>
     dplyr::arrange(symbol, alias) |>
     dplyr::mutate(symbol = dplyr::if_else(
       is.na(symbol) & !is.na(alias),
       as.character(alias),
       as.character(symbol)
     )) |>
-    dplyr::mutate(ambiguous = F,
+    dplyr::mutate(ambiguous = F, 
+                  source = "NCBI",
                   n_primary_map = 1) |>
     dplyr::select(alias, symbol, entrezgene,
-                  n_primary_map, ambiguous)
+                  n_primary_map, ambiguous, source)
+  
+  alias_custom <- as.data.frame(readr::read_tsv(
+    file = file.path(path_data_raw,"custom_gene_aliases.tsv"),
+    show_col_types = F)) |>
+    dplyr::mutate(ambiguous = FALSE,
+                  source = "custom",
+                  n_primary_map = 1)
 
   gene_alias_info <- dplyr::bind_rows(
     ambiguous_aliases,
+    alias_custom,
     unambiguous_aliases) |>
     dplyr::arrange(alias, symbol)
 
