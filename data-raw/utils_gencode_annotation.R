@@ -297,8 +297,8 @@ gencode_resolve_xrefs <- function(
 
   ensembl_mart[['grch37']] <- biomaRt::useEnsembl(
     biomart = 'genes',
-    dataset = 'hsapiens_gene_ensembl',
-    version = "GRCh37")
+    GRCh = "37",
+    dataset = 'hsapiens_gene_ensembl')
 
   queryAttributes1 <- c('ensembl_transcript_id',
                         'refseq_mrna',

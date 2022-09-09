@@ -198,6 +198,8 @@ version_minor_bumped <- paste0(
   ".0")
 
 gd_records <- list()
+db_id_ref <- data.frame()
+
 db <- list()
 db[['basic']] <- gene_basic
 db[['gencode']] <- gene_gencode
@@ -216,28 +218,48 @@ for(elem in c('basic','predisposition','panels','alias','gencode')){
     paste0("data-raw/gd_local/gene_", elem, "_v", version_minor_bumped,".rds"),
     paste0("geneOncoX/gene_", elem, "_v", version_minor_bumped,".rds")
   ))
+  
+  google_rec_df <-
+    dplyr::select(
+      as.data.frame(gd_records[[elem]]), name, id) |>
+    dplyr::rename(
+      gid = id,
+      filename = name) |>
+    dplyr::mutate(
+      name = stringr::str_replace(
+        stringr::str_replace(filename,"_v\\S+$",""),
+        "gene_",""),
+      date = as.character(Sys.Date()),
+      pVersion = version_minor_bumped) |>
+    dplyr::mutate(
+      md5Checksum =
+        gd_records[[elem]]$drive_resource[[1]]$md5Checksum)
+  
+  db_id_ref <- db_id_ref |>
+    dplyr::bind_rows(google_rec_df)
 
 }
 
-db_id_ref <- dplyr::bind_rows(
-  dplyr::select(as.data.frame(gd_records$basic), name, id),
-  dplyr::select(as.data.frame(gd_records$alias), name, id),
-  dplyr::select(as.data.frame(gd_records$panels), name, id),
-  dplyr::select(as.data.frame(gd_records$gencode), name, id),
-  dplyr::select(as.data.frame(gd_records$predisposition), name, id)) |>
-  dplyr::rename(gid = id,
-                filename = name) |>
-  dplyr::mutate(name = stringr::str_replace(
-    stringr::str_replace(filename,"_v\\S+$",""),
-    "gene_","")) |>
-  dplyr::mutate(date = Sys.Date(),
-                pVersion = version_minor_bumped)
-db_id_ref$md5Checksum <- NA
-for(elem in c('basic','predisposition','panels','alias','gencode')){
-
-  db_id_ref[db_id_ref$name == elem,]$md5Checksum <-
-    gd_records[[elem]]$drive_resource[[1]]$md5Checksum
-}
+# db_id_ref <- dplyr::bind_rows(
+#   dplyr::select(as.data.frame(gd_records$basic), name, id),
+#   dplyr::select(as.data.frame(gd_records$alias), name, id),
+#   dplyr::select(as.data.frame(gd_records$panels), name, id),
+#   dplyr::select(as.data.frame(gd_records$gencode), name, id),
+#   dplyr::select(as.data.frame(gd_records$predisposition), name, id)) |>
+#   dplyr::rename(gid = id,
+#                 filename = name) |>
+#   dplyr::mutate(name = stringr::str_replace(
+#     stringr::str_replace(filename,"_v\\S+$",""),
+#     "gene_","")) |>
+#   dplyr::mutate(date = Sys.Date(),
+#                 pVersion = version_minor_bumped)
+# db_id_ref$md5Checksum <- NA
+# for(elem in c('basic','predisposition',
+#               'panels','alias','gencode')){
+# 
+#   db_id_ref[db_id_ref$name == elem,]$md5Checksum <-
+#     gd_records[[elem]]$drive_resource[[1]]$md5Checksum
+# }
 
 usethis::use_data(db_id_ref, internal = T, overwrite = T)
 

@@ -181,21 +181,21 @@ get_function_summary_ncbi <- function(
     gene_df = NULL,
     update = F){
 
-  # assertable::assert_colnames(
-  #   gene_df, c("entrezgene","gene_biotype"), only_colnames = F, quiet = T)
-  #
-  # pcg <- gene_df |>
-  #   dplyr::filter(gene_biotype == "protein-coding") |>
-  #   dplyr::select(entrezgene) |>
-  #   dplyr::distinct()
+  assertable::assert_colnames(
+    gene_df, c("entrezgene","gene_biotype"), only_colnames = F, quiet = T)
 
-  pcg <- gene_df
+  pcg <- gene_df |>
+    dplyr::filter(gene_biotype == "protein-coding") |>
+    dplyr::select(entrezgene) |>
+    dplyr::distinct()
+
+  #pcg <- gene_df
 
   i <- 1
   ncbi_gene_summary <- data.frame()
-  while(i < NROW(pcg) - 300){
+  while(i < NROW(pcg) - 500){
 
-    queryset_stop <- i + 299
+    queryset_stop <- i + 499
     queryset <- pcg[i:queryset_stop,"entrezgene"]
 
     summary_results <- suppressMessages(as.data.frame(
@@ -217,7 +217,7 @@ get_function_summary_ncbi <- function(
         dplyr::bind_rows(ncbi_gene_summary,
                          res)
     }
-    i <- i + 300
+    i <- i + 500
 
   }
 

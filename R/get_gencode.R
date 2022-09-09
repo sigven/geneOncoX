@@ -20,7 +20,7 @@
 #' @param cache_dir Local directory for data download
 #' @param overwrite Logical indicating if local cache should be overwritten
 #' (set to TRUE to re-download if file exists in cache)
-#'
+#' 
 #' @returns
 #' \bold{metadata} - A data frame with 3 rows and 6 columns:
 #' \itemize{

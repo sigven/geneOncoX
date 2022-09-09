@@ -307,6 +307,14 @@ get_cancermine_genes <- function(cancermine_version = "47"){
                header = T, comment.char = "", quote = "",
                sep="\t", stringsAsFactors = F) |>
       dplyr::filter(predictprob >= 0.8) |>
+      
+      ## some entries wrongly captured, are in
+      ## fact mentions of anti-sense non-coding genes
+      dplyr::filter(
+        !stringr::str_detect(
+          formatted_sentence, "-<b>AS1|b>-AS1"
+        )
+      ) |>
       dplyr::group_by(role, gene_entrez_id, pmid) |>
       dplyr::summarise(doid = paste(unique(cancer_id), collapse=","), .groups = "drop") |>
       dplyr::rename(entrezgene = gene_entrez_id) |>
