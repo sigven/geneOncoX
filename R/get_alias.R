@@ -25,7 +25,7 @@
 #'   \item \emph{abbreviation} - abbreviation used in column names of records
 #'  }
 #'
-#' \bold{records} - A data frame with 146,563 rows and 5 columns:
+#' \bold{records} - A data frame with 150,395 rows and 5 columns:
 #' \itemize{
 #'   \item \emph{alias} - gene alias/synonym
 #'   \item \emph{symbol} - primary symbol

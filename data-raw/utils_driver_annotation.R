@@ -289,8 +289,7 @@ get_network_of_cancer_genes <- function(ncg_version = "7.0"){
 
 }
 
-get_cancermine_genes <- function(cancermine_version = "47"){
-
+get_cancermine_genes <- function(cancermine_version = "48"){
 
   cancermine_sentences_fname <-
     paste0('data-raw/cancermine/data-raw/cancermine_sentences.v',
@@ -316,7 +315,8 @@ get_cancermine_genes <- function(cancermine_version = "47"){
         )
       ) |>
       dplyr::group_by(role, gene_entrez_id, pmid) |>
-      dplyr::summarise(doid = paste(unique(cancer_id), collapse=","), .groups = "drop") |>
+      dplyr::summarise(doid = paste(
+        unique(cancer_id), collapse=","), .groups = "drop") |>
       dplyr::rename(entrezgene = gene_entrez_id) |>
       dplyr::distinct()
   )
@@ -328,8 +328,10 @@ get_cancermine_genes <- function(cancermine_version = "47"){
       sep = "\t", header = F, quote = "",
       comment.char = "", stringsAsFactors = F) |>
       magrittr::set_colnames(c('pmid','citation','citation_link')) |>
-      dplyr::mutate(citation = stringi::stri_enc_toascii(citation)) |>
-      dplyr::mutate(citation_link = stringi::stri_enc_toascii(citation_link)) |>
+      dplyr::mutate(
+        citation = stringi::stri_enc_toascii(citation)) |>
+      dplyr::mutate(
+        citation_link = stringi::stri_enc_toascii(citation_link)) |>
       dplyr::distinct() |>
       dplyr::arrange(desc(pmid))
 
@@ -345,8 +347,10 @@ get_cancermine_genes <- function(cancermine_version = "47"){
       dplyr::group_by(entrezgene) |>
       dplyr::summarise(
         pmids_oncogene = paste(pmid,collapse=";"),
-        citations_oncogene = paste(citation,collapse="; "),
-        citation_links_oncogene = paste(head(citation_link,50),collapse=", "),
+        citations_oncogene = paste(
+          citation,collapse="; "),
+        citation_links_oncogene = paste(
+          head(citation_link,50),collapse=", "),
         .groups = "drop") |>
       dplyr::mutate(n_citations_oncogene = as.integer(
         stringr::str_count(pmids_oncogene,";")) + 1) |>
@@ -368,8 +372,10 @@ get_cancermine_genes <- function(cancermine_version = "47"){
       dplyr::group_by(entrezgene) |>
       dplyr::summarise(
         pmids_tsgene = paste(unique(pmid),collapse=";"),
-        citations_tsgene = paste(citation,collapse="; "),
-        citation_links_tsgene = paste(head(citation_link,50),collapse=", "),
+        citations_tsgene = paste(
+          citation,collapse="; "),
+        citation_links_tsgene = paste(head(
+          citation_link,50),collapse=", "),
         .groups = "drop") |>
       dplyr::ungroup() |>
       dplyr::mutate(n_citations_tsgene = as.integer(
@@ -393,7 +399,8 @@ get_cancermine_genes <- function(cancermine_version = "47"){
       dplyr::summarise(
         pmids_cdriver = paste(pmid,collapse=";"),
         citations_cdriver = paste(citation,collapse="; "),
-        citation_links_cdriver = paste(head(citation_link,50),collapse=", "),
+        citation_links_cdriver = paste(
+          head(citation_link,50),collapse=", "),
         .groups = "drop") |>
       dplyr::mutate(n_citations_cdriver = as.integer(
         stringr::str_count(pmids_cdriver,";")) + 1) |>
@@ -418,7 +425,7 @@ get_cancermine_genes <- function(cancermine_version = "47"){
       dplyr::filter(role == "Oncogene") |>
       dplyr::rename(entrezgene = gene_entrez_id) |>
       dplyr::group_by(entrezgene) |>
-      dplyr::summarise(doid_oncogene = paste(unique(cancer_id),collapse=","), .groups = "drop") |>
+      dplyr::summarise(doid_oncogene = paste(unique(cancer_id), collapse=","), .groups = "drop") |>
       dplyr::inner_join(pmids_oncogene, by = "entrezgene") |>
       dplyr::distinct())
 

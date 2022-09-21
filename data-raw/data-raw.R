@@ -85,7 +85,8 @@ fp_drivers <- get_curated_fp_cancer_genes(gene_info = gene_info)
 ncg <- get_network_of_cancer_genes()
 tso500 <- get_tso500(gene_info = gene_info, gene_alias = gene_alias)
 dna_repair <- get_dna_repair_genes(gene_info = gene_info)
-cancermine_genes <- get_cancermine_genes()
+cancermine_genes <- get_cancermine_genes(
+  cancermine_version = "48")
 signaling_genes <- get_signaling_pathway_genes(gene_info = gene_info)
 dbnsfp_annotations <- get_dbnsfp_gene_annotations()
 
