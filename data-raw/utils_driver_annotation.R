@@ -1,4 +1,4 @@
-get_intogen_driver_genes <- function(){
+get_intogen_driver_genes <- function(gene_info = NULL){
 
   intogen_drivers <- as.data.frame(
     read.table(file = file.path(
@@ -7,12 +7,35 @@ get_intogen_driver_genes <- function(){
       header=T, quote=NULL, stringsAsFactors = F) |>
       janitor::clean_names() |>
       dplyr::group_by(symbol) |>
-      dplyr::mutate(role = dplyr::if_else(role == "",as.character(NA),as.character(role))) |>
-      dplyr::mutate(role = dplyr::if_else(role == "Act","Activating",as.character(role))) |>
-      dplyr::mutate(role = dplyr::if_else(role == "LoF","Loss_of_Function",as.character(role))) |>
+      dplyr::mutate(role = dplyr::if_else(
+        role == "",as.character(NA),as.character(role))) |>
+      dplyr::mutate(role = dplyr::if_else(
+        role == "Act","Activating",as.character(role))) |>
+      dplyr::mutate(role = dplyr::if_else(
+        role == "LoF","Loss_of_Function",as.character(role))) |>
       dplyr::summarise(intogen_role = paste(unique(Hmisc::capitalize(role)),collapse="&"),
                        intogen_phenotype = paste(unique(cancer_type),collapse="&"),
-                       .groups = "drop")
+                       .groups = "drop") |>
+      dplyr::mutate(intogen_role = dplyr::if_else(
+        is.na(intogen_role) | intogen_role == "NA",
+        "Unknown",
+        as.character(intogen_role)
+      )) |>
+      dplyr::mutate(symbol = dplyr::case_when(
+        symbol == "CARS" ~ "CARS1",
+        symbol == "FAM46C" ~ "TENT5C",
+        symbol == "H3F3A" ~ "H3-3A",
+        symbol == "HIST1H3B" ~ "H3C2",
+        symbol == "HIST1H4I" ~ "H4C9",
+        symbol == "SEPT9" ~ "SEPTIN9",
+        TRUE ~ as.character(symbol)
+      )) |>
+      dplyr::left_join(
+        dplyr::select(gene_info, symbol, entrezgene), 
+        by = c("symbol")) |>
+      dplyr::filter(!is.na(entrezgene)) |>
+      dplyr::select(-symbol) |>
+      dplyr::distinct()
   )
   lgr::lgr$info(paste0("Parsed n = ", nrow(intogen_drivers),
                            " predicted driver genes (Intogen)"))
@@ -252,28 +275,59 @@ get_cancer_gene_census <- function(
 
 }
 
-get_network_of_cancer_genes <- function(ncg_version = "7.0"){
+get_network_of_cancer_genes <- function(
+    ncg_version = "7.0"){
 
   ncg <- read.table(file = file.path(
     "data-raw","ncg","ncg.tsv"),header = T,
-    stringsAsFactors = F, sep = "\t", quote = "", comment.char = "") |>
+    stringsAsFactors = F, sep = "\t", 
+    quote = "", comment.char = "") |>
     janitor::clean_names() |>
-    dplyr::mutate(ncg = T) |>
+    dplyr::mutate(ncg_driver = dplyr::if_else(
+      !is.na(type) & type == "\"Canonical Cancer Driver\"",
+      as.logical(TRUE), as.logical(FALSE)
+    )) |>
+    dplyr::mutate(cancer_type = stringr::str_replace_all(
+      cancer_type,"\\\"","")) |>
     dplyr::mutate(
       ncg_tsg = dplyr::if_else(
-        stringr::str_detect(cgc_annotation,"TSG") | ncg_tsg == 1,
+        stringr::str_detect(cgc_annotation,"TSG") | 
+          ncg_tsg == 1,
         as.logical(TRUE),as.logical(FALSE))) |>
     dplyr::mutate(
       ncg_oncogene = dplyr::if_else(
-        stringr::str_detect(cgc_annotation,"oncogene") | ncg_oncogene == 1,
+        stringr::str_detect(cgc_annotation,"oncogene") | 
+          ncg_oncogene == 1,
         as.logical(TRUE),as.logical(FALSE))) |>
-    dplyr::select(entrez, ncg, ncg_tsg, ncg_oncogene, pubmed_id, cancer_type) |>
-    dplyr::mutate(cancer_type = stringr::str_replace_all(cancer_type,"\\\"","")) |>
     dplyr::rename(entrezgene = entrez) |>
-    dplyr::group_by(entrezgene, ncg, ncg_tsg, ncg_oncogene) |>
-    dplyr::summarise(ncg_phenotype = paste(sort(unique(cancer_type)), collapse=","),
-                     ncg_pmid = paste(sort(unique(pubmed_id)), collapse=";"),
-                     .groups = "drop") |>
+    dplyr::filter(!(ncg_tsg == F &
+                      ncg_oncogene == F &
+                      ncg_driver == F)) |>
+    dplyr::distinct() |>
+    dplyr::group_by(entrezgene) |>
+    dplyr::summarise(
+      ncg_phenotype = paste(
+        sort(unique(cancer_type)), collapse=","),
+      ncg_pmid = paste(
+        sort(unique(pubmed_id)), collapse=";"),
+      ncg_tsg = paste(
+        unique(ncg_tsg), collapse=","),
+      ncg_oncogene = paste(
+        unique(ncg_oncogene), collapse=","),
+      ncg_driver = paste(
+        unique(ncg_driver), collapse=",")) |>
+    dplyr::mutate(ncg_driver = dplyr::if_else(
+      stringr::str_detect(ncg_driver, ","),
+      as.logical(TRUE),
+      as.logical(ncg_driver)
+    )) |>
+    dplyr::mutate(
+      ncg_tsg = as.logical(ncg_tsg),
+      ncg_oncogene = as.logical(ncg_oncogene)
+    ) |>
+    dplyr::select(
+      entrezgene, ncg_driver, ncg_tsg, 
+      ncg_oncogene, ncg_pmid, ncg_phenotype) |>
     dplyr::mutate(ncg_phenotype = stringr::str_replace_all(
       ncg_phenotype, ",,",","
     )) |>

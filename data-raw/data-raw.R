@@ -80,7 +80,7 @@ cgc <- cgc_som |>
   )) |>
   dplyr::select(-cgc_moi)
 
-intogen_drivers <- get_intogen_driver_genes()
+intogen_drivers <- get_intogen_driver_genes(gene_info = gene_info)
 fp_drivers <- get_curated_fp_cancer_genes(gene_info = gene_info)
 ncg <- get_network_of_cancer_genes()
 tso500 <- get_tso500(gene_info = gene_info, gene_alias = gene_alias)
@@ -147,10 +147,10 @@ gene_basic$records <- gene_info |>
     as.logical(FALSE),
     as.logical(ncg_tsg)
   )) |>
-  dplyr::mutate(ncg = dplyr::if_else(
-    is.na(ncg),
+  dplyr::mutate(ncg_driver = dplyr::if_else(
+    is.na(ncg_driver),
     as.logical(FALSE),
-    as.logical(ncg)
+    as.logical(ncg_driver)
   )) |>
   dplyr::mutate(ncg_oncogene = dplyr::if_else(
     is.na(ncg_oncogene),
@@ -195,7 +195,9 @@ rm(ncg)
 ## upload to Google Drive
 version_minor_bumped <- paste0(
   "0.",
-  as.character(as.integer(substr(as.character(packageVersion("geneOncoX")),3,3)) + 1),
+  as.character(as.integer(substr(
+    as.character(
+      packageVersion("geneOncoX")),3,3)) + 1),
   ".0")
 
 gd_records <- list()
@@ -208,7 +210,7 @@ db[['alias']] <- gene_alias
 db[['predisposition']] <- gene_predisposition
 db[['panels']] <- gene_panels
 
-googledrive::drive_auth_configure(api_key = Sys.getenv("GD_KEY"))
+#googledrive::drive_auth_configure(api_key = Sys.getenv("GD_KEY"))
 
 for(elem in c('basic','predisposition','panels','alias','gencode')){
 
@@ -240,27 +242,6 @@ for(elem in c('basic','predisposition','panels','alias','gencode')){
     dplyr::bind_rows(google_rec_df)
 
 }
-
-# db_id_ref <- dplyr::bind_rows(
-#   dplyr::select(as.data.frame(gd_records$basic), name, id),
-#   dplyr::select(as.data.frame(gd_records$alias), name, id),
-#   dplyr::select(as.data.frame(gd_records$panels), name, id),
-#   dplyr::select(as.data.frame(gd_records$gencode), name, id),
-#   dplyr::select(as.data.frame(gd_records$predisposition), name, id)) |>
-#   dplyr::rename(gid = id,
-#                 filename = name) |>
-#   dplyr::mutate(name = stringr::str_replace(
-#     stringr::str_replace(filename,"_v\\S+$",""),
-#     "gene_","")) |>
-#   dplyr::mutate(date = Sys.Date(),
-#                 pVersion = version_minor_bumped)
-# db_id_ref$md5Checksum <- NA
-# for(elem in c('basic','predisposition',
-#               'panels','alias','gencode')){
-# 
-#   db_id_ref[db_id_ref$name == elem,]$md5Checksum <-
-#     gd_records[[elem]]$drive_resource[[1]]$md5Checksum
-# }
 
 usethis::use_data(db_id_ref, internal = T, overwrite = T)
 
