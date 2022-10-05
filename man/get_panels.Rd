@@ -2,14 +2,14 @@
 % Please edit documentation in R/get_panels.R
 \name{get_panels}
 \alias{get_panels}
-\title{Cancer gene panel collections}
+\title{Cancer gene panel collections from PanelApp}
 \usage{
-get_panels(cache_dir = NA, overwrite = F)
+get_panels(cache_dir = NA, force_download = F)
 }
 \arguments{
 \item{cache_dir}{Local directory for data download}
 
-\item{overwrite}{Logical indicating if local cache should be overwritten
+\item{force_download}{Logical indicating if local cache should be overwritten
 (set to TRUE to re-download if file exists in cache)}
 }
 \value{

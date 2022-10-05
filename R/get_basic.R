@@ -11,7 +11,7 @@
 #' * `records` - a data frame with gene annotations (one record per gene)
 #'
 #' @param cache_dir Local directory for data download
-#' @param overwrite Logical indicating if local cache should be overwritten
+#' @param force_download Logical indicating if local cache should be overwritten
 #' (set to TRUE to re-download if file exists in cache)
 #'
 #' @returns
@@ -51,6 +51,7 @@
 #'   \item \emph{woods_dnarepair_class} - class of DNA repair (DNA repair database, Woods et al.)
 #'   \item \emph{woods_dnarepair_activity} - type of DNA repair activity involved (DNA repair database, Woods et al.)
 #'   \item \emph{illumina_tso500} - gene is part of Illumina's TSO500 panel (SNV_INDEL, CNA_GAIN, CNA_LOSS, RNA_FUSION)
+#'   \item \emph{foundation_one_f1cdx} - gene is part of Foundation One's F1CDx panel (SNV_INDEL, CNA, FUSION, PROMOTER)
 #'   \item \emph{sanchezvega2018_signaling_pathway} - curated signalling pathways (Sanchez-Vega et al., Cell, 2018)
 #'   \item \emph{cancermine_pmid_driver} - PMIDs that support (from text mining) a role for this gene as a driver (CancerMine)
 #'   \item \emph{cancermine_pmid_oncogene} - PMIDs that support (from text mining) a role for this gene as a proto-oncogene (CancerMine)
@@ -103,10 +104,10 @@
 
 
 
-get_basic <- function(cache_dir = NA, overwrite = F){
+get_basic <- function(cache_dir = NA, force_download = F){
 
   dat <- get_gox_data(cache_dir = cache_dir,
-               overwrite = overwrite,
+               force_download = force_download,
                db = "basic")
   return(dat)
 }

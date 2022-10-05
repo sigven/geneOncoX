@@ -35,6 +35,7 @@ get_intogen_driver_genes <- function(gene_info = NULL){
         by = c("symbol")) |>
       dplyr::filter(!is.na(entrezgene)) |>
       dplyr::select(-symbol) |>
+      dplyr::mutate(intogen_driver = T) |>
       dplyr::distinct()
   )
   lgr::lgr$info(paste0("Parsed n = ", nrow(intogen_drivers),
@@ -48,11 +49,17 @@ get_curated_fp_cancer_genes <- function(
     gene_info = NULL){
 
   invisible(assertthat::assert_that(!is.null(gene_info), msg = "'gene_info' object is NULL"))
-  assertable::assert_colnames(gene_info,c("symbol","entrezgene"), only_colnames = F, quiet = T)
-  assertable::assert_coltypes(gene_info, list(symbol = character(), entrezgene = integer()), quiet = T)
+  assertable::assert_colnames(gene_info,c("symbol","entrezgene"), 
+                              only_colnames = F, quiet = T)
+  assertable::assert_coltypes(
+    gene_info, list(symbol = character(), 
+                    entrezgene = integer()), quiet = T)
   xlsx_fname <- file.path(
     "data-raw", "tcga_driver_genes", "bailey_2018_cell.xlsx")
-  invisible(assertthat::assert_that(file.exists(xlsx_fname),msg = paste0("File ",xlsx_fname," does not exist")))
+  invisible(assertthat::assert_that(
+    file.exists(xlsx_fname),
+    msg = paste0("File ",
+                 xlsx_fname," does not exist")))
   tmp <- openxlsx::read.xlsx(xlsx_fname,sheet = 8,startRow = 4)
   fp_cancer_drivers <- data.frame('symbol' = tmp[,2], stringsAsFactors = F) |>
     dplyr::mutate(bailey2018_fp_driver = TRUE) |>
@@ -60,12 +67,14 @@ get_curated_fp_cancer_genes <- function(
     dplyr::left_join(dplyr::select(gene_info, symbol, entrezgene), by = c("symbol")) |>
     dplyr::filter(!is.na(entrezgene)) |>
     dplyr::select(-symbol)
+  
+  lgr::lgr$info(
+    paste0("Parsed n = ", nrow(fp_cancer_drivers),
+           " false positive driver genes (TCGA, Bailey et al., Cell, 2018"))
+  
   return(fp_cancer_drivers)
 
-  lgr::lgr$info(paste0("Parsed n = ", nrow(fp_cancer_drivers),
-                           " false positive driver genes (TCGA, Bailey et al., Cell, 2018"))
-
-
+  
 }
 
 get_tcga_driver_genes <- function(){
@@ -74,7 +83,8 @@ get_tcga_driver_genes <- function(){
     paste0("data-raw/tcga_projects.rds")) |>
     dplyr::bind_rows(
       data.frame('tumor' = 'PANCAN',
-                 'name' = 'Pancancer', stringsAsFactors = F))
+                 'name' = 'Pancancer', 
+                 stringsAsFactors = F))
 
   tcga_drivers <- as.data.frame(
     openxlsx::read.xlsx(
@@ -84,25 +94,45 @@ get_tcga_driver_genes <- function(){
         "bailey_2018_cell.xlsx"),
       sheet = 2,startRow = 4,cols = c(1,2,4,6,7)) |>
       janitor::clean_names() |>
-      dplyr::mutate(tissue_frequency =
-                      dplyr::if_else(is.na(tissue_frequency) |
-                                       tissue_frequency == "NA",
-                                     as.character(pancan_frequency),
-                                     as.character(tissue_frequency))) |>
-      dplyr::rename(symbol = gene, tumor = cancer, frequency = tissue_frequency) |>
+      dplyr::mutate(
+        tissue_frequency =
+          dplyr::if_else(
+            is.na(tissue_frequency) |
+              tissue_frequency == "NA",
+            as.character(pancan_frequency),
+            as.character(tissue_frequency))) |>
+      dplyr::rename(symbol = gene, 
+                    tumor = cancer, 
+                    frequency = tissue_frequency) |>
       dplyr::mutate(frequency = as.numeric(frequency)) |>
       dplyr::left_join(tcga_projects, by=c("tumor")) |>
       dplyr::select(symbol, tumor, name, frequency) |>
       dplyr::mutate(frequency = as.numeric(frequency)) |>
-      dplyr::mutate(name_freq = paste0(tumor,":",round(frequency,3))) |>
+      dplyr::mutate(name_freq = paste0(
+        tumor,":",round(frequency,3))) |>
       dplyr::group_by(symbol) |>
-      dplyr::summarise(tcga_driver = paste(name_freq, collapse = "&"), .groups = "drop") |>
-      dplyr::filter(tcga_driver != 'PANCAN:0'))
-
-  lgr::lgr$info(paste0("Parsed n = ", nrow(tcga_drivers),
-                           " predicted driver genes (TCGA, Bailey et al., Cell, 2018"))
-
-
+      dplyr::summarise(tcga_driver_support = paste(
+        name_freq, collapse = "|"), 
+        .groups = "drop") |>
+      dplyr::filter(tcga_driver_support != 'PANCAN:0')) |>
+    dplyr::mutate(tcga_driver = TRUE) |>
+    dplyr::mutate(symbol = dplyr::case_when(
+      symbol == "CBWD3" ~ "ZNG1C",
+      symbol == "FAM46D" ~ "TENT5D",
+      symbol == "H3F3A" ~ "H3-3A",
+      symbol == "H3F3C" ~ "H3-5",
+      symbol == "HIST1H1C" ~ "H1-2",
+      symbol == "HIST1H1E" ~ "H1-4",
+      symbol == "RQCD1" ~ "CNOT9",
+      symbol == "TCEB1" ~ "ELOC",
+      symbol == "WHSC1" ~ "NSD2",
+      TRUE ~ as.character(symbol)
+    ))
+  
+  lgr::lgr$info(paste0(
+    "Parsed n = ", nrow(tcga_drivers),
+    " predicted driver genes (TCGA, Bailey et al., Cell, 2018)"))
+  
   return(tcga_drivers)
 }
 
@@ -196,6 +226,7 @@ get_signaling_pathway_genes <- function(gene_info){
 
 get_cancer_gene_census <- function(
     origin = "somatic",
+    opentargets_version = "2022.09",
     cgc_version = "96"){
 
   cosmic_cgc <- readr::read_csv(
@@ -204,13 +235,33 @@ get_cancer_gene_census <- function(
       "cancer_gene_census_96.csv"),
     show_col_types = F) |>
     janitor::clean_names()
+  
+  cgc_hallmark_genes <- readRDS(
+    file = file.path(
+      "data-raw", "opentargets",
+      paste0(
+        "opentargets_target_",
+        opentargets_version,
+        ".rds")
+    )) |>
+    dplyr::select(target_symbol,
+                  cancer_hallmark) |>
+    dplyr::filter(
+      !is.na(cancer_hallmark)) |>
+    dplyr::rename(
+      symbol = target_symbol) |>
+    dplyr::select(symbol) |>
+    dplyr::distinct() |>
+    dplyr::mutate(cgc_hallmark = T)
 
   if(origin == "somatic"){
     cosmic_cgc <- cosmic_cgc |>
       dplyr::filter(somatic == "yes")
   }else{
-    cosmic_cgc <- cosmic_cgc |>
-      dplyr::filter(germline == "yes")
+    if(origin == "germline"){
+      cosmic_cgc <- cosmic_cgc |>
+        dplyr::filter(germline == "yes")
+    }
   }
 
   cosmic_cgc <- cosmic_cgc |>
@@ -228,49 +279,96 @@ get_cancer_gene_census <- function(
                   entrezgene = entrez_gene_id,
                   cgc_tier = tier,
                   moi = molecular_genetics) |>
+    dplyr::left_join(cgc_hallmark_genes, by = "symbol") |>
+    dplyr::mutate(cgc_hallmark = dplyr::if_else(
+      is.na(cgc_hallmark),
+      FALSE,
+      as.logical(cgc_hallmark)
+    )) |>
     dplyr::mutate(cgc_oncogene = dplyr::if_else(
-      !is.na(role_in_cancer) & stringr::str_detect(role_in_cancer,"oncogene"),
+      !is.na(role_in_cancer) & 
+        stringr::str_detect(role_in_cancer,"oncogene"),
       TRUE,FALSE
     )) |>
     dplyr::mutate(cgc_tsg = dplyr::if_else(
-      !is.na(role_in_cancer) & stringr::str_detect(role_in_cancer,"TSG"),
+      !is.na(role_in_cancer) & 
+        stringr::str_detect(role_in_cancer,"TSG"),
       TRUE,FALSE
     )) |>
     dplyr::mutate(moi = stringr::str_trim(moi)) |>
-    dplyr::mutate(moi = dplyr::if_else(stringr::str_detect(moi,"^Rec$"),"AR",as.character(moi))) |>
-    dplyr::mutate(moi = dplyr::if_else(stringr::str_detect(moi,"^Dom$"),"AD",as.character(moi))) |>
-    dplyr::mutate(moi = dplyr::if_else(stringr::str_detect(moi,"^Dom/Rec$"),"AD/AR",as.character(moi))) |>
-    dplyr::mutate(cgc_moi = dplyr::if_else(stringr::str_detect(moi,"Rec/X"),as.character(NA),as.character(moi))) |>
-    dplyr::select(symbol, cgc_moi, entrezgene, cgc_tsg, cgc_oncogene,
-                  tumour_types_somatic, cancer_syndrome, tumour_types_germline) |>
+    dplyr::mutate(
+      moi = dplyr::if_else(
+        stringr::str_detect(
+          moi,"^Rec$"),"AR",as.character(moi))) |>
+    dplyr::mutate(moi = dplyr::if_else(
+      stringr::str_detect(
+        moi,"^Dom$"),"AD",as.character(moi))) |>
+    dplyr::mutate(moi = dplyr::if_else(
+      stringr::str_detect(
+        moi,"^Dom/Rec$"),"AD/AR",as.character(moi))) |>
+    dplyr::mutate(cgc_moi = dplyr::if_else(
+      stringr::str_detect(
+        moi,"Rec/X"),as.character(NA),as.character(moi))) |>
+    dplyr::select(symbol, cgc_moi, 
+                  entrezgene, 
+                  cgc_tsg, 
+                  cgc_oncogene,
+                  cgc_hallmark, 
+                  cgc_tier,
+                  tumour_types_somatic, 
+                  cancer_syndrome, 
+                  tumour_types_germline) |>
     ## bug in cancer gene census for ERCC5
-    dplyr::mutate(entrezgene = dplyr::if_else(
-      symbol == 'ERCC5',as.integer(2073),as.integer(entrezgene))
-    ) |>
+    dplyr::mutate(entrezgene = dplyr::case_when(
+      symbol == 'ERCC5' ~ as.integer(2073),
+      symbol == 'MDS2' ~ as.integer(259283),
+      symbol == 'DUX4L1' ~ as.integer(22947),
+      symbol == 'MALAT1' ~ as.integer(378938),
+      symbol == 'HMGN2P46' ~ as.integer(283651),
+      TRUE ~ as.integer(entrezgene)
+    )) |>
     dplyr::select(-symbol)
 
   if(origin == "somatic"){
     cosmic_cgc <- cosmic_cgc |>
-      dplyr::mutate(cgc_somatic = T) |>
-      dplyr::mutate(cgc_phenotype_somatic = tumour_types_somatic) |>
-      dplyr::select(-c(cancer_syndrome,
-                       tumour_types_germline,
-                       tumour_types_somatic))
-
-  }else{
+      dplyr::mutate(
+        cgc_somatic = T) |>
+      dplyr::mutate(
+        cgc_phenotype_somatic = tumour_types_somatic) |>
+      dplyr::select(
+        -c(cancer_syndrome,
+           tumour_types_germline,
+           tumour_types_somatic))
+  }
+  if(origin == "germline"){
     cosmic_cgc <- cosmic_cgc |>
       dplyr::mutate(cgc_germline = T) |>
-      dplyr::mutate(cgc_phenotype_germline = paste(tumour_types_germline,
-                                                   cancer_syndrome, sep="|")) |>
+      dplyr::mutate(cgc_phenotype_germline = paste(
+        tumour_types_germline,
+        cancer_syndrome, sep="|")) |>
       dplyr::select(-c(cancer_syndrome,
                        tumour_types_germline,
                        tumour_types_somatic))
   }
-
-  lgr::lgr$info(paste0("Parsed n = ", nrow(cosmic_cgc),
-                           " genes in COSMIC's Cancer Gene Census (version ",
-                           cgc_version,") - ", origin, " context"))
-
+  if(origin == "all"){
+    cosmic_cgc <- cosmic_cgc |>
+      dplyr::select(entrezgene, cgc_hallmark, cgc_tier) |>
+      dplyr::distinct() |>
+      dplyr::mutate(cgc_driver_tier1 = dplyr::if_else(
+        cgc_tier == 1,
+        TRUE, FALSE
+      )) |>
+      dplyr::mutate(cgc_driver_tier2 = dplyr::if_else(
+        cgc_tier == 2,
+        TRUE, FALSE
+      ))
+  }
+    
+  lgr::lgr$info(paste0(
+    "Parsed n = ", nrow(cosmic_cgc),
+    " genes in COSMIC's Cancer Gene Census (version ",
+    cgc_version,") - (germline/somatic: ", origin, ")"))
+  
   return(cosmic_cgc)
 
 }
@@ -335,6 +433,47 @@ get_network_of_cancer_genes <- function(
       ncg_phenotype, "^,",""
     )) |>
     dplyr::distinct()
+  
+  
+  ncg_phenotype_cleaned <- as.data.frame(
+    ncg |>
+      dplyr::select(entrezgene, ncg_phenotype) |>
+      tidyr::separate_rows(ncg_phenotype, sep=",") |> 
+      dplyr::mutate(ncg_phenotype = stringr::str_replace_all(
+        stringr::str_to_title(ncg_phenotype),"_"," ")) |> 
+      dplyr::mutate(ncg_phenotype = stringr::str_trim(
+        stringr::str_replace(
+          ncg_phenotype,"b-Cell","B-Cell"))) |> 
+      dplyr::mutate(ncg_phenotype = stringr::str_replace(
+        ncg_phenotype,"t-Cell|t cell","T-Cell")) |> 
+      dplyr::mutate(ncg_phenotype = stringr::str_replace(
+        ncg_phenotype,"dlbcl|Dlblc","DLBCL")) |> 
+      dplyr::mutate(ncg_phenotype = stringr::str_replace(
+        ncg_phenotype,"gianT-Cell","giant cell")) |> 
+      dplyr::mutate(ncg_phenotype = stringr::str_replace(
+        ncg_phenotype,"high-Grade","high grade")) |>
+      dplyr::mutate(ncg_phenotype = stringr::str_replace(
+        ncg_phenotype,"Pan-Cancer","Pan-cancer")) |>
+      dplyr::group_by(entrezgene) |>
+      dplyr::summarise(ncg_phenotype = paste(
+        unique(ncg_phenotype), collapse = ", "
+      )) |>
+      dplyr::mutate(ncg_phenotype = dplyr::if_else(
+        is.na(ncg_phenotype) |
+          nchar(ncg_phenotype) == 0,
+        "Undefined tumor type(s)",
+        as.character(ncg_phenotype)
+      ))
+  )
+  
+  ncg$ncg_phenotype <- NULL
+  ncg <- ncg |>
+    dplyr::left_join(
+      ncg_phenotype_cleaned,
+      by = "entrezgene"
+    )
+  
+  
 
   lgr::lgr$info(paste0("Found n = ", nrow(ncg),
                            " cancer-relvant genes (drivers, proto-oncogenes, tumor suppressors) in Network of Cancer Genes (version ",

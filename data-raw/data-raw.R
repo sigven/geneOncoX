@@ -62,12 +62,16 @@ gene_gencode$records[['grch37']] <- gencode_get_transcripts(
 
 gene_summary <- get_function_summary_ncbi(gene_df = gene_info)
 
-cgc_som <- get_cancer_gene_census()
+cgc_all <- get_cancer_gene_census(origin = "all")
+cgc_som <- get_cancer_gene_census(origin = "somatic")
 cgc_gl <- get_cancer_gene_census(origin = "germline")
-cgc <- cgc_som |>
+
+cgc_som_gl <- cgc_som |>
   dplyr::full_join(
     cgc_gl,
-    by = c("cgc_moi","cgc_tsg","entrezgene","cgc_oncogene")) |>
+    by = c("cgc_moi","cgc_tsg",
+           "cgc_hallmark","cgc_tier",
+           "entrezgene","cgc_oncogene")) |>
   dplyr::mutate(cgc_somatic = dplyr::if_else(
     is.na(cgc_somatic),
     as.logical(FALSE),
@@ -80,9 +84,15 @@ cgc <- cgc_som |>
   )) |>
   dplyr::select(-cgc_moi)
 
+cgc <- cgc_all |>
+  dplyr::left_join(cgc_som_gl)
+
+
 intogen_drivers <- get_intogen_driver_genes(gene_info = gene_info)
 fp_drivers <- get_curated_fp_cancer_genes(gene_info = gene_info)
 ncg <- get_network_of_cancer_genes()
+tcga_drivers <- get_tcga_driver_genes()
+f1cdx <- get_f1cdx(gene_info = gene_info)
 tso500 <- get_tso500(gene_info = gene_info, gene_alias = gene_alias)
 dna_repair <- get_dna_repair_genes(gene_info = gene_info)
 cancermine_genes <- get_cancermine_genes(
@@ -102,8 +112,10 @@ gene_basic$records <- gene_info |>
   dplyr::left_join(fp_drivers) |>
   dplyr::left_join(dna_repair) |>
   dplyr::left_join(tso500) |>
+  dplyr::left_join(f1cdx) |>
   dplyr::left_join(signaling_genes) |>
   dplyr::left_join(cancermine_genes) |>
+  dplyr::left_join(tcga_drivers) |>
   dplyr::left_join(dbnsfp_annotations) |>
   dplyr::mutate(cancermine_n_cit_oncogene = dplyr::if_else(
     is.na(cancermine_n_cit_oncogene),
@@ -122,15 +134,20 @@ gene_basic$records <- gene_info |>
     as.logical(FALSE),
     as.logical(cgc_somatic)
   )) |>
+  dplyr::mutate(cgc_driver_tier1 = dplyr::if_else(
+    is.na(cgc_driver_tier1),
+    as.logical(FALSE),
+    as.logical(cgc_driver_tier1)
+  )) |>
+  dplyr::mutate(cgc_driver_tier2 = dplyr::if_else(
+    is.na(cgc_driver_tier2),
+    as.logical(FALSE),
+    as.logical(cgc_driver_tier2)
+  )) |>
   dplyr::mutate(cgc_germline = dplyr::if_else(
     is.na(cgc_germline),
     as.logical(FALSE),
     as.logical(cgc_germline)
-  )) |>
-  dplyr::mutate(ncg_tsg = dplyr::if_else(
-    is.na(ncg_tsg),
-    as.logical(FALSE),
-    as.logical(ncg_tsg)
   )) |>
   dplyr::mutate(cgc_tsg = dplyr::if_else(
     is.na(cgc_tsg),
@@ -162,12 +179,17 @@ gene_basic$records <- gene_info |>
     as.logical(FALSE),
     as.logical(bailey2018_fp_driver)
   )) |>
+  dplyr::mutate(intogen_driver = dplyr::if_else(
+    is.na(intogen_driver),
+    as.logical(FALSE),
+    as.logical(intogen_driver)
+  )) |>
+  dplyr::mutate(tcga_driver = dplyr::if_else(
+    is.na(tcga_driver),
+    as.logical(FALSE),
+    as.logical(tcga_driver)
+  )) |>
   dplyr::select(-synonyms)
-  # dplyr::filter(
-  #   !is.na(gene_biotype) &
-  #     (gene_biotype == "protein-coding" |
-  #        gene_biotype == "ncRNA" |
-  #        gene_biotype == "pseudo"))
 
 gene_predisposition <- list()
 gene_predisposition[['metadata']] <- metadata$predisposition
@@ -190,6 +212,10 @@ rm(gene_info)
 rm(dbnsfp_annotations)
 rm(metadata)
 rm(ncg)
+rm(cgc_all)
+rm(tcga_drivers)
+rm(cgc_som_gl)
+rm(f1cdx)
 
 
 ## upload to Google Drive

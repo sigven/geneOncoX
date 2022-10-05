@@ -275,10 +275,73 @@ get_function_summary_ncbi <- function(
   return(ncbi_gene_summary)
 }
 
+get_f1cdx <- function(gene_info = NULL){
+  
+  lgr::lgr$info("Retrieving genes covered by Foundation One's F1CDx panel")
+  f1cdx_raw <- readxl::read_xlsx(
+    "data-raw/f1cdx/f1cdx.xlsx", col_names = T)
+  
+  
+  rearrangement_targets <- 
+    c("ALK","BCL2","BCR","BRAF","BRCA1", 
+      "BRCA2","CD74","EGFR","ETV4",
+      "ETV5","ETV6","EWSR1","EZR","FGFR1",
+      "FGFR2","FGFR3","KIT","KMT2A",
+      "MSH2","MYB","MYC","NOTCH2","NTRK1",
+      "NTRK2","NUTM1","PDGFRA","RAF1",
+      "RARA","RET","ROS1","RSPO2",
+      "SDC4","SLC34A2","TERC",
+      "TMPRSS2")
+  f1cdx <- dplyr::bind_rows(
+    data.frame('symbol' = f1cdx_raw$sym1, stringsAsFactors = F),
+    data.frame('symbol' = f1cdx_raw$sym2, stringsAsFactors = F),
+    data.frame('symbol' = f1cdx_raw$sym3, stringsAsFactors = F),
+    data.frame('symbol' = f1cdx_raw$sym4, stringsAsFactors = F),
+    data.frame('symbol' = f1cdx_raw$sym5, stringsAsFactors = F),
+    data.frame('symbol' = f1cdx_raw$sym6, stringsAsFactors = F),
+    data.frame('symbol' = f1cdx_raw$sym7, stringsAsFactors = F),
+    data.frame('symbol' = f1cdx_raw$sym8, stringsAsFactors = F),
+    data.frame('symbol' = f1cdx_raw$sym9, stringsAsFactors = F),
+    data.frame('symbol' = f1cdx_raw$sym10, stringsAsFactors = F),
+    data.frame('symbol' = f1cdx_raw$sym11, stringsAsFactors = F)) |>
+    dplyr::filter(!is.na(symbol)) |>
+    dplyr::mutate(symbol = dplyr::case_when(
+      symbol == "C11orf30" ~ "EMSY",
+      symbol == "FAM46C" ~ "TENT5C",
+      symbol == "H3F3A" ~ "H3-3A",
+      symbol == "MRE11A" ~ "MRE11",
+      symbol == "PARK2" ~ "PRKN",
+      symbol == "WHSC1" ~ "NSD2",
+      symbol == "WHSC1L1" ~ "NSD3",
+      TRUE ~ as.character(symbol)
+    )) |>
+    dplyr::mutate(F1CDx = "CNA,SNV_INDEL") |>
+    dplyr::mutate(F1CDx = dplyr::if_else(
+      symbol %in% rearrangement_targets,
+      "CNA,SNV_INDEL,FUSION",
+      as.character(F1CDx)
+    )) |>
+    dplyr::bind_rows(
+      data.frame(
+        symbol = 'TERT', 
+        F1CDx = 'PROMOTER', 
+        stringsAsFactors = F)
+    ) |>
+    dplyr::arrange(symbol) |>
+    dplyr::rename(foundation_one_f1cdx = F1CDx) |>
+    dplyr::inner_join(
+      dplyr::select(gene_info, symbol, entrezgene)
+    ) |>
+    dplyr::select(-symbol)
+  
+  return(f1cdx)
+  
+}
+
 get_tso500 <- function(gene_info = NULL,
                        gene_alias = NULL){
 
-  lgr::lgr$info("Retrieve genes covered by Illumina's TSO500 panel")
+  lgr::lgr$info("Retrieving genes covered by Illumina's TSO500 panel")
   tso500_all <- openxlsx::read.xlsx(
     "data-raw/tso500/journal.pone.0260089.s001.xlsx", sheet = "ST3")
 
@@ -314,11 +377,17 @@ get_tso500 <- function(gene_info = NULL,
       symbol == "MYCL1","MYCL", as.character(symbol)
     )) |>
     dplyr::left_join(
-      dplyr::select(gene_info, entrezgene, symbol), by = "symbol") |>
+      dplyr::select(
+        gene_info, 
+        entrezgene, 
+        symbol), by = "symbol") |>
     dplyr::mutate(
       TSO500 = "CNA_GAIN") |>
     dplyr::mutate(TSO500 = dplyr::if_else(
-      symbol == "BRCA1" | symbol == "BRCA2" | symbol == "PTEN" | symbol == "ATM",
+      symbol == "BRCA1" | 
+        symbol == "BRCA2" | 
+        symbol == "PTEN" | 
+        symbol == "ATM",
       "CNA_LOSS",
       as.character(TSO500)
     ))
@@ -365,7 +434,7 @@ get_tso500 <- function(gene_info = NULL,
 
 get_dna_repair_genes <- function(gene_info = NULL){
 
-  lgr::lgr$info("Retrieve genes in DNA repair genes database")
+  lgr::lgr$info("Retrieving genes in DNA repair genes database")
   all_genes <- readr::read_tsv(
     file.path(
       "data-raw",
