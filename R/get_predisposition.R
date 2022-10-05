@@ -22,7 +22,7 @@
 #' findings (ACMG_SF).
 #'
 #' @param cache_dir Local directory for data download
-#' @param overwrite Logical indicating if local cache should be overwritten
+#' @param force_download Logical indicating if local cache should be overwritten
 #'
 #' @returns
 #' \bold{metadata} - A data frame with 1 row and 6 columns:
@@ -53,10 +53,10 @@
 #' @export
 #'
 
-get_predisposition <- function(cache_dir = NA, overwrite = F){
+get_predisposition <- function(cache_dir = NA, force_download = F){
 
   dat <- get_gox_data(cache_dir = cache_dir,
-                      overwrite = overwrite,
+                      force_download = force_download,
                       db = "predisposition")
   return(dat)
 }

@@ -4,12 +4,12 @@
 \alias{get_alias}
 \title{Get human gene aliases from NCBI}
 \usage{
-get_alias(cache_dir = NA, overwrite = F)
+get_alias(cache_dir = NA, force_download = F)
 }
 \arguments{
 \item{cache_dir}{Local directory for data download}
 
-\item{overwrite}{Logical indicating if local cache should be overwritten
+\item{force_download}{Logical indicating if local cache should be overwritten
 (set to TRUE to re-download if file exists in cache)}
 }
 \value{

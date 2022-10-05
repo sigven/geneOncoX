@@ -8,8 +8,7 @@ driver etc. based on multiple lines of evidence.}
 assign_cancer_gene_evidence(
   gox_basic = NULL,
   min_citations_tsg = 15,
-  min_citations_oncogene = 15,
-  min_citations_driver = 10
+  min_citations_oncogene = 15
 )
 }
 \arguments{
@@ -18,8 +17,6 @@ assign_cancer_gene_evidence(
 \item{min_citations_tsg}{minimum citations (CancerMine) for tsg support}
 
 \item{min_citations_oncogene}{minimum citations (CancerMine) for oncogene support}
-
-\item{min_citations_driver}{minimum citations (CancerMine) for driver support}
 }
 \description{
 Function to classify genes as tumor suppressors/proto-oncogenes,

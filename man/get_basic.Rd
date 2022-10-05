@@ -4,12 +4,12 @@
 \alias{get_basic}
 \title{Get basic cancer-relevant gene annotations}
 \usage{
-get_basic(cache_dir = NA, overwrite = F)
+get_basic(cache_dir = NA, force_download = F)
 }
 \arguments{
 \item{cache_dir}{Local directory for data download}
 
-\item{overwrite}{Logical indicating if local cache should be overwritten
+\item{force_download}{Logical indicating if local cache should be overwritten
 (set to TRUE to re-download if file exists in cache)}
 }
 \value{
@@ -38,9 +38,9 @@ get_basic(cache_dir = NA, overwrite = F)
 \item \emph{cgc_phenotype_somatic} - cancer phenotypes relevant for somatic mutations of this gene (Cancer Gene Census)
 \item \emph{cgc_germline} - logical indicating whether the cancer relevance of this gene relates to the germline (Cancer Gene Census)
 \item \emph{cgc_phenotype_germline} - cancer phenotypes relevant for germline mutations of this gene (Cancer Gene Census)
-\item \emph{ncg} - cancer gene according to Network of Cancer Genes (NCG)
+\item \emph{ncg_driver} - canonical cancer driver gene according to Network of Cancer Genes (NCG)
 \item \emph{ncg_tsg} - tumor suppressor gene (NCG)
-\item \emph{ncg_oncogenei} - proto-oncogene (NCG)
+\item \emph{ncg_oncogene} - proto-oncogene (NCG)
 \item \emph{ncg_phenotype} - cancer phenotypes relevant for this gene (NCG)
 \item \emph{ncg_pmid} - supporting literature identifiers (PMIDs, NCG)
 \item \emph{intogen_role} - cancer driver role (IntOGen)
@@ -49,6 +49,7 @@ get_basic(cache_dir = NA, overwrite = F)
 \item \emph{woods_dnarepair_class} - class of DNA repair (DNA repair database, Woods et al.)
 \item \emph{woods_dnarepair_activity} - type of DNA repair activity involved (DNA repair database, Woods et al.)
 \item \emph{illumina_tso500} - gene is part of Illumina's TSO500 panel (SNV_INDEL, CNA_GAIN, CNA_LOSS, RNA_FUSION)
+\item \emph{foundation_one_f1cdx} - gene is part of Foundation One's F1CDx panel (SNV_INDEL, CNA, FUSION, PROMOTER)
 \item \emph{sanchezvega2018_signaling_pathway} - curated signalling pathways (Sanchez-Vega et al., Cell, 2018)
 \item \emph{cancermine_pmid_driver} - PMIDs that support (from text mining) a role for this gene as a driver (CancerMine)
 \item \emph{cancermine_pmid_oncogene} - PMIDs that support (from text mining) a role for this gene as a proto-oncogene (CancerMine)

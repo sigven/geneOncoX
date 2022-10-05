@@ -1,7 +1,7 @@
 #' Function that retrieves geneOncoX data from Google Drive
 #'
 #' @param cache_dir Local directory for data download
-#' @param overwrite Logical indicating if local cache should be overwritten
+#' @param force_download Logical indicating if local cache should be overwritten
 #' (set to TRUE to re-download if file exists in cache)
 #' @param db type of dataset to be retrieved
 #'
@@ -9,7 +9,7 @@
 #'
 #'
 get_gox_data <- function(cache_dir = NA,
-                         overwrite = F,
+                         force_download = F,
                          db = "alias"){
 
   lgr::lgr$appenders$console$set_layout(
@@ -31,23 +31,28 @@ get_gox_data <- function(cache_dir = NA,
   fname_local <- file.path(
     cache_dir,
     paste0("gene_",db,"_v",
-           geneOncoX:::db_id_ref[geneOncoX:::db_id_ref$name == db,]$pVersion,
+           db_id_ref[db_id_ref$name == db,]$pVersion,
+           #geneOncoX:::db_id_ref[geneOncoX:::db_id_ref$name == db,]$pVersion,
            '.rds')
   )
 
   fname_gd <- googledrive::as_id(
-    geneOncoX:::db_id_ref[geneOncoX:::db_id_ref$name == db,]$gid)
+    #geneOncoX:::db_id_ref[geneOncoX:::db_id_ref$name == db,]$gid)
+    db_id_ref[db_id_ref$name == db,]$gid)
 
   md5checksum_package <-
-    geneOncoX:::db_id_ref[geneOncoX:::db_id_ref$name == db,]$md5Checksum
+    #geneOncoX:::db_id_ref[geneOncoX:::db_id_ref$name == db,]$md5Checksum
+    db_id_ref[db_id_ref$name == db,]$md5Checksum
 
   dat <- NULL
-  if(file.exists(fname_local) & overwrite == F){
+  if(file.exists(fname_local) && force_download == F){
     dat <- readRDS(fname_local)
     dat$fpath <- fname_local
     if(!is.null(dat[['records']]) & !is.null(dat[['metadata']])){
       lgr::lgr$info(paste0(
-        "Reading from cache_dir = '", cache_dir, "', argument overwrite = F"))
+        "Reading from cache_dir = '", 
+        cache_dir, 
+        "', argument force_download = FALSE"))
       lgr::lgr$info(paste0("Object 'gene_",db,"' sucessfully loaded"))
       if(db == 'gencode'){
         lgr::lgr$info(paste0(
@@ -70,7 +75,8 @@ get_gox_data <- function(cache_dir = NA,
     dl <- googledrive::with_drive_quiet(
       googledrive::drive_download(
         fname_gd,
-        path = fname_local, overwrite = TRUE)
+        path = fname_local, 
+        force_download = TRUE)
     )
 
     md5checksum_remote <- dl$drive_resource[[1]]$md5Checksum
@@ -80,12 +86,16 @@ get_gox_data <- function(cache_dir = NA,
     if(md5checksum_remote == md5checksum_local){
       dat <- readRDS(fname_local)
       dat$fpath <- fname_local
-      if(!is.null(dat[['records']]) & !is.null(dat[['metadata']])){
+      if(!is.null(dat[['records']]) & 
+         !is.null(dat[['metadata']])){
 
         lgr::lgr$info(paste0(
-          "Reading from cache_dir = ' (", cache_dir, "'), argument overwrite = F"))
-        lgr::lgr$info(paste0("Object 'gene_",db,"' sucessfully loaded"))
-        lgr::lgr$info(paste0("md5 checksum is valid: ", md5checksum_remote))
+          "Reading from cache_dir = '", cache_dir, 
+          "', argument force_download = ", force_download))
+        lgr::lgr$info(paste0(
+          "Object 'gene_",db,"' sucessfully loaded"))
+        lgr::lgr$info(paste0(
+          "md5 checksum is valid: ", md5checksum_remote))
 
         if(db == 'gencode'){
           lgr::lgr$info(paste0(
@@ -100,9 +110,10 @@ get_gox_data <- function(cache_dir = NA,
         }
       }
     }else{
-      lgr::lgr$error(paste0("md5 checksum of local file (", md5checksum_local,
-                            ") is inconsistent with remote file (",
-                            md5checksum_remote,")"))
+      lgr::lgr$error(
+        paste0("md5 checksum of local file (", md5checksum_local,
+               ") is inconsistent with remote file (",
+               md5checksum_remote,")"))
     }
 
   }

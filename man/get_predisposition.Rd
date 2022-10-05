@@ -4,12 +4,12 @@
 \alias{get_predisposition}
 \title{Get human cancer predisposition genes}
 \usage{
-get_predisposition(cache_dir = NA, overwrite = F)
+get_predisposition(cache_dir = NA, force_download = F)
 }
 \arguments{
 \item{cache_dir}{Local directory for data download}
 
-\item{overwrite}{Logical indicating if local cache should be overwritten}
+\item{force_download}{Logical indicating if local cache should be overwritten}
 }
 \value{
 \bold{metadata} - A data frame with 1 row and 6 columns:

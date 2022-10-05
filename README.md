@@ -12,6 +12,8 @@ The goal of **geneOncoX** is to offer an R package that simplifies the process o
 -   [Cancer Gene Census](https://cancer.sanger.ac.uk/census) - manually curated resource on cancer genes (soma and germline)
 -   [DNA repair genes](https://www.mdanderson.org/documents/Labs/Wood-Laboratory/human-dna-repair-genes.html) - collection of genes involved in DNA repair
 -   [Genomics England PanelApp](https://panelapp.genomicsengland.co.uk/) - collections of cancer gene panels used in clinical diagnostics
+-   [TSO500 targets](https://emea.illumina.com/products/by-brand/trusight-oncology/tso-500-portfolio.html) - cancer genes targeted by Illumina's TSO500 gene panel
+-   [F1CDx targets](https://www.foundationmedicine.com/test/foundationone-cdx) - cancer genes targeted by Foundation One's F1CDx gene panel
 
 ### Installation
 
@@ -29,7 +31,7 @@ The package offers (currently) five different functions, that each retrieves a s
 
 -   [`get_predisposition()`](https://sigven.github.io/geneOncoX/reference/get_predisposition.html) - retrieves a list of genes of relevance for cancer predisposition, utilizing multiple resources, including Cancer Gene Census, Genomics England PanelApp, [TCGA's PanCancer study](https://pubmed.ncbi.nlm.nih.gov/29625052/), and others.
 
--   [`get_panels()`](https://sigven.github.io/geneOncoX/reference/get_panels.html) - retrieves a collection of \> 40 different panels for various cancer conditions, as found in Genomics England PanelApp
+-   [`get_panels()`](https://sigven.github.io/geneOncoX/reference/get_panels.html) - retrieves a collection of \> 40 different panels for various cancer conditions, as found in the Genomics England PanelApp.
 
 Technically, each dataset comes as a `list` object in R with
 

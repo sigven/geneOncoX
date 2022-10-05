@@ -2,14 +2,14 @@ Package: geneOncoX
 Type: Package
 Title: Human gene annotations for the oncology domain
 Version: 0.5.4
-Date: 2022-09-27
+Date: 2022-10-05
 Authors@R: person(given = "Sigve", family = "Nakken", role = c("aut", "cre"),
              email = "sigven@ifi.uio.no",
              comment = c(ORCID = "0000-0001-8468-2050"))
 Maintainer: Sigve Nakken <sigven@ifi.uio.no>
-Description: A small collection of datasets relevant for gene annotations in the
+Description: A collection of datasets relevant for gene annotations in the
     context of cancer. Datasets contain basic gene annotations, tumor suppressor,
-    oncogene, driver gene annotations, as well as genes involved in cancer 
+    proto-oncogene, driver gene annotations, as well as genes involved in cancer 
     predisposition. A collection of gene panels used in clinical cancer diagnostics
     are further provided.
 URL: https://github.com/sigven/geneOncoX,
@@ -21,7 +21,12 @@ biocViews:
 Imports: 
     googledrive,
     lgr,
-    tools
+    tools,
+    rlang,
+    assertable,
+    dplyr,
+    readr,
+    stringr
 Suggests: 
     testthat (>= 3.1.0),
     knitr,

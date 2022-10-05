@@ -1,5 +1,5 @@
 #' @title
-#' Cancer gene panel collections
+#' Cancer gene panel collections from PanelApp
 #'
 #' @description
 #' Collection of > 40 cancer gene panels from
@@ -13,7 +13,7 @@
 #' (filter on column `genome_build` to get a build-specific set of panels)
 #'
 #' @param cache_dir Local directory for data download
-#' @param overwrite Logical indicating if local cache should be overwritten
+#' @param force_download Logical indicating if local cache should be overwritten
 #' (set to TRUE to re-download if file exists in cache)
 #'
 #' @returns
@@ -48,10 +48,10 @@
 #'
 
 
-get_panels <- function(cache_dir = NA, overwrite = F){
+get_panels <- function(cache_dir = NA, force_download = F){
 
   dat <- get_gox_data(cache_dir = cache_dir,
-                      overwrite = overwrite,
+                      force_download = force_download,
                       db = "panels")
   return(dat)
 }

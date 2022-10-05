@@ -11,7 +11,7 @@
 #' * `records` - a list with gene aliases indicating ambiguous/non-ambiguous state
 #'
 #' @param cache_dir Local directory for data download
-#' @param overwrite Logical indicating if local cache should be overwritten
+#' @param force_download Logical indicating if local cache should be overwritten
 #' (set to TRUE to re-download if file exists in cache)
 #'
 #' @returns
@@ -39,10 +39,11 @@
 #' @export
 #'
 
-get_alias <- function(cache_dir = NA, overwrite = F){
+get_alias <- function(cache_dir = NA, 
+                      force_download = F){
 
   dat <- get_gox_data(cache_dir = cache_dir,
-                      overwrite = overwrite,
+                      force_download = force_download,
                       db = "alias")
   return(dat)
 }
