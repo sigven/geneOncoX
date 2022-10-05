@@ -5,9 +5,9 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="A small collection of datasets relevant for gene annotations in the
+<meta name="description" content="A collection of datasets relevant for gene annotations in the
     context of cancer. Datasets contain basic gene annotations, tumor suppressor,
-    oncogene, driver gene annotations, as well as genes involved in cancer 
+    proto-oncogene, driver gene annotations, as well as genes involved in cancer 
     predisposition. A collection of gene panels used in clinical cancer diagnostics
     are further provided.">
 <title>Human gene annotations for the oncology domain • geneOncoX</title>
@@ -22,9 +22,9 @@
 <script src="deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Human gene annotations for the oncology domain">
-<meta property="og:description" content="A small collection of datasets relevant for gene annotations in the
+<meta property="og:description" content="A collection of datasets relevant for gene annotations in the
     context of cancer. Datasets contain basic gene annotations, tumor suppressor,
-    oncogene, driver gene annotations, as well as genes involved in cancer 
+    proto-oncogene, driver gene annotations, as well as genes involved in cancer 
     predisposition. A collection of gene panels used in clinical cancer diagnostics
     are further provided.">
 <meta property="og:image" content="https://sigven.github.io/geneOncoX/logo.png">
@@ -94,6 +94,10 @@
 <a href="https://www.mdanderson.org/documents/Labs/Wood-Laboratory/human-dna-repair-genes.html" class="external-link">DNA repair genes</a> - collection of genes involved in DNA repair</li>
 <li>
 <a href="https://panelapp.genomicsengland.co.uk/" class="external-link">Genomics England PanelApp</a> - collections of cancer gene panels used in clinical diagnostics</li>
+<li>
+<a href="https://emea.illumina.com/products/by-brand/trusight-oncology/tso-500-portfolio.html" class="external-link">TSO500 targets</a> - cancer genes targeted by Illumina’s TSO500 gene panel</li>
+<li>
+<a href="https://www.foundationmedicine.com/test/foundationone-cdx" class="external-link">F1CDx targets</a> - cancer genes targeted by Foundation One’s F1CDx gene panel</li>
 </ul>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -109,7 +113,7 @@
 <li><p><a href="https://sigven.github.io/geneOncoX/reference/get_gencode.html"><code>get_gencode()</code></a> - retrieves two datasets ( <em>grch37</em> and <em>grch38</em> ) with human gene transcripts from GENCODE, including cross-references to RefSeq, <a href="https://www.uniprot.org" class="external-link">UniProt</a>, <a href="https://appris.bioinfo.cnio.es/#/" class="external-link">APPRIS</a>, and <a href="https://www.ncbi.nlm.nih.gov/refseq/MANE/" class="external-link">MANE</a></p></li>
 <li><p><a href="https://sigven.github.io/geneOncoX/reference/get_alias.html"><code>get_alias()</code></a> - retrieves a list of gene synonyms, indicating which synonyms are ambiguous or nonambiguous (with respect to primary gene symbols)</p></li>
 <li><p><a href="https://sigven.github.io/geneOncoX/reference/get_predisposition.html"><code>get_predisposition()</code></a> - retrieves a list of genes of relevance for cancer predisposition, utilizing multiple resources, including Cancer Gene Census, Genomics England PanelApp, <a href="https://pubmed.ncbi.nlm.nih.gov/29625052/" class="external-link">TCGA’s PanCancer study</a>, and others.</p></li>
-<li><p><a href="https://sigven.github.io/geneOncoX/reference/get_panels.html"><code>get_panels()</code></a> - retrieves a collection of &gt; 40 different panels for various cancer conditions, as found in Genomics England PanelApp</p></li>
+<li><p><a href="https://sigven.github.io/geneOncoX/reference/get_panels.html"><code>get_panels()</code></a> - retrieves a collection of &gt; 40 different panels for various cancer conditions, as found in the Genomics England PanelApp.</p></li>
 </ul>
 <p>Technically, each dataset comes as a <code>list</code> object in R with</p>
 <ul>

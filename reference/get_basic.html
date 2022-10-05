@@ -66,7 +66,7 @@ with two elements:</p><ul><li><p><code>metadata</code> - a data frame with metad
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_basic</span><span class="op">(</span>cache_dir <span class="op">=</span> <span class="cn">NA</span>, overwrite <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_basic</span><span class="op">(</span>cache_dir <span class="op">=</span> <span class="cn">NA</span>, force_download <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -75,7 +75,7 @@ with two elements:</p><ul><li><p><code>metadata</code> - a data frame with metad
 <dd><p>Local directory for data download</p></dd>
 
 
-<dt>overwrite</dt>
+<dt>force_download</dt>
 <dd><p>Logical indicating if local cache should be overwritten
 (set to TRUE to re-download if file exists in cache)</p></dd>
 
@@ -103,9 +103,9 @@ with two elements:</p><ul><li><p><code>metadata</code> - a data frame with metad
 <li><p><em>cgc_phenotype_somatic</em> - cancer phenotypes relevant for somatic mutations of this gene (Cancer Gene Census)</p></li>
 <li><p><em>cgc_germline</em> - logical indicating whether the cancer relevance of this gene relates to the germline (Cancer Gene Census)</p></li>
 <li><p><em>cgc_phenotype_germline</em> - cancer phenotypes relevant for germline mutations of this gene (Cancer Gene Census)</p></li>
-<li><p><em>ncg</em> - cancer gene according to Network of Cancer Genes (NCG)</p></li>
+<li><p><em>ncg_driver</em> - canonical cancer driver gene according to Network of Cancer Genes (NCG)</p></li>
 <li><p><em>ncg_tsg</em> - tumor suppressor gene (NCG)</p></li>
-<li><p><em>ncg_oncogenei</em> - proto-oncogene (NCG)</p></li>
+<li><p><em>ncg_oncogene</em> - proto-oncogene (NCG)</p></li>
 <li><p><em>ncg_phenotype</em> - cancer phenotypes relevant for this gene (NCG)</p></li>
 <li><p><em>ncg_pmid</em> - supporting literature identifiers (PMIDs, NCG)</p></li>
 <li><p><em>intogen_role</em> - cancer driver role (IntOGen)</p></li>
@@ -114,6 +114,7 @@ with two elements:</p><ul><li><p><code>metadata</code> - a data frame with metad
 <li><p><em>woods_dnarepair_class</em> - class of DNA repair (DNA repair database, Woods et al.)</p></li>
 <li><p><em>woods_dnarepair_activity</em> - type of DNA repair activity involved (DNA repair database, Woods et al.)</p></li>
 <li><p><em>illumina_tso500</em> - gene is part of Illumina's TSO500 panel (SNV_INDEL, CNA_GAIN, CNA_LOSS, RNA_FUSION)</p></li>
+<li><p><em>foundation_one_f1cdx</em> - gene is part of Foundation One's F1CDx panel (SNV_INDEL, CNA, FUSION, PROMOTER)</p></li>
 <li><p><em>sanchezvega2018_signaling_pathway</em> - curated signalling pathways (Sanchez-Vega et al., Cell, 2018)</p></li>
 <li><p><em>cancermine_pmid_driver</em> - PMIDs that support (from text mining) a role for this gene as a driver (CancerMine)</p></li>
 <li><p><em>cancermine_pmid_oncogene</em> - PMIDs that support (from text mining) a role for this gene as a proto-oncogene (CancerMine)</p></li>
