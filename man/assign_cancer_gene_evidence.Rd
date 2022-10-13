@@ -16,7 +16,11 @@ assign_cancer_gene_evidence(
 
 \item{min_citations_tsg}{minimum citations (CancerMine) for tsg support}
 
-\item{min_citations_oncogene}{minimum citations (CancerMine) for oncogene support}
+\item{min_citations_oncogene}{minimum citations
+(CancerMine) for oncogene support}
+}
+\value{
+data frame with cancer gene annotations
 }
 \description{
 Function to classify genes as tumor suppressors/proto-oncogenes,

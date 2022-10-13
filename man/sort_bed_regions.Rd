@@ -2,16 +2,19 @@
 % Please edit documentation in R/helpers.R
 \name{sort_bed_regions}
 \alias{sort_bed_regions}
-\title{Function to sort BED data}
+\title{Function to sort data frame with genomic regions (simple BED format)}
 \usage{
-sort_bed_regions(unsorted_regions, chr_names = F)
+sort_bed_regions(unsorted_regions, chr_names = FALSE)
 }
 \arguments{
-\item{unsorted_regions}{data frame with unsorted regions}
+\item{unsorted_regions}{data frame with unsorted regions (BED)}
 
 \item{chr_names}{logical indicating if chromosome names contain 'chr' or not}
 }
+\value{
+data frame with sorted BED regions
+}
 \description{
-Function to sort BED data
+Function to sort data frame with genomic regions (simple BED format)
 }
 \keyword{internal}

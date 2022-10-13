@@ -9,10 +9,30 @@ create_virtual_panel_bed(
   gox_gencode = NULL,
   gox_panels = NULL,
   gox_predisposition = NULL,
-  super_panel = F,
+  super_panel = FALSE,
   build = "grch37",
   dest_dir = NA
 )
+}
+\arguments{
+\item{gwas_bed_fpath}{path to assembly-specific GWAS BED track}
+
+\item{gox_gencode}{object returned by \code{geneOncoX::get_gencode()}}
+
+\item{gox_panels}{object returned by \code{geneOncoX::get_panels()}}
+
+\item{gox_predisposition}{object returned by
+\code{geneOncoX::get_predisposition()}}
+
+\item{super_panel}{logical indicating if a BED files for a CPSR super panel
+are to be generated}
+
+\item{build}{genome assembly build (grch37/grch38)}
+
+\item{dest_dir}{destination directory for BED file}
+}
+\value{
+integer indicating success (0) or failure (-1)
 }
 \description{
 Function to write virtual panel BED files (CPSR)

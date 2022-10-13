@@ -4,15 +4,19 @@
 \alias{get_gox_data}
 \title{Function that retrieves geneOncoX data from Google Drive}
 \usage{
-get_gox_data(cache_dir = NA, force_download = F, db = "alias")
+get_gox_data(cache_dir = NA, force_download = FALSE, db = "alias")
 }
 \arguments{
 \item{cache_dir}{Local directory for data download}
 
-\item{force_download}{Logical indicating if local cache should be overwritten
-(set to TRUE to re-download if file exists in cache)}
+\item{force_download}{Logical indicating if local cache
+should be overwritten (set to TRUE to re-download if file
+exists in cache)}
 
 \item{db}{type of dataset to be retrieved}
+}
+\value{
+pre-processed gene/transcript annotation records and metadata
 }
 \description{
 Function that retrieves geneOncoX data from Google Drive

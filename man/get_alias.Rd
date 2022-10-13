@@ -4,26 +4,27 @@
 \alias{get_alias}
 \title{Get human gene aliases from NCBI}
 \usage{
-get_alias(cache_dir = NA, force_download = F)
+get_alias(cache_dir = NA, force_download = FALSE)
 }
 \arguments{
 \item{cache_dir}{Local directory for data download}
 
-\item{force_download}{Logical indicating if local cache should be overwritten
-(set to TRUE to re-download if file exists in cache)}
+\item{force_download}{Logical indicating if local cache should be
+overwritten (set to TRUE to re-download if file exists in cache)}
 }
 \value{
-\bold{metadata} - A data frame with 1 row and 6 columns:
+\strong{metadata} - A data frame with 1 row and 6 columns:
 \itemize{
 \item \emph{source} - gene annotation source
 \item \emph{annotation_data} - type of annotations used
 \item \emph{url} - URL of annotation resource
-\item \emph{citation} - publication to cite for annotation source (citation; PMID)
+\item \emph{citation} - publication to cite for annotation source
+(citation; PMID)
 \item \emph{version} - version used/datestamp
 \item \emph{abbreviation} - abbreviation used in column names of records
 }
 
-\bold{records} - A data frame with 150,395 rows and 5 columns:
+\strong{records} - A data frame with 150,395 rows and 5 columns:
 \itemize{
 \item \emph{alias} - gene alias/synonym
 \item \emph{symbol} - primary symbol
@@ -34,12 +35,23 @@ get_alias(cache_dir = NA, force_download = F)
 }
 }
 \description{
-A dataset that indicate ambiguous and unambiguous gene aliases/synonyms
-for human genes. Gene aliases with less than three characters have been
-ignored, and a few custom aliases have been added (source = \code{custom}).
-The dataset comes as a \code{list} object, with two elements:
+Downloads and returns a dataset that indicate ambiguous and unambiguous
+gene aliases/synonyms for human genes. Gene aliases with less than three
+characters have been ignored, and a few custom aliases have been added
+(source = \code{custom}). The dataset comes as a \code{list} object, with two
+elements:
 \itemize{
-\item \code{metadata} - a data frame with metadata regarding annotation resources used
-\item \code{records} - a list with gene aliases indicating ambiguous/non-ambiguous state
+\item \code{metadata} - a data frame with metadata regarding annotation
+resources used
+\item \code{records} - a list with gene aliases indicating ambiguous/
+non-ambiguous state
 }
+}
+\examples{
+
+\dontrun{
+library(geneOncoX)
+gene_alias <- get_alias(cache_dir = "~/Desktop")
+}
+
 }

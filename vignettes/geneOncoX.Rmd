@@ -1,0 +1,332 @@
+---
+title: "geneOncoX"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{geneOncoX}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: '`r system.file("bibliography.bib", package = "geneOncoX")`'
+nocite: |
+  @Martin2019-nq, @Lever2019-xp, @Repana2019-dd, 
+  @Bailey2018-os, @Sondka2018-wf, @Liu2020-ga, 
+  @Martinez-Jimenez2020-qx, @Wood2001-nk
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, echo = F}
+library(geneOncoX)
+```
+
+<br><br>
+
+# Get basic gene annotations
+
+This shows how to retrieve basic gene and cancer relevant gene annotations,
+including how to retrieve tumor suppressor genes, proto-oncogenes, and 
+predicted cancer driver genes.
+
+```{r basic, echo = T}
+library(geneOncoX)
+
+## load the data
+gene_basic <- get_basic(cache_dir = "~/Desktop")
+
+## Number of records
+nrow(gene_basic$records)
+
+## Show metadata for underlying resources
+gene_basic$metadata
+
+
+```
+
+<br><br>
+
+## Get classified tumor suppressor genes
+
+```{r tsg, echo = T, eval = T, results = "hide"}
+
+## get tumor suppressor genes - as indicated from either
+## Cancer Gene Census (CGC) or Network of Cancer Genes (NCG)
+## - show literature support from CancerMine
+
+tsg <- gene_basic$records |>
+  dplyr::filter(cgc_tsg == TRUE |
+                  ncg_tsg == TRUE) |>
+  dplyr::select(symbol, entrezgene, name, gene_biotype,
+                cgc_tsg, ncg_tsg, cancermine_cit_links_tsg, 
+                ncbi_function_summary) |>
+  dplyr::rename(support_cancermine = cancermine_cit_links_tsg)
+
+## Make as datatable
+tsg_table <- DT::datatable(
+  tsg, 
+  escape = FALSE,
+  extensions = c("Buttons", "Responsive"), 
+  width = "100%",
+  options = list(
+    buttons = c("csv", "excel"), dom = "Bfrtip"))
+
+```
+
+<br>
+
+```{r tsg_dt, echo = F, eval = T}
+tsg_table
+```
+
+<br><br>
+
+## Get classified proto-oncogenes
+
+```{r oncogene, echo = T, eval = T, results = "hide"}
+
+## get proto-oncogenes - as indicated from either
+## Cancer Gene Census (CGC) or Network of Cancer Genes (NCG),
+## - show literature support from CancerMine
+oncogene <- gene_basic$records |>
+  dplyr::filter(cgc_oncogene == TRUE |
+                  ncg_oncogene == TRUE) |>
+  dplyr::select(symbol, entrezgene, 
+                name, gene_biotype,
+                cgc_tsg, ncg_tsg, 
+                cancermine_cit_links_oncogene, 
+                ncbi_function_summary) |>
+  dplyr::rename(support_cancermine = 
+                  cancermine_cit_links_oncogene)
+
+## Make as datatable
+oncogene_table <- DT::datatable(
+  oncogene, 
+  escape = FALSE,
+  extensions = c("Buttons", "Responsive"), 
+  width = "100%",
+  options = list(
+    buttons = c("csv", "excel"), 
+    dom = "Bfrtip"))
+
+```
+
+<br>
+
+```{r oncogene_table, echo = F, eval = T}
+oncogene_table
+```
+
+<br><br>
+
+## Get predicted cancer driver genes
+
+```{r cancer_driver, echo = T, eval = T, results = "hide"}
+
+## get proto-oncogenes - as indicated from either
+## - Cancer Gene Census (CGC) - tier1/tier2
+## - Network of Cancer Genes (NCG) - canonical drivers
+## - IntOGen mutational driver catalogue
+## - TCGA's PanCancer driver prediction (Bailey et al., Cell, 2018)
+##
+cancer_driver <- gene_basic$records |>
+  dplyr::filter(cgc_driver_tier1 == TRUE |
+                cgc_driver_tier2 == TRUE |
+                intogen_driver == TRUE |
+                ncg_driver == TRUE |
+                tcga_driver == TRUE) |>
+  dplyr::select(symbol, entrezgene, 
+                name, gene_biotype,
+                cgc_driver_tier1,
+                cgc_driver_tier2,
+                intogen_driver,
+                intogen_phenotype,
+                intogen_role,
+                ncg_driver,
+                ncg_phenotype,
+                tcga_driver,
+                cancermine_cit_links_driver, 
+                ncbi_function_summary) |>
+  dplyr::rename(support_cancermine = 
+                  cancermine_cit_links_driver)
+
+## Make as datatable
+driver_table <- DT::datatable(
+  cancer_driver, 
+  escape = FALSE,
+  extensions = c("Buttons", "Responsive"), 
+  width = "100%",
+  options = list(
+    buttons = c("csv", "excel"), 
+    dom = "Bfrtip"))
+
+```
+
+<br>
+
+```{r driver_table, echo = F, eval = T}
+driver_table
+```
+
+<br><br>
+
+# Get cancer predisposition genes
+
+This show how to retrieve known cancer predisposition genes, utilizing
+multiple sources, including Cancer Gene Census, Genomics England PanelApp,
+TCGA's pan-cancer study of germline variants etc.
+
+```{r gene_predisposition, echo = T}
+
+## load the data
+gene_predisposition <- get_predisposition(cache_dir = "~/Desktop")
+
+## number of cancer predisposition genes
+nrow(gene_predisposition$records |> dplyr::filter(
+  !stringr::str_detect(predisp_source, "^ACMG_SF$")
+))
+
+## cancer predisposition metadata
+gene_predisposition$metadata
+
+```
+
+
+<br><br>
+
+# Get cancer gene panels
+
+This shows how to retrieve genes from cancer gene panels
+defined in Genomics England PanelApp.
+
+```{r gene_panels, echo = T}
+
+## load the data
+gene_panels <- get_panels(cache_dir = "~/Desktop")
+
+## panel data for genome build grch38
+panel_data <- gene_panels$records |>
+  dplyr::filter(genome_build == "grch38")
+
+## show number of genes in each panel
+gene_freq <- as.data.frame(panel_data |>
+  dplyr::group_by(gepa_panel_name) |>
+  dplyr::summarise(n = dplyr::n()) |>
+  dplyr::arrange(desc(n)) |>
+  dplyr::rename(panel_name = gepa_panel_name))
+
+gene_freq
+
+```
+
+<br><br>
+
+# Get gene aliases
+
+This shows how to retrieve ambiguous and unambiguous gene aliases (i.e. with
+respect to primary gene symbols).
+
+```{r gene_alias, echo = T}
+
+## load the data
+gene_alias <- get_alias(cache_dir = "~/Desktop")
+
+## number of gene synonyms that are ambiguous
+nrow(dplyr::filter(gene_alias$records, ambiguous == TRUE))
+
+## show structure of alias records
+head(gene_alias$records)
+
+```
+
+
+<br><br>
+
+# Get GENCODE transcripts
+
+This shows how to retrieve GENCODE transcripts for `grch37` and `grch38`.
+
+```{r gencode, echo = T}
+
+## load the data
+gene_gencode <- get_gencode(cache_dir = "~/Desktop")
+
+## number of transcript records - grch37
+nrow(gene_gencode$records$grch37)
+
+## number of transcript records - grch38
+nrow(gene_gencode$records$grch38)
+
+## show colnames for transcript records
+colnames(gene_gencode$records$grch38)
+
+## show metadata for underlying resources
+gene_gencode$metadata
+
+```
+
+# Get DNA repair genes
+
+```{r dna_repair, echo = T}
+
+## load the data
+gene_dna_repair <- gene_basic$records |>
+  dplyr::filter(!is.na(woods_dnarepair_class)) |>
+  dplyr::select(symbol, woods_dnarepair_class,
+                woods_dnarepair_activity)
+
+## count number of genes in each class
+dna_repair_class_freq <- as.data.frame(
+  gene_dna_repair |>
+  dplyr::group_by(woods_dnarepair_class) |>
+  dplyr::summarise(n = dplyr::n()) |>
+  dplyr::arrange(desc(n)) |>
+  dplyr::rename(dna_repair_class = woods_dnarepair_class))
+
+dna_repair_class_freq
+
+```
+
+# Get TSO500 genes
+
+```{r tso500, echo = T}
+
+## load the data
+gene_tso500 <- gene_basic$records |>
+  dplyr::filter(!is.na(illumina_tso500))
+
+## number of genes covered by TSO500 panel
+nrow(gene_tso500)
+
+## types of variant types covered
+illumina_tso500_variant_freq <- as.data.frame(
+  gene_tso500 |>
+  dplyr::group_by(illumina_tso500) |>
+  dplyr::summarise(n = dplyr::n()) |>
+  dplyr::arrange(desc(n)))
+
+illumina_tso500_variant_freq
+
+```
+
+
+<br><br>
+
+# Session Info
+
+\vspace{5pt}
+\footnotesize
+```{r sessioninfo, eval = TRUE}
+# set eval = FALSE if you don't want this info (useful for reproducibility) 
+# to appear
+sessionInfo()
+```
+\normalsize
+
+<br><br>
+
+# References

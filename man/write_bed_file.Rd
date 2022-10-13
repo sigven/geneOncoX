@@ -2,7 +2,7 @@
 % Please edit documentation in R/helpers.R
 \name{write_bed_file}
 \alias{write_bed_file}
-\title{Function write BED data to file}
+\title{Function that writes BED data to file}
 \usage{
 write_bed_file(bed_data, bed_fname, dest_dir = NA)
 }
@@ -13,7 +13,10 @@ write_bed_file(bed_data, bed_fname, dest_dir = NA)
 
 \item{dest_dir}{directory to write BED file}
 }
+\value{
+file name of bgzipped BED file with BED track data
+}
 \description{
-Function write BED data to file
+Function that writes BED data to file
 }
 \keyword{internal}
