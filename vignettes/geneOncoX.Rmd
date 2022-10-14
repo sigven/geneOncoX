@@ -37,7 +37,8 @@ predicted cancer driver genes.
 library(geneOncoX)
 
 ## load the data
-gene_basic <- get_basic(cache_dir = "~/Desktop")
+download_dir <- tempdir()
+gene_basic <- get_basic(cache_dir = download_dir)
 
 ## Number of records
 nrow(gene_basic$records)
@@ -183,7 +184,7 @@ TCGA's pan-cancer study of germline variants etc.
 ```{r gene_predisposition, echo = T}
 
 ## load the data
-gene_predisposition <- get_predisposition(cache_dir = "~/Desktop")
+gene_predisposition <- get_predisposition(cache_dir = download_dir)
 
 ## number of cancer predisposition genes
 nrow(gene_predisposition$records |> dplyr::filter(
@@ -206,7 +207,7 @@ defined in Genomics England PanelApp.
 ```{r gene_panels, echo = T}
 
 ## load the data
-gene_panels <- get_panels(cache_dir = "~/Desktop")
+gene_panels <- get_panels(cache_dir = download_dir)
 
 ## panel data for genome build grch38
 panel_data <- gene_panels$records |>
@@ -233,7 +234,7 @@ respect to primary gene symbols).
 ```{r gene_alias, echo = T}
 
 ## load the data
-gene_alias <- get_alias(cache_dir = "~/Desktop")
+gene_alias <- get_alias(cache_dir = download_dir)
 
 ## number of gene synonyms that are ambiguous
 nrow(dplyr::filter(gene_alias$records, ambiguous == TRUE))
@@ -253,7 +254,8 @@ This shows how to retrieve GENCODE transcripts for `grch37` and `grch38`.
 ```{r gencode, echo = T}
 
 ## load the data
-gene_gencode <- get_gencode(cache_dir = "~/Desktop")
+download_dir <- tempdir()
+gene_gencode <- get_gencode(cache_dir = download_dir)
 
 ## number of transcript records - grch37
 nrow(gene_gencode$records$grch37)
