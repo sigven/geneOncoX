@@ -53,7 +53,7 @@
 #' 
 #' \dontrun{
 #' library(geneOncoX)
-#' gene_panels <- get_panels(cache_dir = "~/Desktop")
+#' gene_panels <- get_panels(cache_dir = tempdir())
 #' }
 #'
 #' @export

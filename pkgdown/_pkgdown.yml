@@ -1,0 +1,27 @@
+url: https://sigven.github.io/geneOncoX/
+title: geneOncoX
+template:
+  bootstrap: 5
+toc:
+  depth: 3
+authors:
+  Sigve Nakken:
+    href: "https://github.com/sigven"
+navbar:
+  structure:
+    left: [home, get_started, reference, news]
+    right: [search, github]
+  components:
+    get_started:
+       text: Get started
+       href: articles/geneOncoX.html
+    
+home:
+  sidebar:
+    structure: [links, license, community, citation, authors, dev]
+    components:
+      citation:
+         title: Citation
+         text: "[Citing geneOncoX](authors.html#citation)"
+news:
+  one_page: true

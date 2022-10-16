@@ -51,7 +51,7 @@ non-ambiguous state
 
 \dontrun{
 library(geneOncoX)
-gene_alias <- get_alias(cache_dir = "~/Desktop")
+gene_alias <- get_alias(cache_dir = tempdir())
 }
 
 }

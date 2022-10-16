@@ -99,7 +99,7 @@ package), and UniProt accessions/identifiers.
 
 \dontrun{
 library(geneOncoX)
-transcripts_gencode <- get_gencode(cache_dir = "~/Desktop")
+transcripts_gencode <- get_gencode(cache_dir = tempdir())
 }
 
 }

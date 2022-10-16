@@ -2,9 +2,9 @@
 
 # geneOncoX <a href="https://sigven.github.io/geneOncoX/"><img src="man/figures/logo.png" align="right" height="130" width="113"/></a>
 
-The goal of **geneOncoX** is to offer an R package that simplifies the process of gene annotation in cancer sequencing projects. The package offers a few pre-processed datasets, along with metadata, that the user can retrieve and use for their own projects or set-ups. The package utilizes the [googledrive](https://googledrive.tidyverse.org/) R package to download the pre-processed and documented datasets to a local cache directory provided by the user.
+_Which human genes are known drivers of tumor development_? 
 
-**geneOncoX** integrates a number of existing resources when it comes to cancer-relevant gene annotations, including, but not limited to:
+**geneOncoX** is an R package that address this question through the integration of a number of resources with respect to cancer gene annotations, including, but not limited to:
 
 -   [IntOGen](https://www.intogen.org/download) - compendium of mutational cancer driver genes
 -   [Network of Cancer Genes](http://ncg.kcl.ac.uk/) - collection of curated cancer genes
@@ -14,6 +14,8 @@ The goal of **geneOncoX** is to offer an R package that simplifies the process o
 -   [Genomics England PanelApp](https://panelapp.genomicsengland.co.uk/) - collections of cancer gene panels used in clinical diagnostics
 -   [TSO500 targets](https://emea.illumina.com/products/by-brand/trusight-oncology/tso-500-portfolio.html) - cancer genes targeted by Illumina's TSO500 gene panel
 -   [F1CDx targets](https://www.foundationmedicine.com/test/foundationone-cdx) - cancer genes targeted by Foundation One's F1CDx gene panel
+
+The package offers a few pre-processed datasets, along with metadata, that the user can retrieve and use for their own projects or set-ups. The package utilizes the [googledrive](https://googledrive.tidyverse.org/) R package to download the pre-processed and documented datasets to a local cache directory provided by the user.
 
 ### Installation
 

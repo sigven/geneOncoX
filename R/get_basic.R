@@ -159,7 +159,7 @@
 #' 
 #' \dontrun{
 #' library(geneOncoX)
-#' gene_basic <- get_basic(cache_dir = "~/Desktop")
+#' gene_basic <- get_basic(cache_dir = tempdir())
 #' }
 #' 
 #' @export

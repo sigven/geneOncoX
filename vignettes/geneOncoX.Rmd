@@ -1,10 +1,10 @@
 ---
-title: "geneOncoX"
+title: "Getting started"
 output: 
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{geneOncoX}
+  %\VignetteIndexEntry{Getting started}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: '`r system.file("bibliography.bib", package = "geneOncoX")`'
@@ -23,6 +23,18 @@ knitr::opts_chunk$set(
 
 ```{r setup, echo = F}
 library(geneOncoX)
+```
+
+<br><br>
+
+# Installation
+
+```{r install, echo = T, eval = F}
+
+if (!("remotes" %in% installed.packages()) {
+  install.packages("remotes")
+}
+remotes::install_github('sigven/geneOncoX')
 ```
 
 <br><br>
@@ -254,7 +266,6 @@ This shows how to retrieve GENCODE transcripts for `grch37` and `grch38`.
 ```{r gencode, echo = T}
 
 ## load the data
-download_dir <- tempdir()
 gene_gencode <- get_gencode(cache_dir = download_dir)
 
 ## number of transcript records - grch37
@@ -270,6 +281,8 @@ colnames(gene_gencode$records$grch38)
 gene_gencode$metadata
 
 ```
+
+<br><br>
 
 # Get DNA repair genes
 
@@ -292,6 +305,8 @@ dna_repair_class_freq <- as.data.frame(
 dna_repair_class_freq
 
 ```
+
+<br><br>
 
 # Get TSO500 genes
 

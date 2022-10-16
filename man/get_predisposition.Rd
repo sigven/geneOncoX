@@ -65,7 +65,7 @@ incidental findings (ACMG_SF).
 
 \dontrun{
 library(geneOncoX)
-gene_predisp <- get_predisposition(cache_dir = "~/Desktop")
+gene_predisp <- get_predisposition(cache_dir = tempdir())
 }
 
 }
