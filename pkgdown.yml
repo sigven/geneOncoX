@@ -1,9 +1,9 @@
-pandoc: 2.14.2
+pandoc: 2.19.2
 pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   geneOncoX: geneOncoX.html
-last_built: 2022-10-16T07:57Z
+last_built: 2022-10-31T10:12Z
 urls:
   reference: https://sigven.github.io/geneOncoX/reference
   article: https://sigven.github.io/geneOncoX/articles
