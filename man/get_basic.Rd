@@ -24,7 +24,7 @@ get_basic(cache_dir = NA, force_download = FALSE)
 \item \emph{abbreviation} - abbreviation used in column names of records
 }
 
-\strong{records} - A data frame with 81,300 rows and 57 columns:
+\strong{records} - A data frame with 91,343 rows and 65 columns:
 \itemize{
 \item \emph{entrezgene} - NCBI Entrez identifier
 \item \emph{symbol} - primary gene symbol

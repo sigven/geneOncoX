@@ -43,8 +43,8 @@ get_transcript_appris_annotation <-
 gencode_get_transcripts <-
     function(build = "grch38",
              append_regulatory_region = TRUE,
-             gencode_version = 41,
-             ensembl_version = 107,
+             gencode_version = 42,
+             ensembl_version = 108,
              uniprot_version = "2022_03",
              gene_info = NULL,
              gene_alias = NULL) {
@@ -198,9 +198,10 @@ gencode_get_transcripts <-
         ## get gene and transcript cross-references (biomart + gene_info)
         gencode_xrefs <- gencode_resolve_xrefs(
             transcript_df = transcript_df,
+            ensembl_version = ensembl_version,
             build = build,
             gene_info = gene_info,
-            gene_alias = gene_alias,
+            gene_alias = gene_alias
         )
 
         appris_annotation <- get_transcript_appris_annotation(

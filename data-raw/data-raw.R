@@ -55,7 +55,8 @@ gene_gencode$metadata <- metadata[["gencode"]]
 gene_gencode$records[["grch38"]] <- gencode_get_transcripts(
     build = "grch38",
     gene_info = gene_info,
-    gencode_version = 41,
+    gencode_version = metadata$gencode[1,]$version,
+    ensembl_version = metadata$gencode[2,]$version,
     uniprot_version = "2022_03",
     gene_alias = gene_alias
 )
@@ -63,6 +64,7 @@ gene_gencode$records[["grch37"]] <- gencode_get_transcripts(
     build = "grch37",
     gene_info = gene_info,
     gencode_version = 19,
+    ensembl_version = metadata$gencode[2,]$version,
     uniprot_version = "2022_03",
     gene_alias = gene_alias
 )

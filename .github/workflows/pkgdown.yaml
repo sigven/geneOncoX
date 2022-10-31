@@ -13,6 +13,7 @@ name: pkgdown
 
 jobs:
   pkgdown:
+    if: "startsWith(github.event.head_commit.message, 'Bump version:')"
     runs-on: ubuntu-latest
     # Only restrict concurrency for non-PR jobs
     concurrency:
