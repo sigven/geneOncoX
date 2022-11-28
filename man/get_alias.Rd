@@ -24,7 +24,7 @@ overwritten (set to TRUE to re-download if file exists in cache)}
 \item \emph{abbreviation} - abbreviation used in column names of records
 }
 
-\strong{records} - A data frame with 160,551 rows and 5 columns:
+\strong{records} - A data frame with 177,916 rows and 5 columns:
 \itemize{
 \item \emph{alias} - gene alias/synonym
 \item \emph{symbol} - primary symbol

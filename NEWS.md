@@ -1,3 +1,12 @@
+# v0.6.2
+
+* Added a few curated cancer predisposition genes (contributed by UMCCR)
+   * [CSDE1](https://www.ncbi.nlm.nih.gov/gene/7812), 
+   [EGLN1](https://www.ncbi.nlm.nih.gov/gene/54583), 
+   and [EGLN2](https://www.ncbi.nlm.nih.gov/gene/112398)
+* Updates from NCBI gene info (2022-11-28)
+* Updated cross-references from UniProt KB (2022_04)
+
 # v0.6.1
 
 * Updated GENCODE (v42), and NCBI gene info (2022-10-31)

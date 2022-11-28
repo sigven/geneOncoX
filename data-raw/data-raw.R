@@ -57,7 +57,7 @@ gene_gencode$records[["grch38"]] <- gencode_get_transcripts(
     gene_info = gene_info,
     gencode_version = metadata$gencode[1,]$version,
     ensembl_version = metadata$gencode[2,]$version,
-    uniprot_version = "2022_03",
+    uniprot_version = "2022_04",
     gene_alias = gene_alias
 )
 gene_gencode$records[["grch37"]] <- gencode_get_transcripts(
@@ -65,7 +65,7 @@ gene_gencode$records[["grch37"]] <- gencode_get_transcripts(
     gene_info = gene_info,
     gencode_version = 19,
     ensembl_version = metadata$gencode[2,]$version,
-    uniprot_version = "2022_03",
+    uniprot_version = "2022_04",
     gene_alias = gene_alias
 )
 
@@ -79,9 +79,12 @@ cgc_som_gl <- cgc_som |>
     dplyr::full_join(
         cgc_gl,
         by = c(
-            "cgc_moi", "cgc_tsg",
-            "cgc_hallmark", "cgc_tier",
-            "entrezgene", "cgc_oncogene"
+            "cgc_moi", 
+            "cgc_tsg",
+            "cgc_hallmark", 
+            "cgc_tier",
+            "entrezgene", 
+            "cgc_oncogene"
         )
     ) |>
     dplyr::mutate(cgc_somatic = dplyr::if_else(

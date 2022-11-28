@@ -604,7 +604,7 @@ gencode_resolve_xrefs <- function(
     return(gencode_transcripts_xref_final)
 }
 
-get_uniprot_map <- function(uniprot_version = "2022_03") {
+get_uniprot_map <- function(uniprot_version = "2022_04") {
     lgr::lgr$info("Retrieving UniProtKB annotation")
     withr::local_options(timeout = max(30000000, getOption("timeout")))
 

@@ -23,7 +23,7 @@ get_predisposition(cache_dir = NA, force_download = FALSE)
 \item \emph{abbreviation} - abbreviation used in column names of records
 }
 
-\strong{records} - A data frame with 591 rows and 8 columns:
+\strong{records} - A data frame with 594 rows and 8 columns:
 \itemize{
 \item \emph{symbol} - official gene symbol
 \item \emph{entrezgene} - Entrez gene identifier

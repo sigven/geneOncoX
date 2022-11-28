@@ -146,26 +146,51 @@ oncogene_table
 ## - IntOGen mutational driver catalogue
 ## - TCGA's PanCancer driver prediction (Bailey et al., Cell, 2018)
 ##
+##  Rank hits by how many sources that contribute to classification
+##
 cancer_driver <- gene_basic$records |>
   dplyr::filter(cgc_driver_tier1 == TRUE |
                 cgc_driver_tier2 == TRUE |
                 intogen_driver == TRUE |
                 ncg_driver == TRUE |
                 tcga_driver == TRUE) |>
+  dplyr::mutate(driver_score = 0) |>
+  dplyr::mutate(driver_score = dplyr::if_else(
+    cgc_driver_tier1 == T, 
+    driver_score + 2,
+    as.numeric(driver_score))) |>
+  dplyr::mutate(driver_score = dplyr::if_else(
+    cgc_driver_tier2 == T, 
+    driver_score + 1,
+    as.numeric(driver_score))) |>
+  dplyr::mutate(driver_score = dplyr::if_else(
+    intogen_driver == T, 
+    driver_score + 1,
+    as.numeric(driver_score))) |>
+  dplyr::mutate(driver_score = dplyr::if_else(
+    ncg_driver == T, 
+    driver_score + 1,
+    as.numeric(driver_score))) |>
+  dplyr::mutate(driver_score = dplyr::if_else(
+    tcga_driver == T, 
+    driver_score + 1,
+    as.numeric(driver_score))) |>
   dplyr::select(symbol, entrezgene, 
                 name, gene_biotype,
                 cgc_driver_tier1,
                 cgc_driver_tier2,
                 intogen_driver,
-                intogen_phenotype,
+                #intogen_phenotype,
                 intogen_role,
                 ncg_driver,
                 ncg_phenotype,
                 tcga_driver,
+                driver_score,
                 cancermine_cit_links_driver, 
                 ncbi_function_summary) |>
   dplyr::rename(support_cancermine = 
-                  cancermine_cit_links_driver)
+                  cancermine_cit_links_driver) |>
+  dplyr::arrange(dplyr::desc(driver_score), symbol)
 
 ## Make as datatable
 driver_table <- DT::datatable(
