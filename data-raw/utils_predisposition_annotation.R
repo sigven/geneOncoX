@@ -199,7 +199,17 @@ get_panel_app_genes <-
         return(all_panels)
     }
 
-get_acmg_secondary_findings <- function(gene_info = NULL) {
+get_acmg_secondary_findings <- function(
+        gene_info = NULL,
+        cache_dir = NA) {
+    
+    
+    ontology_maps <- phenoOncoX::get_aux_maps(
+        cache_dir = cache_dir
+    )
+    
+    umls_concept <- ontology_maps$records$umls$concept
+    
     acmg_sf_list <- as.data.frame(
         openxlsx::read.xlsx(file.path(
             "data-raw", "predisposition",
@@ -244,7 +254,7 @@ get_acmg_secondary_findings <- function(gene_info = NULL) {
                 as.character("Wilms tumor 1"),
                 as.character(disease_phenotype)
             )) |>
-            dplyr::left_join(oncoPhenoMap::auxiliary_maps$umls$concept,
+            dplyr::left_join(umls_concept,
                 by = c("disease_phenotype" = "cui_name")
             ) |>
             dplyr::select(-c(source, main_term)) |>
@@ -408,7 +418,7 @@ get_curated_predisposition_genes <- function(gene_info = NULL) {
         janitor::clean_names() |>
         dplyr::mutate(
             ensembl_gene_id = stringr::str_trim(ensembl_gene_id),
-            source = "OTHER"
+            source = "CURATED_OTHER"
         ) |>
         dplyr::select(ensembl_gene_id, moi, source, reference) |>
         dplyr::left_join(
@@ -438,7 +448,7 @@ get_curated_predisposition_genes <- function(gene_info = NULL) {
         janitor::clean_names() |>
         dplyr::mutate(
             symbol = stringr::str_trim(symbol),
-            source = "OTHER"
+            source = "CURATED_OTHER"
         ) |>
         dplyr::left_join(
             dplyr::select(
@@ -530,16 +540,18 @@ get_moi_mod_maxwell2016 <- function(gene_info = NULL) {
 
 get_predisposition_genes <- function(gene_info = NULL,
                                      build = NULL,
-                                     gene_panels = NULL) {
+                                     gene_panels = NULL,
+                                     cache_dir = NA) {
     cpg_collections <- list()
     cpg_collections[["TCGA_PANCAN_2018"]] <- 
         get_predisposition_genes_huang018(gene_info = gene_info)
     cpg_collections[["ACMG_SF"]] <- 
-        get_acmg_secondary_findings(gene_info = gene_info) |>
+        get_acmg_secondary_findings(gene_info = gene_info,
+                                    cache_dir = cache_dir) |>
         dplyr::select(entrezgene, inheritance, disease_phenotype) |>
         dplyr::rename(moi = inheritance, phenotypes = disease_phenotype) |>
         dplyr::mutate(source = "ACMG_SF")
-    cpg_collections[["OTHER"]] <- 
+    cpg_collections[["CURATED_OTHER"]] <- 
         get_curated_predisposition_genes(gene_info = gene_info) |>
         dplyr::select(-reference)
     cpg_collections[["CGC"]] <- get_cancer_gene_census(origin = "germline") |>
@@ -580,7 +592,7 @@ get_predisposition_genes <- function(gene_info = NULL,
     all_predisposition_incidental <- as.data.frame(
         cpg_collections[["CGC"]] |>
             dplyr::bind_rows(cpg_collections[["TCGA_PANCAN_2018"]]) |>
-            dplyr::bind_rows(cpg_collections[["OTHER"]]) |>
+            dplyr::bind_rows(cpg_collections[["CURATED_OTHER"]]) |>
             dplyr::bind_rows(cpg_collections[["PANEL_APP"]]) |>
             dplyr::bind_rows(cpg_collections[["ACMG_SF"]]) |>
             dplyr::filter(!is.na(entrezgene)) |>
@@ -665,7 +677,13 @@ get_predisposition_genes <- function(gene_info = NULL,
                 nchar(moi) == 0, as.character(NA), as.character(moi)
             )) |>
             dplyr::rename(predisp_cancer_cui = susceptibility_cui) |>
-            dplyr::select(-moi_maxwell)
+            dplyr::select(-moi_maxwell) |>
+            dplyr::mutate(predisp_source = dplyr::if_else(
+                stringr::str_detect(predisp_source,"CURATED_OTHER") &
+                    stringr::str_detect(predisp_source,"&"),
+                stringr::str_replace(predisp_source,"^CURATED_OTHER&|&CURATED_OTHER",""),
+                as.character(predisp_source)
+            )) 
     )
 
     return(all_predisposition_incidental)

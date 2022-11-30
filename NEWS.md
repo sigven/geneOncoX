@@ -1,4 +1,10 @@
-# v0.6.2
+# Version 0.6.3
+  
+* Improved UniProt identifier mappings for Ensembl transcripts
+associated with the _grch37_ genome assembly
+* Updated CGC (v97)
+
+# Version 0.6.2
 
 * Added a few curated cancer predisposition genes (contributed by UMCCR)
    * [CSDE1](https://www.ncbi.nlm.nih.gov/gene/7812), 
@@ -7,18 +13,18 @@
 * Updates from NCBI gene info (2022-11-28)
 * Updated cross-references from UniProt KB (2022_04)
 
-# v0.6.1
+# Version 0.6.1
 
 * Updated GENCODE (v42), and NCBI gene info (2022-10-31)
 
-# v0.6.0
+# Version 0.6.0
 
 * Added a `NEWS.md` file to track changes to the package.
 * Added `geneOncoX.Rmd` to vignettes - getting started guide
 * Updated code and documentation according to style
 recommendations
 
-# v0.5.5
+# Version 0.5.5
 
 * Added F1CDx annotation (Foundation One)
 

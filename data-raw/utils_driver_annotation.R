@@ -326,11 +326,11 @@ get_signaling_pathway_genes <- function(gene_info) {
 
 get_cancer_gene_census <- function(origin = "somatic",
                                    opentargets_version = "2022.11",
-                                   cgc_version = "96") {
+                                   cgc_version = "97") {
     cosmic_cgc <- readr::read_csv(
         file = file.path(
             "data-raw", "cancer_gene_census",
-            "cancer_gene_census_96.csv"
+            "cancer_gene_census_97.csv"
         ),
         show_col_types = FALSE
     ) |>

@@ -67,7 +67,7 @@ gene_basic$metadata
 
 ```{r tsg, echo = T, eval = T, results = "hide"}
 
-## get tumor suppressor genes - as indicated from either
+## Get tumor suppressor genes - as indicated from either
 ## Cancer Gene Census (CGC) or Network of Cancer Genes (NCG)
 ## - show literature support from CancerMine
 
@@ -102,7 +102,7 @@ tsg_table
 
 ```{r oncogene, echo = T, eval = T, results = "hide"}
 
-## get proto-oncogenes - as indicated from either
+## Get proto-oncogenes - as indicated from either
 ## Cancer Gene Census (CGC) or Network of Cancer Genes (NCG),
 ## - show literature support from CancerMine
 oncogene <- gene_basic$records |>
@@ -140,7 +140,7 @@ oncogene_table
 
 ```{r cancer_driver, echo = T, eval = T, results = "hide"}
 
-## get proto-oncogenes - as indicated from either
+## Get predicted cancer driver genes - as indicated from either
 ## - Cancer Gene Census (CGC) - tier1/tier2
 ## - Network of Cancer Genes (NCG) - canonical drivers
 ## - IntOGen mutational driver catalogue
@@ -216,19 +216,35 @@ driver_table
 
 This show how to retrieve known cancer predisposition genes, utilizing
 multiple sources, including Cancer Gene Census, Genomics England PanelApp,
-TCGA's pan-cancer study of germline variants etc.
+TCGA's pan-cancer study of germline variants, and other/user-curated entries.
 
 ```{r gene_predisposition, echo = T}
 
 ## load the data
 gene_predisposition <- get_predisposition(cache_dir = download_dir)
 
-## number of cancer predisposition genes
+## Number of cancer predisposition genes
 nrow(gene_predisposition$records |> dplyr::filter(
   !stringr::str_detect(predisp_source, "^ACMG_SF$")
 ))
 
-## cancer predisposition metadata
+## Get statistics regarding how reference sources on 
+## cancer predisposition genes contribute
+##
+## CGC - Cancer Gene Census (germline)
+## PANEL_APP - N = 43 gene panels for inherited cancer conditions/
+##             cancer syndromes (Genomics England PanelApp)
+## CURATED_OTHER - curated/user-contributed genes
+## TCGA_PANCAN_2018 - TCGA's pancancer analysis of
+##                    germline variants in cancer
+##                    (Huang et al., Cell, 2019)
+## ACMG_SF - Secondary findings list (ACMG, v3.1)
+plyr::count(gene_predisposition$records$predisp_source) |>
+  dplyr::arrange(dplyr::desc(freq)) |>
+  dplyr::filter(x != "ACMG_SF")
+
+
+## Cancer predisposition metadata
 gene_predisposition$metadata
 
 ```
