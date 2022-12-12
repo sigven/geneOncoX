@@ -46,6 +46,9 @@ get_gene_info_ncbi <- function(update = T) {
       gene_biotype == "protin-coding",
       "protein_coding", as.character(gene_biotype)
     )) |>
+    dplyr::filter(
+      gene_biotype != "biological-region"
+    ) |>
     dplyr::select(-c(X1, X6))
 
   ### for genes annotated with the same ensembl gene ids, ignore this

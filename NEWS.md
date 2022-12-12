@@ -1,6 +1,7 @@
 # Version 0.6.4
 
 * Use tidyverse code style
+* Ignore genes from NCBI with biotype `biological-region`
 
 # Version 0.6.3
   
