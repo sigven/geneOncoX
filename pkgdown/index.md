@@ -2,7 +2,7 @@
 
 # geneOncoX <a href="https://sigven.github.io/geneOncoX/"><img src="man/figures/logo.png" align="right" height="130" width="113"/></a>
 
-_Which human genes are known drivers of tumor development_? 
+__Which human genes are implicated in tumor development__? 
 
 **geneOncoX** is an R package that address this question through the integration of a number of resources with respect to cancer gene annotations, including, but not limited to:
 

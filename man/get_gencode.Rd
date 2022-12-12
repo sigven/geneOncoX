@@ -96,7 +96,6 @@ also providing cross-references to RefSeq (through the use of the
 package), and UniProt accessions/identifiers.
 }
 \examples{
-
 \dontrun{
 library(geneOncoX)
 transcripts_gencode <- get_gencode(cache_dir = tempdir())

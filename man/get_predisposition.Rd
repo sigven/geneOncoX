@@ -62,7 +62,6 @@ one record per gene
 incidental findings (ACMG_SF).
 }
 \examples{
-
 \dontrun{
 library(geneOncoX)
 gene_predisp <- get_predisposition(cache_dir = tempdir())

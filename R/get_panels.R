@@ -6,7 +6,7 @@
 #' \href{https://panelapp.genomicsengland.co.uk/}{Genomics England PanelApp}.
 #' The dataset comes as a `list` object, with two elements:
 #'
-#' * `metadata` - a data frame with metadata regarding annotation 
+#' * `metadata` - a data frame with metadata regarding annotation
 #'                resources used
 #' * `records` - a data frame with genes found in each panel
 #'
@@ -50,7 +50,6 @@
 #' }
 #'
 #' @examples
-#' 
 #' \dontrun{
 #' library(geneOncoX)
 #' gene_panels <- get_panels(cache_dir = tempdir())
@@ -61,10 +60,10 @@
 
 
 get_panels <- function(cache_dir = NA, force_download = FALSE) {
-    dat <- get_gox_data(
-        cache_dir = cache_dir,
-        force_download = force_download,
-        db = "panels"
-    )
-    return(dat)
+  dat <- get_gox_data(
+    cache_dir = cache_dir,
+    force_download = force_download,
+    db = "panels"
+  )
+  return(dat)
 }

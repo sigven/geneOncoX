@@ -59,7 +59,6 @@ resources used
 (filter on column \code{genome_build} to get a build-specific set of panels)
 }
 \examples{
-
 \dontrun{
 library(geneOncoX)
 gene_panels <- get_panels(cache_dir = tempdir())

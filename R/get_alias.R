@@ -2,19 +2,19 @@
 #' Get human gene aliases from NCBI
 #'
 #' @description
-#' Downloads and returns a dataset that indicate ambiguous and unambiguous 
-#' gene aliases/synonyms for human genes. Gene aliases with less than three 
-#' characters have been ignored, and a few custom aliases have been added 
-#' (source = `custom`). The dataset comes as a `list` object, with two 
+#' Downloads and returns a dataset that indicate ambiguous and unambiguous
+#' gene aliases/synonyms for human genes. Gene aliases with less than three
+#' characters have been ignored, and a few custom aliases have been added
+#' (source = `custom`). The dataset comes as a `list` object, with two
 #' elements:
 #'
-#' * `metadata` - a data frame with metadata regarding annotation 
+#' * `metadata` - a data frame with metadata regarding annotation
 #'                resources used
-#' * `records` - a list with gene aliases indicating ambiguous/ 
+#' * `records` - a list with gene aliases indicating ambiguous/
 #'               non-ambiguous state
 #'
 #' @param cache_dir Local directory for data download
-#' @param force_download Logical indicating if local cache should be 
+#' @param force_download Logical indicating if local cache should be
 #'  overwritten (set to TRUE to re-download if file exists in cache)
 #'
 #' @returns
@@ -39,9 +39,8 @@
 #'   \item \emph{source} - source for gene synonyms (NCBI, custom)
 #
 #' }
-#' 
+#'
 #' @examples
-#' 
 #' \dontrun{
 #' library(geneOncoX)
 #' gene_alias <- get_alias(cache_dir = tempdir())
@@ -52,10 +51,10 @@
 
 get_alias <- function(cache_dir = NA,
                       force_download = FALSE) {
-    dat <- get_gox_data(
-        cache_dir = cache_dir,
-        force_download = force_download,
-        db = "alias"
-    )
-    return(dat)
+  dat <- get_gox_data(
+    cache_dir = cache_dir,
+    force_download = force_download,
+    db = "alias"
+  )
+  return(dat)
 }

@@ -7,7 +7,7 @@
 #' Cancer Gene Census, NCBI, dbNSFP etc. The dataset comes as a `list` object,
 #' with two elements:
 #'
-#' * `metadata` - a data frame with metadata regarding annotation 
+#' * `metadata` - a data frame with metadata regarding annotation
 #'                resources used
 #' * `records` - a data frame with gene annotations (one record per gene)
 #'
@@ -156,20 +156,19 @@
 #' }
 #'
 #' @examples
-#' 
 #' \dontrun{
 #' library(geneOncoX)
 #' gene_basic <- get_basic(cache_dir = tempdir())
 #' }
-#' 
+#'
 #' @export
 #'
 
 get_basic <- function(cache_dir = NA, force_download = FALSE) {
-    dat <- get_gox_data(
-        cache_dir = cache_dir,
-        force_download = force_download,
-        db = "basic"
-    )
-    return(dat)
+  dat <- get_gox_data(
+    cache_dir = cache_dir,
+    force_download = force_download,
+    db = "basic"
+  )
+  return(dat)
 }

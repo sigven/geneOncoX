@@ -13,9 +13,9 @@
 #'
 #' The dataset comes as a `list` object, with two elements:
 #'
-#' * `metadata` - a data frame with metadata regarding annotation 
+#' * `metadata` - a data frame with metadata regarding annotation
 #'                resources used
-#' * `records` - a list with records of cancer predisposing gene, 
+#' * `records` - a list with records of cancer predisposing gene,
 #'               one record per gene
 #'
 #' @details
@@ -51,9 +51,8 @@
 #'   \item \emph{phenotypes} - associated cancer phenotypes
 #'   \item \emph{mechanism_of_disease} - mechanism of disease)
 #' }
-#' 
+#'
 #' @examples
-#' 
 #' \dontrun{
 #' library(geneOncoX)
 #' gene_predisp <- get_predisposition(cache_dir = tempdir())
@@ -63,10 +62,10 @@
 #'
 
 get_predisposition <- function(cache_dir = NA, force_download = FALSE) {
-    dat <- get_gox_data(
-        cache_dir = cache_dir,
-        force_download = force_download,
-        db = "predisposition"
-    )
-    return(dat)
+  dat <- get_gox_data(
+    cache_dir = cache_dir,
+    force_download = force_download,
+    db = "predisposition"
+  )
+  return(dat)
 }

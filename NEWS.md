@@ -1,3 +1,7 @@
+# Version 0.6.4
+
+* Use tidyverse code style
+
 # Version 0.6.3
   
 * Improved UniProt identifier mappings for Ensembl transcripts

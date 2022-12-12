@@ -84,21 +84,20 @@
 #'   metadata (metadata)
 #'
 #' @examples
-#' 
 #' \dontrun{
 #' library(geneOncoX)
 #' transcripts_gencode <- get_gencode(cache_dir = tempdir())
 #' }
-#' 
+#'
 #' @export
 #'
 
 get_gencode <- function(cache_dir = NA,
                         force_download = FALSE) {
-    dat <- get_gox_data(
-        cache_dir = cache_dir,
-        force_download = force_download,
-        db = "gencode"
-    )
-    return(dat)
+  dat <- get_gox_data(
+    cache_dir = cache_dir,
+    force_download = force_download,
+    db = "gencode"
+  )
+  return(dat)
 }
