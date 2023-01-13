@@ -585,7 +585,8 @@ get_predisposition_genes <- function(gene_info = NULL,
     dplyr::select(entrezgene, moi, phenotypes) |>
     dplyr::mutate(source = "CGC")
 
-  mod_moi_predisposition <- get_moi_mod_maxwell2016(gene_info = gene_info)
+  mod_moi_predisposition <- get_moi_mod_maxwell2016(
+    gene_info = gene_info)
 
   cpg_collections[["PANEL_APP"]] <- as.data.frame(
     gene_panels$records |>

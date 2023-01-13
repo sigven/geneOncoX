@@ -123,8 +123,8 @@ get_gene_aliases_ncbi <- function(gene_info,
   primary_to_primary_all <-
     gene_info |>
     janitor::clean_names() |>
-    dplyr::rename(alias = symbol) |>
-    dplyr::select(entrezgene, alias) |>
+    dplyr::mutate(alias = symbol) |>
+    dplyr::select(entrezgene,symbol, alias) |>
     dplyr::distinct()
 
   gene_synonyms <-
@@ -133,6 +133,7 @@ get_gene_aliases_ncbi <- function(gene_info,
     dplyr::rename(alias = synonyms) |>
     tidyr::separate_rows(alias, sep = "\\|") |>
     dplyr::filter(!(symbol == "H3P10" & alias == "p16")) |>
+    dplyr::filter(!(symbol == "NRAS" & alias == "KRAS")) |>
     dplyr::filter(nchar(alias) > 2) |>
     dplyr::filter(!stringr::str_detect(alias, "^(-|[0-9])")) |>
     dplyr::anti_join(primary_to_primary_all, by = "alias")
@@ -204,7 +205,12 @@ get_gene_aliases_ncbi <- function(gene_info,
     alias_custom,
     unambiguous_aliases
   ) |>
-    dplyr::arrange(alias, symbol)
+    dplyr::arrange(alias, symbol) |>
+    dplyr::mutate(is_primary_symbol = dplyr::if_else(
+      alias == symbol,
+      TRUE,
+      FALSE
+    ))
 
   return(gene_alias_info)
 }
