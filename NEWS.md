@@ -1,3 +1,8 @@
+# Version 0.6.5
+
+* Ensured both primary symbols and aliases were present
+in the gene alias data frame
+
 # Version 0.6.4
 
 * Use tidyverse code style
