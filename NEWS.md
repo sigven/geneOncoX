@@ -1,3 +1,8 @@
+# Version 0.6.6
+
+* Upgraded CancerMine (v49, January 2023)
+* Added a few custom gene aliases
+
 # Version 0.6.5
 
 * Ensured both primary symbols and aliases were present

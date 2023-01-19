@@ -57,7 +57,7 @@ gene_gencode$records[["grch38"]] <- gencode_get_transcripts(
   gene_info = gene_info,
   gencode_version = as.integer(metadata$gencode[1, ]$version),
   ensembl_version = as.integer(metadata$gencode[2, ]$version),
-  uniprot_version = "2022_04",
+  uniprot_version = as.character(metadata$gencode[3, ]$version),
   gene_alias = gene_alias
 )
 gene_gencode$records[["grch37"]] <- gencode_get_transcripts(
@@ -65,7 +65,7 @@ gene_gencode$records[["grch37"]] <- gencode_get_transcripts(
   gene_info = gene_info,
   gencode_version = as.integer(19),
   ensembl_version = as.integer(metadata$gencode[2, ]$version),
-  uniprot_version = "2022_04",
+  uniprot_version = as.character(metadata$gencode[3, ]$version),
   gene_alias = gene_alias
 )
 
@@ -190,7 +190,7 @@ f1cdx <- get_f1cdx(gene_info = gene_info)
 tso500 <- get_tso500(gene_info = gene_info, gene_alias = gene_alias)
 dna_repair <- get_dna_repair_genes(gene_info = gene_info)
 cancermine_genes <- get_cancermine_genes(
-  cancermine_version = "48"
+  cancermine_version = "49"
 )
 signaling_genes <- get_signaling_pathway_genes(gene_info = gene_info)
 dbnsfp_annotations <- get_dbnsfp_gene_annotations()
