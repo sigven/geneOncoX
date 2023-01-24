@@ -8,19 +8,31 @@ driver etc. based on multiple lines of evidence.}
 assign_cancer_gene_evidence(
   gox_basic = NULL,
   min_citations_tsg = 15,
-  min_citations_oncogene = 15
+  min_citations_oncogene = 15,
+  min_sources_tsg = 1,
+  min_sources_oncogene = 1,
+  min_sources_driver = 2
 )
 }
 \arguments{
 \item{gox_basic}{output from geneOncoX::get_basic()}
 
-\item{min_citations_tsg}{minimum citations (CancerMine) for tsg support}
+\item{min_citations_tsg}{minimum citation count for CancerMine TSG support}
 
-\item{min_citations_oncogene}{minimum citations
-(CancerMine) for oncogene support}
+\item{min_citations_oncogene}{minimum citation count for CancerMine
+proto-oncogene support}
+
+\item{min_sources_tsg}{minimum number of sources (NCG, CGC, CancerMine)
+that must contribute to TSG status}
+
+\item{min_sources_oncogene}{minimum number of sources (NCG, CGC, CancerMine)
+that must contribute to proto-oncogene status}
+
+\item{min_sources_driver}{minimum number of sources (NCG, CGC, CancerMine,
+TCGA, IntoGen) that must contribute to cancer driver gene status}
 }
 \value{
-data frame with cancer gene annotations
+data frame with cancer gene annotation status
 }
 \description{
 Function to classify genes as tumor suppressors/proto-oncogenes,

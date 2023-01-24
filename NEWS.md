@@ -1,3 +1,7 @@
+# Version 0.6.7
+
+* Fixed a bug in the helper function `assign_cancer_gene_evidence`
+
 # Version 0.6.6
 
 * Upgraded CancerMine (v49, January 2023)

@@ -2,7 +2,7 @@ Package: geneOncoX
 Type: Package
 Title: Human gene annotations for the oncology domain
 Version: 0.6.6
-Date: 2023-01-19
+Date: 2023-01-24
 Authors@R: person(given = "Sigve", family = "Nakken", role = c("aut", "cre"),
              email = "sigven@ifi.uio.no",
              comment = c(ORCID = "0000-0001-8468-2050"))
@@ -34,6 +34,6 @@ Suggests:
 VignetteBuilder: knitr
 License: MIT + file LICENSE
 Encoding: UTF-8
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3
 Roxygen: list(markdown = TRUE)
 Config/testthat/edition: 3

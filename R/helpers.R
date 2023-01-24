@@ -331,16 +331,25 @@ write_bed_file <- function(bed_data,
 #' driver etc. based on multiple lines of evidence.
 #'
 #' @param gox_basic output from geneOncoX::get_basic()
-#' @param min_citations_tsg minimum citations (CancerMine) for tsg support
-#' @param min_citations_oncogene minimum citations
-#'   (CancerMine) for oncogene support
+#' @param min_citations_tsg minimum citation count for CancerMine TSG support
+#' @param min_citations_oncogene minimum citation count for CancerMine 
+#' proto-oncogene support
+#' @param min_sources_tsg minimum number of sources (NCG, CGC, CancerMine) 
+#' that must contribute to TSG status
+#' @param min_sources_oncogene minimum number of sources (NCG, CGC, CancerMine) 
+#' that must contribute to proto-oncogene status
+#' @param min_sources_driver minimum number of sources (NCG, CGC, CancerMine,  
+#' TCGA, IntoGen) that must contribute to cancer driver gene status
 #'
-#' @return data frame with cancer gene annotations
+#' @return data frame with cancer gene annotation status
 #' @keywords internal
 #'
 assign_cancer_gene_evidence <- function(gox_basic = NULL,
                                         min_citations_tsg = 15,
-                                        min_citations_oncogene = 15) {
+                                        min_citations_oncogene = 15,
+                                        min_sources_tsg = 1,
+                                        min_sources_oncogene = 1,
+                                        min_sources_driver = 2) {
   tsg_oncogene_driver <- list()
 
   #### CancerMine: Tumor suppressor genes and oncogene annotation
@@ -629,10 +638,10 @@ assign_cancer_gene_evidence <- function(gox_basic = NULL,
 
 
   driver_genes <- as.data.frame(dplyr::bind_rows(
-    tsg_oncogene_driver$CGC,
-    tsg_oncogene_driver$IntOGen
-  ) |>
-    dplyr::bind_rows(tsg_oncogene_driver$NCG) |>
+    dplyr::filter(tsg_oncogene_driver$CGC, driver == T),
+    tsg_oncogene_driver$IntOGen) |>
+    dplyr::bind_rows(
+      dplyr::filter(tsg_oncogene_driver$NCG, driver == T)) |>
     dplyr::bind_rows(
       dplyr::filter(
         tsg_oncogene_driver$CancerMine,
@@ -665,7 +674,7 @@ assign_cancer_gene_evidence <- function(gox_basic = NULL,
       ),
       .groups = "drop"
     ) |>
-    dplyr::filter(.data$driver != FALSE) |>
+    #dplyr::filter(.data$driver != FALSE) |>
     dplyr::mutate(driver = dplyr::if_else(
       stringr::str_detect(.data$driver, "&"),
       TRUE,
@@ -674,9 +683,8 @@ assign_cancer_gene_evidence <- function(gox_basic = NULL,
 
 
   oncogenes <- as.data.frame(dplyr::bind_rows(
-    tsg_oncogene_driver$CGC,
-    tsg_oncogene_driver$NCG
-  ) |>
+    dplyr::filter(tsg_oncogene_driver$CGC, oncogene == T),
+    dplyr::filter(tsg_oncogene_driver$NCG, oncogene == T)) |>
     dplyr::bind_rows(tsg_oncogene_driver$CancerMine) |>
     dplyr::mutate(
       oncogene = dplyr::if_else(
@@ -703,7 +711,7 @@ assign_cancer_gene_evidence <- function(gox_basic = NULL,
       ),
       .groups = "drop"
     ) |>
-    dplyr::filter(.data$oncogene != FALSE) |>
+    #dplyr::filter(.data$oncogene != FALSE) |>
     dplyr::mutate(oncogene = dplyr::if_else(
       stringr::str_detect(.data$oncogene, "&"),
       TRUE,
@@ -711,9 +719,8 @@ assign_cancer_gene_evidence <- function(gox_basic = NULL,
     )))
 
   tsgs <- as.data.frame(dplyr::bind_rows(
-    tsg_oncogene_driver$CGC,
-    tsg_oncogene_driver$NCG
-  ) |>
+    dplyr::filter(tsg_oncogene_driver$CGC, tsg == T),
+    dplyr::filter(tsg_oncogene_driver$NCG, tsg == T)) |>
     dplyr::bind_rows(tsg_oncogene_driver$CancerMine) |>
     dplyr::mutate(
       tsg = dplyr::if_else(
@@ -740,7 +747,7 @@ assign_cancer_gene_evidence <- function(gox_basic = NULL,
       ),
       .groups = "drop"
     ) |>
-    dplyr::filter(.data$tsg != FALSE) |>
+    #dplyr::filter(.data$tsg != FALSE) |>
     dplyr::mutate(tsg = dplyr::if_else(
       stringr::str_detect(.data$tsg, "&"),
       TRUE,
@@ -776,8 +783,49 @@ assign_cancer_gene_evidence <- function(gox_basic = NULL,
         .data$driver_links, "^, ", ""
       ),
       ", , ", ", "
+    )) |>
+    dplyr::mutate(oncogene_links = dplyr::if_else(
+      is.na(oncogene_links),'', as.character(oncogene_links)
+    )) |>
+    dplyr::mutate(tsg_links = dplyr::if_else(
+      is.na(tsg_links),'', as.character(tsg_links)
+    )) |>
+    dplyr::mutate(driver_links = dplyr::if_else(
+      is.na(driver_links),'', as.character(driver_links)
+    )) |>
+    dplyr::mutate(cancergene_evidence = dplyr::if_else(
+      !is.na(tsg_links) |
+        !is.na(oncogene_links) |
+        !is.na(driver_links),
+      paste0(  
+        oncogene_links, ", ",
+        tsg_links, ", ",
+        driver_links),
+      as.character(NA)
+      )
+    ) |>
+    dplyr::mutate(cancergene_evidence = stringr::str_replace_all(
+      cancergene_evidence, "^(, ){1,}", ""
+    )) |>
+    dplyr::mutate(cancergene_evidence = stringr::str_replace_all(
+      cancergene_evidence, "(, ){2,}", ", "
+    )) |>
+    dplyr::mutate(tsg = dplyr::if_else(
+      as.numeric(stringr::str_count(tsg_support, "&") + 1) < 
+        min_sources_tsg | is.na(tsg_support),
+      FALSE, as.logical(tsg)
+    )) |>
+    dplyr::mutate(oncogene = dplyr::if_else(
+      as.numeric(stringr::str_count(oncogene_support, "&") + 1) <  
+        min_sources_oncogene | is.na(oncogene_support),
+      FALSE, as.logical(oncogene)
+    )) |>
+    dplyr::mutate(driver = dplyr::if_else(
+      as.numeric(stringr::str_count(driver_support, "&") + 1) <  
+        min_sources_tsg | is.na(driver_support),
+      FALSE, as.logical(driver)
     ))
-
+  
   num_oncogene_all <-
     dplyr::filter(
       tsg_oncogene_driver_evidence,
@@ -824,12 +872,12 @@ assign_cancer_gene_evidence <- function(gox_basic = NULL,
       "gene classification)"
     )
   )
-  lgr::lgr$info(
-    paste0(
-      "Driver/proto-oncogene/tumor suppressor gene stats - ",
-      "support from at least one source:"
-    )
-  )
+  # lgr::lgr$info(
+  #   paste0(
+  #     "Driver/proto-oncogene/tumor suppressor gene stats - ",
+  #     "support from at least one source:"
+  #   )
+  # )
   lgr::lgr$info(
     paste0(
       "A total of n = ", nrow(num_oncogene_all),
