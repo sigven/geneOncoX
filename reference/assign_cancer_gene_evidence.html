@@ -14,7 +14,7 @@ driver etc. based on multiple lines of evidence."><meta property="og:image" cont
     
     <a class="navbar-brand me-2" href="../index.html">geneOncoX</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.7</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,7 +63,10 @@ driver etc. based on multiple lines of evidence.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">assign_cancer_gene_evidence</span><span class="op">(</span></span>
 <span>  gox_basic <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  min_citations_tsg <span class="op">=</span> <span class="fl">15</span>,</span>
-<span>  min_citations_oncogene <span class="op">=</span> <span class="fl">15</span></span>
+<span>  min_citations_oncogene <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>  min_sources_tsg <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  min_sources_oncogene <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  min_sources_driver <span class="op">=</span> <span class="fl">2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -74,19 +77,34 @@ driver etc. based on multiple lines of evidence.</p>
 
 
 <dt>min_citations_tsg</dt>
-<dd><p>minimum citations (CancerMine) for tsg support</p></dd>
+<dd><p>minimum citation count for CancerMine TSG support</p></dd>
 
 
 <dt>min_citations_oncogene</dt>
-<dd><p>minimum citations
-(CancerMine) for oncogene support</p></dd>
+<dd><p>minimum citation count for CancerMine
+proto-oncogene support</p></dd>
+
+
+<dt>min_sources_tsg</dt>
+<dd><p>minimum number of sources (NCG, CGC, CancerMine)
+that must contribute to TSG status</p></dd>
+
+
+<dt>min_sources_oncogene</dt>
+<dd><p>minimum number of sources (NCG, CGC, CancerMine)
+that must contribute to proto-oncogene status</p></dd>
+
+
+<dt>min_sources_driver</dt>
+<dd><p>minimum number of sources (NCG, CGC, CancerMine,
+TCGA, IntoGen) that must contribute to cancer driver gene status</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>data frame with cancer gene annotations</p>
+<p>data frame with cancer gene annotation status</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
