@@ -42,7 +42,7 @@ get_intogen_driver_genes <- function(gene_info = NULL) {
       )) |>
       dplyr::left_join(
         dplyr::select(gene_info, symbol, entrezgene),
-        by = c("symbol")
+        by = c("symbol"), multiple = "all"
       ) |>
       dplyr::filter(!is.na(entrezgene)) |>
       dplyr::select(-symbol) |>
@@ -92,7 +92,7 @@ get_curated_fp_cancer_genes <- function(gene_info = NULL) {
     dplyr::filter(!is.na(symbol)) |>
     dplyr::left_join(
       dplyr::select(gene_info, symbol, entrezgene),
-      by = c("symbol")
+      by = c("symbol"), multiple = "all"
     ) |>
     dplyr::filter(!is.na(entrezgene)) |>
     dplyr::select(-symbol)
@@ -144,7 +144,7 @@ get_tcga_driver_genes <- function() {
         frequency = tissue_frequency
       ) |>
       dplyr::mutate(frequency = as.numeric(frequency)) |>
-      dplyr::left_join(tcga_projects, by = c("tumor")) |>
+      dplyr::left_join(tcga_projects, by = c("tumor"), multiple = "all") |>
       dplyr::select(symbol, tumor, name, frequency) |>
       dplyr::mutate(frequency = as.numeric(frequency)) |>
       dplyr::mutate(name_freq = paste0(
@@ -311,7 +311,7 @@ get_signaling_pathway_genes <- function(gene_info) {
   ) |>
     dplyr::left_join(
       dplyr::select(gene_info, symbol, entrezgene),
-      by = "symbol"
+      by = "symbol", multiple = "all"
     ) |>
     dplyr::select(-c(symbol, sanchezvega2018_signaling_pathway_short))
 
@@ -391,7 +391,7 @@ get_cancer_gene_census <- function(origin = "somatic",
       cgc_tier = tier,
       moi = molecular_genetics
     ) |>
-    dplyr::left_join(cgc_hallmark_genes, by = "symbol") |>
+    dplyr::left_join(cgc_hallmark_genes, by = "symbol", multiple = "all") |>
     dplyr::mutate(cgc_hallmark = dplyr::if_else(
       is.na(cgc_hallmark),
       FALSE,
@@ -629,7 +629,7 @@ get_network_of_cancer_genes <- function(ncg_version = "7.0") {
   ncg <- ncg |>
     dplyr::left_join(
       ncg_phenotype_cleaned,
-      by = "entrezgene"
+      by = "entrezgene", multiple = "all"
     )
 
   lgr::lgr$info(
@@ -702,7 +702,7 @@ get_cancermine_genes <- function(cancermine_version = "49") {
   }
 
   pmids <- pmids |>
-    dplyr::inner_join(all_citations, by = c("pmid"))
+    dplyr::inner_join(all_citations, by = c("pmid"), multiple = "all")
 
   pmids_oncogene <- as.data.frame(
     pmids |>
@@ -820,7 +820,7 @@ get_cancermine_genes <- function(cancermine_version = "49") {
         doid_oncogene = paste(unique(cancer_id), collapse = ","),
         .groups = "drop"
       ) |>
-      dplyr::inner_join(pmids_oncogene, by = "entrezgene") |>
+      dplyr::inner_join(pmids_oncogene, by = "entrezgene", multiple = "all") |>
       dplyr::distinct()
   )
 
@@ -842,7 +842,8 @@ get_cancermine_genes <- function(cancermine_version = "49") {
         unique(cancer_id),
         collapse = ","
       ), .groups = "drop") |>
-      dplyr::inner_join(pmids_tsgene, by = "entrezgene") |>
+      dplyr::inner_join(
+        pmids_tsgene, by = "entrezgene", multiple = "all") |>
       dplyr::distinct()
   )
   n_hc_tsgene <- tsgene |>
@@ -863,7 +864,8 @@ get_cancermine_genes <- function(cancermine_version = "49") {
         unique(cancer_id),
         collapse = ","
       ), .groups = "drop") |>
-      dplyr::inner_join(pmids_cdriver, by = "entrezgene") |>
+      dplyr::inner_join(pmids_cdriver, 
+                        by = "entrezgene", multiple = "all") |>
       dplyr::distinct()
   )
   n_hc_cdriver <- cdriver |>
@@ -871,8 +873,8 @@ get_cancermine_genes <- function(cancermine_version = "49") {
     nrow()
 
   cancermine_full <- cdriver |>
-    dplyr::full_join(tsgene, by = "entrezgene") |>
-    dplyr::full_join(oncogene, by = "entrezgene") |>
+    dplyr::full_join(tsgene, by = "entrezgene", multiple = "all") |>
+    dplyr::full_join(oncogene, by = "entrezgene", multiple = "all") |>
     dplyr::rename(
       cancermine_pmid_driver = pmids_cdriver,
       cancermine_pmid_tsg = pmids_tsgene,

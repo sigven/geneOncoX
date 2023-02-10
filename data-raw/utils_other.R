@@ -65,7 +65,8 @@ get_gene_info_ncbi <- function(update = T) {
   gene_info <- gene_info |>
     dplyr::left_join(
       ensgene_id_count,
-      by = c("ensembl_gene_id")
+      by = c("ensembl_gene_id"), 
+      multiple = "all"
     ) |>
     dplyr::mutate(ensembl_gene_id = dplyr::if_else(
       !is.na(n) & n > 1,
@@ -151,7 +152,7 @@ get_gene_aliases_ncbi <- function(gene_info,
       dplyr::group_by(alias) |>
       dplyr::summarise(n_primary_map = dplyr::n(), .groups = "drop") |>
       dplyr::filter(n_primary_map > 1) |>
-      dplyr::inner_join(gene_synonyms, by = "alias") |>
+      dplyr::inner_join(gene_synonyms, by = "alias", multiple = "all") |>
       dplyr::select(
         alias, symbol, entrezgene,
         n_primary_map
@@ -163,7 +164,7 @@ get_gene_aliases_ncbi <- function(gene_info,
   )
 
   unambiguous_aliases <- gene_synonyms |>
-    dplyr::inner_join(unique_aliases, by = "alias") |>
+    dplyr::inner_join(unique_aliases, by = "alias", multiple = "all") |>
     dplyr::bind_rows(primary_to_primary_all) |>
     dplyr::filter(
       !(alias == "PD-1" & symbol != "PDCD1")
@@ -388,7 +389,7 @@ get_f1cdx <- function(gene_info = NULL) {
     dplyr::arrange(symbol) |>
     dplyr::rename(foundation_one_f1cdx = F1CDx) |>
     dplyr::inner_join(
-      dplyr::select(gene_info, symbol, entrezgene)
+      dplyr::select(gene_info, symbol, entrezgene), multiple = "all"
     ) |>
     dplyr::select(-symbol)
 
@@ -413,7 +414,7 @@ get_tso500 <- function(gene_info = NULL,
     dplyr::mutate(symbol = stringr::str_trim(symbol)) |>
     dplyr::left_join(
       dplyr::select(gene_info, entrezgene, symbol),
-      by = "symbol"
+      by = "symbol", multiple = "all"
     )
   tso500_snv_indel_complete <- tso500_snv_indel |>
     dplyr::filter(is.na(entrezgene)) |>
@@ -421,7 +422,7 @@ get_tso500 <- function(gene_info = NULL,
     dplyr::rename(alias = symbol) |>
     dplyr::left_join(
       dplyr::filter(gene_alias$records, ambiguous == FALSE),
-      by = "alias"
+      by = "alias", multiple = "all"
     ) |>
     dplyr::select(-c(alias, n_primary_map, ambiguous)) |>
     dplyr::bind_rows(
@@ -448,7 +449,7 @@ get_tso500 <- function(gene_info = NULL,
         entrezgene,
         symbol
       ),
-      by = "symbol"
+      by = "symbol", multiple = "all"
     ) |>
     dplyr::mutate(
       TSO500 = "CNA_GAIN"
@@ -469,7 +470,7 @@ get_tso500 <- function(gene_info = NULL,
     dplyr::rename(alias = symbol) |>
     dplyr::left_join(
       dplyr::filter(gene_alias$records, ambiguous == FALSE),
-      by = "alias"
+      by = "alias", multiple = "all"
     ) |>
     dplyr::select(-c(alias, n_primary_map, ambiguous)) |>
     dplyr::bind_rows(
@@ -492,7 +493,7 @@ get_tso500 <- function(gene_info = NULL,
     )) |>
     dplyr::left_join(
       dplyr::select(gene_info, entrezgene, symbol),
-      by = "symbol"
+      by = "symbol", multiple = "all"
     ) |>
     dplyr::mutate(
       TSO500 = "RNA_FUSION"
@@ -551,10 +552,11 @@ get_dna_repair_genes <- function(gene_info = NULL) {
 
   dna_repair_all <-
     dnarepair_class |>
-    dplyr::left_join(dnarepair_activity, by = "symbol") |>
+    dplyr::left_join(dnarepair_activity, 
+                     by = "symbol", multiple = "all") |>
     dplyr::left_join(
       dplyr::select(gene_info, entrezgene, symbol),
-      by = "symbol"
+      by = "symbol", multiple = "all"
     ) |>
     dplyr::select(-symbol)
 

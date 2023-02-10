@@ -200,18 +200,30 @@ gene_basic$metadata <- metadata[["basic"]]
 
 gene_basic$records <- gene_info |>
   dplyr::select(-ensembl_gene_id) |>
-  dplyr::left_join(gene_summary) |>
-  dplyr::left_join(cgc) |>
-  dplyr::left_join(ncg) |>
-  dplyr::left_join(intogen_drivers) |>
-  dplyr::left_join(fp_drivers) |>
-  dplyr::left_join(dna_repair) |>
-  dplyr::left_join(tso500) |>
-  dplyr::left_join(f1cdx) |>
-  dplyr::left_join(signaling_genes) |>
-  dplyr::left_join(cancermine_genes) |>
-  dplyr::left_join(tcga_drivers) |>
-  dplyr::left_join(dbnsfp_annotations) |>
+  dplyr::left_join(gene_summary,
+                   by = "entrezgene", multiple = "all") |>
+  dplyr::left_join(cgc,
+                   by = "entrezgene", multiple = "all") |>
+  dplyr::left_join(ncg,
+                   by = "entrezgene", multiple = "all") |>
+  dplyr::left_join(intogen_drivers,
+                   by = "entrezgene", multiple = "all") |>
+  dplyr::left_join(fp_drivers,
+                   by = "entrezgene", multiple = "all") |>
+  dplyr::left_join(dna_repair,
+                   by = "entrezgene", multiple = "all") |>
+  dplyr::left_join(tso500,
+                   by = "symbol", multiple = "all") |>
+  dplyr::left_join(f1cdx,
+                   by = "entrezgene", multiple = "all") |>
+  dplyr::left_join(signaling_genes,
+                   by = "entrezgene", multiple = "all") |>
+  dplyr::left_join(cancermine_genes,
+                   by = "entrezgene", multiple = "all") |>
+  dplyr::left_join(tcga_drivers,
+                   by = "symbol", multiple = "all") |>
+  dplyr::left_join(dbnsfp_annotations,
+                   by = "entrezgene", multiple = "all") |>
   dplyr::mutate(cancermine_n_cit_oncogene = dplyr::if_else(
     is.na(cancermine_n_cit_oncogene),
     as.integer(0),
@@ -305,6 +317,7 @@ rm(cgc_gl)
 rm(cgc)
 rm(cgc_som)
 rm(intogen_drivers)
+rm(gene_gencode)
 rm(fp_drivers)
 rm(dna_repair)
 rm(signaling_genes)

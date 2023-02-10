@@ -190,7 +190,7 @@ get_panel_app_genes <-
           gene_info, hgnc_id,
           entrezgene, name
         ),
-        by = "hgnc_id"
+        by = "hgnc_id", multiple = "all"
       ) |>
       dplyr::rename(genename = name) |>
       dplyr::select(-hgnc_id) |>
@@ -258,7 +258,8 @@ get_acmg_secondary_findings <- function(gene_info = NULL,
         as.character(disease_phenotype)
       )) |>
       dplyr::left_join(umls_concept,
-        by = c("disease_phenotype" = "cui_name")
+        by = c("disease_phenotype" = "cui_name"), 
+        multiple = "all"
       ) |>
       dplyr::select(-c(source, main_term)) |>
       dplyr::mutate(cui = dplyr::if_else(
@@ -276,7 +277,7 @@ get_acmg_secondary_findings <- function(gene_info = NULL,
       # dplyr::rename(predisp_syndrome_cui = cui) |>
       dplyr::left_join(
         dplyr::select(gene_info, symbol, entrezgene),
-        by = c("symbol")
+        by = c("symbol"), multiple = "all"
       ) |>
       dplyr::group_by(
         entrezgene, gene_mim,
@@ -386,7 +387,7 @@ get_predisposition_genes_huang018 <- function(gene_info = NULL) {
     ) |>
     dplyr::left_join(
       dplyr::select(gene_info, symbol, entrezgene),
-      by = c("symbol")
+      by = c("symbol"), multiple = "all"
     ) |>
     dplyr::mutate(source = "TCGA_PANCAN_2018") |>
     dplyr::select(-symbol)
@@ -415,13 +416,14 @@ get_predisposition_genes_huang018 <- function(gene_info = NULL) {
     dplyr::select(symbol, predisp_syndrome_cui, susceptibility_cui) |>
     dplyr::left_join(
       dplyr::select(gene_info, symbol, entrezgene),
-      by = c("symbol")
+      by = c("symbol"), multiple = "all"
     ) |>
     dplyr::select(-symbol) |>
     dplyr::distinct()
 
   tcga_pancan2018_genes <- tcga_pancan2018_genes |>
-    dplyr::left_join(tcga_2018_predisposition_umls, by = "entrezgene") |>
+    dplyr::left_join(tcga_2018_predisposition_umls, 
+                     by = "entrezgene", multiple = "all") |>
     dplyr::select(entrezgene, source, dplyr::everything())
 
   return(tcga_pancan2018_genes)
@@ -450,7 +452,7 @@ get_curated_predisposition_genes <- function(gene_info = NULL) {
         entrezgene,
         ensembl_gene_id
       ),
-      by = c("ensembl_gene_id")
+      by = c("ensembl_gene_id"), multiple = "all"
     ) |>
     dplyr::select(
       entrezgene, source,
@@ -478,7 +480,7 @@ get_curated_predisposition_genes <- function(gene_info = NULL) {
         gene_info,
         symbol, entrezgene
       ),
-      by = c("symbol")
+      by = c("symbol"), multiple = "all"
     ) |>
     dplyr::select(entrezgene, source)
 
@@ -554,7 +556,7 @@ get_moi_mod_maxwell2016 <- function(gene_info = NULL) {
         gene_info,
         symbol, entrezgene
       ),
-      by = c("symbol")
+      by = c("symbol"), multiple = "all"
     ) |>
     dplyr::select(entrezgene, mod_maxwell, moi_maxwell) |>
     dplyr::distinct()
@@ -645,7 +647,7 @@ get_predisposition_genes <- function(gene_info = NULL,
           gene_info,
           symbol, entrezgene
         ),
-        by = c("entrezgene")
+        by = c("entrezgene"), multiple = "all"
       ) |>
       dplyr::group_by(symbol, entrezgene) |>
       dplyr::summarise(
@@ -689,7 +691,9 @@ get_predisposition_genes <- function(gene_info = NULL,
         "AD/AR",
         as.character(moi)
       )) |>
-      dplyr::left_join(mod_moi_predisposition, by = "entrezgene") |>
+      dplyr::left_join(
+        mod_moi_predisposition, 
+        by = "entrezgene", multiple = "all") |>
       dplyr::rename(mechanism_of_disease = mod_maxwell) |>
       dplyr::mutate(moi = dplyr::if_else(
         nchar(moi) == 0 & !is.na(moi_maxwell),

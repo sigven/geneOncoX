@@ -181,7 +181,8 @@ gencode_get_transcripts <-
       }
       gencode <- as.data.frame(
         gencode |>
-          dplyr::left_join(chromosome_lengths, by = c("chrom")) |>
+          dplyr::left_join(chromosome_lengths, 
+                           by = c("chrom"), multiple = "all") |>
           dplyr::rowwise() |>
           dplyr::mutate(
             start = dplyr::if_else(
@@ -235,7 +236,7 @@ gencode_get_transcripts <-
         by = c(
           "symbol", "ensembl_gene_id",
           "ensembl_transcript_id"
-        )
+        ), multiple = "all"
       ) |>
       dplyr::left_join(
         dplyr::select(
@@ -243,7 +244,7 @@ gencode_get_transcripts <-
           principal_isoform_flag,
           ensembl_transcript_id
         ),
-        by = "ensembl_transcript_id"
+        by = "ensembl_transcript_id", multiple = "all"
       ) |>
       gencode_expand_basic() |>
       dplyr::left_join(
@@ -251,7 +252,7 @@ gencode_get_transcripts <-
         by = c(
           "uniprot_acc",
           "ensembl_transcript_id"
-        )
+        ), multiple = "all"
       ) |>
       sort_bed_regions() |>
       dplyr::rename(
@@ -346,7 +347,7 @@ gencode_expand_basic <- function(gencode) {
         single_transcripts_per_gene,
         ensembl_gene_id, basic_expanded
       ),
-      by = "ensembl_gene_id"
+      by = "ensembl_gene_id", multiple = "all"
     ) |>
     dplyr::mutate(tag = dplyr::case_when(
       is.na(tag) & basic_expanded == TRUE ~ "basic",
@@ -431,11 +432,11 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
   xref_biomart <- xref_biomart_1 |>
     dplyr::left_join(
       xref_biomart_2,
-      by = "ensembl_transcript_id"
+      by = "ensembl_transcript_id", multiple = "all"
     ) |>
     dplyr::left_join(
       xref_biomart_3,
-      by = "ensembl_transcript_id"
+      by = "ensembl_transcript_id", multiple = "all"
     ) |>
     dplyr::distinct() |>
     dplyr::mutate(hgnc_id = as.integer(
@@ -488,7 +489,7 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
       dplyr::left_join(ensXref, by = c(
         "ensembl_gene_id",
         "ensembl_transcript_id"
-      ))
+      ), multiple = "all")
   }
 
   for (xref in c(
@@ -517,7 +518,7 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
         ))
     )
     transcript_df <- transcript_df |>
-      dplyr::left_join(ensXref, by = c("ensembl_gene_id"))
+      dplyr::left_join(ensXref, by = c("ensembl_gene_id"), multiple = "all")
   }
 
 
@@ -535,7 +536,7 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
           entrezgene,
           name
         ),
-        by = "hgnc_id"
+        by = "hgnc_id", multiple = "all"
       )
   )
 
@@ -555,7 +556,7 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
           entrezgene,
           name
         ),
-        by = "entrezgene"
+        by = "entrezgene", multiple = "all"
       )
   )
 
@@ -574,7 +575,7 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
           symbol,
           name
         ),
-        by = "symbol"
+        by = "symbol", multiple = "all"
       )
   )
 
@@ -599,13 +600,13 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
     dplyr::rename(symbol = alias) |>
     dplyr::inner_join(
       dplyr::select(gene_info, entrezgene, hgnc_id, name),
-      by = "entrezgene"
+      by = "entrezgene", multiple = "all"
     )
 
   gene_xrefs_maps[["by_alias"]] <- gencode_transcripts_xref |>
     dplyr::filter(is.na(entrezgene) & is.na(name) & !is.na(symbol)) |>
     dplyr::select(-c(entrezgene, name, hgnc_id)) |>
-    dplyr::left_join(unambiguous_aliases, by = "symbol")
+    dplyr::left_join(unambiguous_aliases, by = "symbol", multiple = "all")
 
   gencode_transcripts_xref_final <- as.data.frame(
     dplyr::anti_join(
@@ -701,9 +702,11 @@ get_uniprot_map <- function(uniprot_version = "2022_04") {
 
   uniprot_map <-
     dplyr::full_join(
-      dplyr::left_join(refseq_id_acc, up_id_acc, by = c("uniprot_acc")),
-      dplyr::left_join(ensembl_up_acc, up_id_acc, by = c("uniprot_acc")),
-      by = c("uniprot_acc", "uniprot_id")
+      dplyr::left_join(refseq_id_acc, up_id_acc, 
+                       by = c("uniprot_acc"), multiple = "all"),
+      dplyr::left_join(ensembl_up_acc, up_id_acc, 
+                       by = c("uniprot_acc"), multiple = "all"),
+      by = c("uniprot_acc", "uniprot_id"), multiple = "all"
     ) |>
     dplyr::filter(!is.na(uniprot_id)) |>
     dplyr::mutate(ensembl_transcript_id_full = ensembl_transcript_id) |>
