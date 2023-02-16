@@ -419,7 +419,7 @@ for (elem in c(
         "gene_", ""
       ),
       date = as.character(Sys.Date()),
-      pVersion = version_minor_bumped
+      pVersion = version_bump
     ) |>
     dplyr::mutate(
       md5Checksum =
