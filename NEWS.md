@@ -1,4 +1,10 @@
-# Version 0.6.7
+# Version 0.6.9
+
+* Implemented new helper function `assign_cancer_gene_roles`
+   - adds confidence support for tumor supressive/oncogenic roles of genes
+     based on amount of literature evidence and manual curation status
+
+# Version 0.6.8
 
 * Upgraded GENCODE (v43), Ensembl v109
 

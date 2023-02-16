@@ -317,7 +317,7 @@ rm(cgc_gl)
 rm(cgc)
 rm(cgc_som)
 rm(intogen_drivers)
-rm(gene_gencode)
+#rm(gene_gencode)
 rm(fp_drivers)
 rm(dna_repair)
 rm(signaling_genes)
@@ -337,15 +337,37 @@ rm(up_xref_grch38)
 
 
 ## upload to Google Drive
-version_minor_bumped <- paste0(
-  "0.",
-  as.character(as.integer(substr(
-    as.character(
-      packageVersion("geneOncoX")
-    ), 3, 3
-  )) + 1),
-  ".0"
-)
+
+version_bumps <- list()
+version_bumps[['major']] <- 
+  as.character(
+    semver::increment_version(
+      semver::parse_version(
+        as.character(packageVersion("geneOncoX"))
+      ), "major", 1L
+    )
+  )
+version_bumps[['minor']] <- 
+  as.character(
+    semver::increment_version(
+      semver::parse_version(
+        as.character(packageVersion("geneOncoX"))
+      ), "minor", 1L
+    )
+  )
+version_bumps[['patch']] <- 
+  as.character(
+    semver::increment_version(
+      semver::parse_version(
+        as.character(packageVersion("geneOncoX"))
+      ), "patch", 1L
+    )
+  )
+
+
+bump_version_level <- "patch"
+version_bump <- version_bumps[[bump_version_level]]
+
 
 gd_records <- list()
 db_id_ref <- data.frame()
@@ -361,26 +383,26 @@ rm(gene_alias)
 rm(gene_basic)
 rm(gene_panels)
 rm(gene_predisposition)
+rm(gene_gencode)
 
 # googledrive::drive_auth_configure(api_key = Sys.getenv("GD_KEY"))
 
 for (elem in c(
   "basic", "predisposition",
-  "panels", "alias", "gencode"
-)) {
+  "panels", "alias", "gencode")) {
   saveRDS(db[[elem]],
     file = paste0(
       "data-raw/gd_local/gene_", elem, "_v",
-      version_minor_bumped, ".rds"
+      version_bump, ".rds"
     )
   )
 
   (gd_records[[elem]] <- googledrive::drive_upload(
     paste0(
       "data-raw/gd_local/gene_",
-      elem, "_v", version_minor_bumped, ".rds"
+      elem, "_v", version_bump, ".rds"
     ),
-    paste0("geneOncoX/gene_", elem, "_v", version_minor_bumped, ".rds")
+    paste0("geneOncoX/gene_", elem, "_v", version_bump, ".rds")
   ))
 
   google_rec_df <-

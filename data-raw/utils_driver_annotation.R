@@ -511,9 +511,14 @@ get_network_of_cancer_genes <- function(ncg_version = "7.0") {
       "data-raw", "ncg", "ncg.tsv"
     ), header = TRUE,
     stringsAsFactors = FALSE, sep = "\t",
-    quote = "", comment.char = ""
-  ) |>
-    janitor::clean_names() |>
+    quote = "", comment.char = "") |>
+    janitor::clean_names() |> 
+    
+    # dplyr::select(
+    #   ncg_tsg, entrez, vogelstein_annotation,
+    #   cgc_annotation, saito_annotation, cancer_type
+    # ) |>
+    dplyr::distinct() |>
     dplyr::mutate(ncg_driver = dplyr::if_else(
       !is.na(type) & type == "\"Canonical Cancer Driver\"",
       as.logical(TRUE), as.logical(FALSE)
@@ -688,15 +693,12 @@ get_cancermine_genes <- function(cancermine_version = "49") {
     all_citations <- read.table(
       file = gzfile(cancermine_citations_fname),
       sep = "\t", header = FALSE, quote = "",
-      comment.char = "", stringsAsFactors = FALSE
-    ) |>
+      comment.char = "", stringsAsFactors = FALSE) |>
       magrittr::set_colnames(c("pmid", "citation", "citation_link")) |>
-      dplyr::mutate(
-        citation = stringi::stri_enc_toascii(citation)
-      ) |>
-      dplyr::mutate(
-        citation_link = stringi::stri_enc_toascii(citation_link)
-      ) |>
+      # dplyr::mutate(
+      #   citation = stringi::stri_enc_toascii(citation)) |>
+      # dplyr::mutate(
+      #   citation_link = stringi::stri_enc_toascii(citation_link)) |>
       dplyr::distinct() |>
       dplyr::arrange(desc(pmid))
   }
