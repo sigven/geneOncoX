@@ -932,7 +932,12 @@ assign_cancer_gene_evidence <- function(gox_basic = NULL,
 #' driver etc. based on multiple lines of evidence.
 #'
 #' @param gox_basic output from geneOncoX::get_basic()
-#' @param citation_cutoff_cancermine minimum citation count for genes with CancerMine support only
+#' @param citation_cutoff_cm1 minimum citation count for genes with CancerMine 
+#' support only (MODERATE)
+#' @param citation_cutoff_cm2 minimum citation count for genes with CancerMine 
+#' support only (STRONG)
+#' @param citation_cutoff_cm1 minimum citation count for genes with CancerMine 
+#' support only (VERY STRONG)
 #' @param min_sources_driver minimum number of sources (NCG, CGC, CancerMine,  
 #' TCGA, IntoGen) that must contribute to cancer driver gene status
 #'
@@ -940,7 +945,9 @@ assign_cancer_gene_evidence <- function(gox_basic = NULL,
 #' @keywords internal
 #'
 assign_cancer_gene_roles <- function(gox_basic = NULL,
-                                     citation_cutoff_cancermine = 10,
+                                     citation_cutoff_cm1 = 5,
+                                     citation_cutoff_cm2 = 10,
+                                     citation_cutoff_cm3 = 20,
                                      min_sources_driver = 2) {
   tsg_oncogene_driver <- list()
   
@@ -1233,7 +1240,7 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         dplyr::filter(
           tsg_oncogene_driver$CancerMine,
           nchar(.data$links_driver) > 0 &
-            cancermine_n_cit_driver >= citation_cutoff_cancermine
+            cancermine_n_cit_driver >= citation_cutoff_cm1
         )
       ) |>
       dplyr::select(-c("cancermine_n_cit_oncogene",
@@ -1330,35 +1337,51 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         as.numeric(cancermine_n_cit_tsg))) |>
     dplyr::filter(
       !(is.na(oncogene) & 
-          cancermine_n_cit_oncogene < citation_cutoff_cancermine)) |>
+          cancermine_n_cit_oncogene <= citation_cutoff_cm1)) |>
     dplyr::mutate(
       oncogene_confidence_level = dplyr::if_else(
-        (!is.na(oncogene) & cancermine_n_cit_oncogene == 0) |
+        
+        ## 1) in CGC/NCG and <= 5 citations in Cancermine
+        ## 2) NOT in CGC/NCG and CancerMine citations in [6,10]
+        (!is.na(oncogene) & 
+           cancermine_n_cit_oncogene <= citation_cutoff_cm1) |
           (is.na(oncogene) & 
-             cancermine_n_cit_oncogene < citation_cutoff_cancermine &
+             cancermine_n_cit_oncogene > citation_cutoff_cm1 &
+             cancermine_n_cit_oncogene <= citation_cutoff_cm2 & 
              (is.na(cancermine_oncogene_tsg_citratio) |
                 cancermine_oncogene_tsg_citratio > 0.33)),
-        "WEAK",
+        "MODERATE",
         "NONE"
       )) |>
     dplyr::mutate(
       oncogene_confidence_level = dplyr::if_else(
+        
+        ## 1) in CGC/NCG and and CancerMine citations in [6,10]
+        ## 2) NOT in CGC/NCG and CancerMine citations in [11,20]
+        
         (!is.na(oncogene) & 
-           cancermine_n_cit_oncogene < citation_cutoff_cancermine &
+           cancermine_n_cit_oncogene > citation_cutoff_cm1 &
+           cancermine_n_cit_oncogene <= citation_cutoff_cm2 &
            cancermine_n_cit_oncogene > 0) |
           (is.na(oncogene) & 
-             cancermine_n_cit_oncogene >= citation_cutoff_cancermine &
-             #cancermine_n_cit_oncogene <= 15 &
+             cancermine_n_cit_oncogene > citation_cutoff_cm2 &
+             cancermine_n_cit_oncogene <= citation_cutoff_cm3 &
              (is.na(cancermine_oncogene_tsg_citratio) |
                 cancermine_oncogene_tsg_citratio > 0.33)),
-        "MODERATE",
+        "STRONG",
         as.character(oncogene_confidence_level)
       )) |>
     dplyr::mutate(
       oncogene_confidence_level = dplyr::if_else(
+        
+        ## 1) in CGC/NCG and and CancerMine citations in [10,]
+        ## 2) NOT in CGC/NCG and CancerMine citations in [20,]
+        
         (!is.na(oncogene) & 
-           cancermine_n_cit_oncogene >= citation_cutoff_cancermine),
-        "STRONG",
+           cancermine_n_cit_oncogene >= citation_cutoff_cm2) |
+          (is.na(oncogene) & 
+             cancermine_n_cit_oncogene > citation_cutoff_cm3),
+        "VERY STRONG",
         as.character(oncogene_confidence_level)
       )) |>
     dplyr::filter(
@@ -1376,12 +1399,12 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
       ) 
     ) |>
     dplyr::mutate(oncogene_support = dplyr::case_when(
-      oncogene_confidence_level == "MODERATE" &
+      oncogene_confidence_level == "STRONG" &
         !is.na(full_oncogene_support) ~
       paste(full_oncogene_support, "CancerMine", sep = "&"),
-      oncogene_confidence_level == "MODERATE" &
+      oncogene_confidence_level == "STRONG" &
         is.na(full_oncogene_support) ~ "CancerMine",
-      oncogene_confidence_level == "WEAK" ~ full_oncogene_support,
+      oncogene_confidence_level == "MODERATE" ~ full_oncogene_support,
       TRUE ~ paste(full_oncogene_support, "CancerMine", sep = "&")
     )) |>
     dplyr::select(
@@ -1445,36 +1468,54 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         is.na(cancermine_n_cit_tsg),
         as.numeric(0),
         as.numeric(cancermine_n_cit_tsg))) |>
+    
     dplyr::filter(
       !(is.na(tsg) & 
-          cancermine_n_cit_tsg < citation_cutoff_cancermine)) |>
+          cancermine_n_cit_tsg <= citation_cutoff_cm1)) |>
     dplyr::mutate(
       tsg_confidence_level = dplyr::if_else(
-        (!is.na(tsg) & cancermine_n_cit_tsg == 0) |
+        
+        ## 1) in CGC/NCG and <= 5 citations in Cancermine
+        ## 2) NOT in CGC/NCG and CancerMine citations in [6,10]
+        (!is.na(tsg) & 
+           cancermine_n_cit_tsg <= citation_cutoff_cm1) |
           (is.na(tsg) & 
-             cancermine_n_cit_tsg < citation_cutoff_cancermine &
+             cancermine_n_cit_tsg > citation_cutoff_cm1 &
+             cancermine_n_cit_tsg <= citation_cutoff_cm2 & 
              (is.na(cancermine_oncogene_tsg_citratio) |
-                cancermine_oncogene_tsg_citratio < 3)),
-        "WEAK",
+                cancermine_oncogene_tsg_citratio > 0.33)),
+        "MODERATE",
         "NONE"
       )) |>
     dplyr::mutate(
       tsg_confidence_level = dplyr::if_else(
+        
+        ## 1) in CGC/NCG and and CancerMine citations in [6,10]
+        ## 2) NOT in CGC/NCG and CancerMine citations in [11,20]
+        
         (!is.na(tsg) & 
-           cancermine_n_cit_tsg < citation_cutoff_cancermine &
+           cancermine_n_cit_tsg > citation_cutoff_cm1 &
+           cancermine_n_cit_tsg <= citation_cutoff_cm2 &
            cancermine_n_cit_tsg > 0) |
           (is.na(tsg) & 
-             cancermine_n_cit_tsg >= citation_cutoff_cancermine &
+             cancermine_n_cit_tsg > citation_cutoff_cm2 &
+             cancermine_n_cit_tsg <= citation_cutoff_cm3 &
              (is.na(cancermine_oncogene_tsg_citratio) |
-                cancermine_oncogene_tsg_citratio < 3)),
-        "MODERATE",
+                cancermine_oncogene_tsg_citratio > 0.33)),
+        "STRONG",
         as.character(tsg_confidence_level)
       )) |>
     dplyr::mutate(
       tsg_confidence_level = dplyr::if_else(
+        
+        ## 1) in CGC/NCG and and CancerMine citations in [10,]
+        ## 2) NOT in CGC/NCG and CancerMine citations in [20,]
+        
         (!is.na(tsg) & 
-           cancermine_n_cit_tsg >= 10),
-        "STRONG",
+           cancermine_n_cit_tsg >= citation_cutoff_cm2) |
+          (is.na(tsg) & 
+             cancermine_n_cit_tsg > citation_cutoff_cm3),
+        "VERY STRONG",
         as.character(tsg_confidence_level)
       )) |>
     dplyr::filter(
@@ -1492,12 +1533,24 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
       ) 
     ) |>
     dplyr::mutate(tsg_support = dplyr::case_when(
+      tsg_confidence_level == "STRONG" &
+        !is.na(full_tsg_support) ~
+        paste(full_tsg_support, "CancerMine", sep = "&"),
+      tsg_confidence_level == "STRONG" &
+        is.na(full_tsg_support) ~ "CancerMine",
+      
       tsg_confidence_level == "MODERATE" &
         !is.na(full_tsg_support) ~
         paste(full_tsg_support, "CancerMine", sep = "&"),
       tsg_confidence_level == "MODERATE" &
         is.na(full_tsg_support) ~ "CancerMine",
-      tsg_confidence_level == "WEAK" ~ full_tsg_support,
+      
+      tsg_confidence_level == "VERY STRONG" &
+        !is.na(full_tsg_support) ~
+        paste(full_tsg_support, "CancerMine", sep = "&"),
+      tsg_confidence_level == "VERY STRONG" &
+        is.na(full_tsg_support) ~ "CancerMine",
+      
       TRUE ~ paste(full_tsg_support, "CancerMine", sep = "&")
     )) |>
     dplyr::select(
