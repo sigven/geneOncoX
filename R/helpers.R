@@ -1380,7 +1380,9 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         (!is.na(oncogene) & 
            cancermine_n_cit_oncogene >= citation_cutoff_cm2) |
           (is.na(oncogene) & 
-             cancermine_n_cit_oncogene > citation_cutoff_cm3),
+             cancermine_n_cit_oncogene > citation_cutoff_cm3 &
+             (is.na(cancermine_oncogene_tsg_citratio) |
+                cancermine_oncogene_tsg_citratio > 0.33)),
         "VERY STRONG",
         as.character(oncogene_confidence_level)
       )) |>
@@ -1401,12 +1403,35 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
     dplyr::mutate(oncogene_support = dplyr::case_when(
       oncogene_confidence_level == "STRONG" &
         !is.na(full_oncogene_support) ~
-      paste(full_oncogene_support, "CancerMine", sep = "&"),
+        paste(full_oncogene_support, "CancerMine", sep = "&"),
       oncogene_confidence_level == "STRONG" &
         is.na(full_oncogene_support) ~ "CancerMine",
-      oncogene_confidence_level == "MODERATE" ~ full_oncogene_support,
+      oncogene_confidence_level == "MODERATE" &
+        !is.na(full_oncogene_support) ~
+        paste(full_oncogene_support, "CancerMine", sep = "&"),
+      oncogene_confidence_level == "MODERATE" &
+        is.na(full_oncogene_support) ~ "CancerMine",
+      
+      oncogene_confidence_level == "VERY STRONG" &
+        !is.na(full_oncogene_support) ~
+        paste(full_oncogene_support, "CancerMine", sep = "&"),
+      oncogene_confidence_level == "VERY STRONG" &
+        is.na(full_oncogene_support) ~ "CancerMine",
+      
       TRUE ~ paste(full_oncogene_support, "CancerMine", sep = "&")
     )) |>
+    # dplyr::mutate(oncogene_support = dplyr::case_when(
+    #   oncogene_confidence_level == "STRONG" &
+    #     !is.na(full_oncogene_support) ~
+    #   paste(full_oncogene_support, "CancerMine", sep = "&"),
+    #   oncogene_confidence_level == "STRONG" &
+    #     is.na(full_oncogene_support) ~ "CancerMine",
+    #   oncogene_confidence_level == "MODERATE" ~ full_oncogene_support,
+    #   TRUE ~ paste(full_oncogene_support, "CancerMine", sep = "&")
+    # )) |>
+    dplyr::mutate(oncogene_support = stringr::str_replace(
+      oncogene_support, "^NA&","")
+    ) |>
     dplyr::select(
       -c("full_oncogene_support",
          "full_oncogene_links",
@@ -1483,7 +1508,7 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
              cancermine_n_cit_tsg > citation_cutoff_cm1 &
              cancermine_n_cit_tsg <= citation_cutoff_cm2 & 
              (is.na(cancermine_oncogene_tsg_citratio) |
-                cancermine_oncogene_tsg_citratio > 0.33)),
+                cancermine_oncogene_tsg_citratio < 3)),
         "MODERATE",
         "NONE"
       )) |>
@@ -1501,7 +1526,7 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
              cancermine_n_cit_tsg > citation_cutoff_cm2 &
              cancermine_n_cit_tsg <= citation_cutoff_cm3 &
              (is.na(cancermine_oncogene_tsg_citratio) |
-                cancermine_oncogene_tsg_citratio > 0.33)),
+                cancermine_oncogene_tsg_citratio < 3)),
         "STRONG",
         as.character(tsg_confidence_level)
       )) |>
@@ -1514,13 +1539,16 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         (!is.na(tsg) & 
            cancermine_n_cit_tsg >= citation_cutoff_cm2) |
           (is.na(tsg) & 
-             cancermine_n_cit_tsg > citation_cutoff_cm3),
+             cancermine_n_cit_tsg > citation_cutoff_cm3 &
+             (is.na(cancermine_oncogene_tsg_citratio) |
+                cancermine_oncogene_tsg_citratio < 3)),
         "VERY STRONG",
         as.character(tsg_confidence_level)
       )) |>
     dplyr::filter(
       tsg_confidence_level != "NONE"
     ) |>
+   
     dplyr::mutate(
       tsg_links = dplyr::case_when(
         !is.na(full_tsg_links) &
@@ -1538,7 +1566,6 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         paste(full_tsg_support, "CancerMine", sep = "&"),
       tsg_confidence_level == "STRONG" &
         is.na(full_tsg_support) ~ "CancerMine",
-      
       tsg_confidence_level == "MODERATE" &
         !is.na(full_tsg_support) ~
         paste(full_tsg_support, "CancerMine", sep = "&"),
@@ -1553,6 +1580,9 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
       
       TRUE ~ paste(full_tsg_support, "CancerMine", sep = "&")
     )) |>
+    dplyr::mutate(tsg_support = stringr::str_replace(
+      tsg_support, "^NA&","")
+    ) |>
     dplyr::select(
       -c("full_tsg_support",
          "full_tsg_links",
@@ -1661,8 +1691,12 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
     )
   )
   lgr::lgr$info("Counts per confidence level:")
-  lgr::lgr$info(paste(plyr::count(sort(oncogene_all$oncogene_confidence_level))$x, collapse = " | "))
-  lgr::lgr$info(paste(plyr::count(sort(oncogene_all$oncogene_confidence_level))$freq, collapse = " | "))
+  lgr::lgr$info(
+    paste(plyr::count(
+      sort(oncogene_all$oncogene_confidence_level))$x, collapse = " | "))
+  lgr::lgr$info(
+    paste(plyr::count(
+      sort(oncogene_all$oncogene_confidence_level))$freq, collapse = " | "))
   
   
   lgr::lgr$info(
@@ -1672,8 +1706,12 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
     )
   )
   lgr::lgr$info("Counts per confidence level:")
-  lgr::lgr$info(paste(plyr::count(sort(tsg_all$tsg_confidence_level))$x, collapse = " | "))
-  lgr::lgr$info(paste(plyr::count(sort(tsg_all$tsg_confidence_level))$freq, collapse = " | "))
+  lgr::lgr$info(
+    paste(plyr::count(
+      sort(tsg_all$tsg_confidence_level))$x, collapse = " | "))
+  lgr::lgr$info(
+    paste(plyr::count(
+      sort(tsg_all$tsg_confidence_level))$freq, collapse = " | "))
   
   
   lgr::lgr$info(
