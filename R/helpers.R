@@ -1005,8 +1005,6 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         "source")
     ) |>
     dplyr::filter(
-      #.data$oncogene == TRUE |
-      #  .data$tsg == TRUE |
       stringr::str_detect(
         .data$links_oncogene, ": <"
       ) |
@@ -1161,9 +1159,10 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         "links_tsg",
         "source")
     ) |>
-    dplyr::filter(.data$oncogene == TRUE |
-                    .data$tsg == TRUE |
-                    .data$driver == TRUE) |>
+    dplyr::filter(
+      .data$oncogene == TRUE |
+        .data$tsg == TRUE |
+        .data$driver == TRUE) |>
     dplyr::distinct()
   
   ### IntOGen: Predicted cancer driver genes
@@ -1349,7 +1348,7 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
              cancermine_n_cit_oncogene > citation_cutoff_cm1 &
              cancermine_n_cit_oncogene <= citation_cutoff_cm2 & 
              (is.na(cancermine_oncogene_tsg_citratio) |
-                cancermine_oncogene_tsg_citratio > 0.33)),
+                cancermine_oncogene_tsg_citratio > 0.4)),
         "MODERATE",
         "NONE"
       )) |>
@@ -1367,7 +1366,7 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
              cancermine_n_cit_oncogene > citation_cutoff_cm2 &
              cancermine_n_cit_oncogene <= citation_cutoff_cm3 &
              (is.na(cancermine_oncogene_tsg_citratio) |
-                cancermine_oncogene_tsg_citratio > 0.33)),
+                cancermine_oncogene_tsg_citratio > 0.4)),
         "STRONG",
         as.character(oncogene_confidence_level)
       )) |>
@@ -1382,7 +1381,7 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
           (is.na(oncogene) & 
              cancermine_n_cit_oncogene > citation_cutoff_cm3 &
              (is.na(cancermine_oncogene_tsg_citratio) |
-                cancermine_oncogene_tsg_citratio > 0.33)),
+                cancermine_oncogene_tsg_citratio > 0.4)),
         "VERY STRONG",
         as.character(oncogene_confidence_level)
       )) |>
@@ -1508,7 +1507,7 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
              cancermine_n_cit_tsg > citation_cutoff_cm1 &
              cancermine_n_cit_tsg <= citation_cutoff_cm2 & 
              (is.na(cancermine_oncogene_tsg_citratio) |
-                cancermine_oncogene_tsg_citratio < 3)),
+                cancermine_oncogene_tsg_citratio < 2.5)),
         "MODERATE",
         "NONE"
       )) |>
@@ -1526,7 +1525,7 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
              cancermine_n_cit_tsg > citation_cutoff_cm2 &
              cancermine_n_cit_tsg <= citation_cutoff_cm3 &
              (is.na(cancermine_oncogene_tsg_citratio) |
-                cancermine_oncogene_tsg_citratio < 3)),
+                cancermine_oncogene_tsg_citratio < 2.5)),
         "STRONG",
         as.character(tsg_confidence_level)
       )) |>
@@ -1541,7 +1540,7 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
           (is.na(tsg) & 
              cancermine_n_cit_tsg > citation_cutoff_cm3 &
              (is.na(cancermine_oncogene_tsg_citratio) |
-                cancermine_oncogene_tsg_citratio < 3)),
+                cancermine_oncogene_tsg_citratio < 2.5)),
         "VERY STRONG",
         as.character(tsg_confidence_level)
       )) |>
