@@ -1,3 +1,8 @@
+
+# Version 0.9.0
+
+* Upgraded CancerMine (v50, March 2023)
+
 # Version 0.6.9
 
 * Implemented new helper function `assign_cancer_gene_roles`

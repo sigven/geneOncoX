@@ -179,7 +179,8 @@ cgc_som_gl <- cgc_som |>
   dplyr::select(-cgc_moi)
 
 cgc <- cgc_all |>
-  dplyr::left_join(cgc_som_gl)
+  dplyr::left_join(
+    cgc_som_gl, by = c("entrezgene","cgc_hallmark","cgc_tier"))
 
 
 intogen_drivers <- get_intogen_driver_genes(gene_info = gene_info)
@@ -190,7 +191,7 @@ f1cdx <- get_f1cdx(gene_info = gene_info)
 tso500 <- get_tso500(gene_info = gene_info, gene_alias = gene_alias)
 dna_repair <- get_dna_repair_genes(gene_info = gene_info)
 cancermine_genes <- get_cancermine_genes(
-  cancermine_version = "49"
+  cancermine_version = "50"
 )
 signaling_genes <- get_signaling_pathway_genes(gene_info = gene_info)
 dbnsfp_annotations <- get_dbnsfp_gene_annotations()
@@ -339,33 +340,18 @@ rm(up_xref_grch38)
 ## upload to Google Drive
 
 version_bumps <- list()
-version_bumps[['major']] <- 
-  as.character(
-    semver::increment_version(
-      semver::parse_version(
-        as.character(packageVersion("geneOncoX"))
-      ), "major", 1L
+for(vbump in c('major','minor','patch')){
+  version_bumps[[vbump]] <- 
+    as.character(
+      semver::increment_version(
+        semver::parse_version(
+          as.character(packageVersion("geneOncoX"))
+        ), vbump, 1L
+      )
     )
-  )
-version_bumps[['minor']] <- 
-  as.character(
-    semver::increment_version(
-      semver::parse_version(
-        as.character(packageVersion("geneOncoX"))
-      ), "minor", 1L
-    )
-  )
-version_bumps[['patch']] <- 
-  as.character(
-    semver::increment_version(
-      semver::parse_version(
-        as.character(packageVersion("geneOncoX"))
-      ), "patch", 1L
-    )
-  )
+}
 
-
-bump_version_level <- "patch"
+bump_version_level <- "minor"
 version_bump <- version_bumps[[bump_version_level]]
 
 
@@ -409,7 +395,7 @@ for (elem in c(
     dplyr::select(
       as.data.frame(gd_records[[elem]]), name, id
     ) |>
-    dplyr::rename(
+    dplyr::rename( 
       gid = id,
       filename = name
     ) |>

@@ -327,15 +327,16 @@ get_signaling_pathway_genes <- function(gene_info) {
 }
 
 get_cancer_gene_census <- function(origin = "somatic",
-                                   opentargets_version = "2022.11",
+                                   opentargets_version = "2023.02",
                                    cgc_version = "97") {
   cosmic_cgc <- readr::read_csv(
     file = file.path(
-      "data-raw", "cancer_gene_census",
-      "cancer_gene_census_97.csv"
+      "data-raw", 
+      "cancer_gene_census",
+      paste0("cancer_gene_census_",
+             cgc_version,".csv")
     ),
-    show_col_types = FALSE
-  ) |>
+    show_col_types = FALSE) |>
     janitor::clean_names()
 
   cgc_hallmark_genes <- readRDS(
@@ -651,17 +652,17 @@ get_network_of_cancer_genes <- function(ncg_version = "7.0") {
 get_cancermine_genes <- function(cancermine_version = "49") {
   cancermine_sentences_fname <-
     paste0(
-      "data-raw/cancermine/data-raw/cancermine_sentences.v",
+      "data-raw/cancermine/cancermine_sentences.v",
       cancermine_version, ".tsv.gz"
     )
   cancermine_citations_fname <-
     paste0(
-      "data-raw/cancermine/output/cancermine_citations.v",
+      "data-raw/cancermine/cancermine_citations.v",
       cancermine_version, ".tsv.gz"
     )
   cancermine_collated_fname <-
     paste0(
-      "data-raw/cancermine/data-raw/cancermine_collated.v",
+      "data-raw/cancermine/cancermine_collated.v",
       cancermine_version, ".tsv.gz"
     )
 
