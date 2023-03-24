@@ -432,11 +432,15 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
   xref_biomart <- xref_biomart_1 |>
     dplyr::left_join(
       xref_biomart_2,
-      by = "ensembl_transcript_id", multiple = "all"
+      by = "ensembl_transcript_id", 
+      multiple = "all", 
+      relationship = "many-to-many"
     ) |>
     dplyr::left_join(
       xref_biomart_3,
-      by = "ensembl_transcript_id", multiple = "all"
+      by = "ensembl_transcript_id", 
+      multiple = "all",
+      relationship = "many-to-many"
     ) |>
     dplyr::distinct() |>
     dplyr::mutate(hgnc_id = as.integer(
@@ -489,7 +493,8 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
       dplyr::left_join(ensXref, by = c(
         "ensembl_gene_id",
         "ensembl_transcript_id"
-      ), multiple = "all")
+      ), multiple = "all", 
+      relationship = "many-to-many")
   }
 
   for (xref in c(
@@ -518,7 +523,10 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
         ))
     )
     transcript_df <- transcript_df |>
-      dplyr::left_join(ensXref, by = c("ensembl_gene_id"), multiple = "all")
+      dplyr::left_join(
+        ensXref, by = c("ensembl_gene_id"), 
+        multiple = "all", 
+        relationship = "many-to-many")
   }
 
 
@@ -536,7 +544,9 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
           entrezgene,
           name
         ),
-        by = "hgnc_id", multiple = "all"
+        by = "hgnc_id", 
+        multiple = "all", 
+        relationship = "many-to-many"
       )
   )
 
@@ -575,7 +585,8 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
           symbol,
           name
         ),
-        by = "symbol", multiple = "all"
+        by = "symbol", multiple = "all", 
+        relationship = "many-to-many"
       )
   )
 
