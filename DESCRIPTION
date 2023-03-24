@@ -14,7 +14,7 @@ Description: A collection of datasets relevant for gene annotations in the
 URL: https://github.com/sigven/geneOncoX
 BugReports: https://github.com/sigven/geneOncoX/issues
 Depends: 
-    R (>= 4.2)
+    R (>= 4.1)
 Imports: 
     googledrive,
     lgr,
