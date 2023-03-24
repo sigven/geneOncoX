@@ -29,6 +29,8 @@ library(geneOncoX)
 
 # Installation
 
+*NOTE*: _geneOncoX_ requires that you have R version 4.1 or higher installed
+
 ```{r install, echo = T, eval = F}
 
 if (!("remotes" %in% installed.packages())) {
