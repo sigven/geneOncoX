@@ -1,3 +1,6 @@
+# Version 0.7.1
+
+* Retrieved new PanelApp genes (March 2023)
 
 # Version 0.7.0
 
