@@ -259,7 +259,7 @@ get_acmg_secondary_findings <- function(gene_info = NULL,
       )) |>
       dplyr::left_join(umls_concept,
         by = c("disease_phenotype" = "cui_name"), 
-        multiple = "all"
+        multiple = "all", relationship = "many-to-many"
       ) |>
       dplyr::select(-c(source, main_term)) |>
       dplyr::mutate(cui = dplyr::if_else(
@@ -277,7 +277,8 @@ get_acmg_secondary_findings <- function(gene_info = NULL,
       # dplyr::rename(predisp_syndrome_cui = cui) |>
       dplyr::left_join(
         dplyr::select(gene_info, symbol, entrezgene),
-        by = c("symbol"), multiple = "all"
+        by = c("symbol"), multiple = "all",
+        relationship = "many-to-many"
       ) |>
       dplyr::group_by(
         entrezgene, gene_mim,
@@ -387,7 +388,8 @@ get_predisposition_genes_huang018 <- function(gene_info = NULL) {
     ) |>
     dplyr::left_join(
       dplyr::select(gene_info, symbol, entrezgene),
-      by = c("symbol"), multiple = "all"
+      by = c("symbol"), multiple = "all",
+      relationship = "many-to-many"
     ) |>
     dplyr::mutate(source = "TCGA_PANCAN_2018") |>
     dplyr::select(-symbol)
@@ -668,7 +670,7 @@ get_predisposition_genes <- function(gene_info = NULL,
         phenotypes, "(\\|NA)|(; NA)|(^;)", ""
       )) |>
       dplyr::mutate(phenotypes = stringr::str_replace_all(
-        phenotypes, "^( )?;", ""
+        phenotypes, "^((( ){1,})?;?)", ""
       )) |>
       dplyr::mutate(moi = stringr::str_replace_all(moi, "^&|&$", "")) |>
       dplyr::mutate(predisp_syndrome_cui = stringr::str_replace_all(
