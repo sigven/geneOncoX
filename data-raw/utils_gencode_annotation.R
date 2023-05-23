@@ -634,13 +634,13 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
   return(gencode_transcripts_xref_final)
 }
 
-get_uniprot_map <- function(uniprot_version = "2022_04") {
+get_uniprot_map <- function(uniprot_version = "2023_02") {
   lgr::lgr$info("Retrieving UniProtKB annotation")
   withr::local_options(timeout = max(30000000, getOption("timeout")))
 
   remote_idmapping_dat_fname <-
     paste0(
-      "https://ftp.uniprot.org/pub/databases/uniprot/",
+      "https://ftp.ebi.ac.uk/pub/databases/uniprot/",
       "current_release/knowledgebase/idmapping/by_organism/",
       "HUMAN_9606_idmapping.dat.gz"
     )

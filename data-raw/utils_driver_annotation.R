@@ -328,16 +328,44 @@ get_signaling_pathway_genes <- function(gene_info) {
 
 get_cancer_gene_census <- function(origin = "somatic",
                                    opentargets_version = "2023.02",
-                                   cgc_version = "97") {
-  cosmic_cgc <- readr::read_csv(
+                                   cgc_version = "98") {
+  
+  
+  
+  cosmic_genes <- readr::read_tsv(
+    file = file.path(
+      "data-raw",
+      "cancer_gene_census",
+      paste0("Cosmic_Genes_v",
+             cgc_version,"_GRCh38.tsv.gz")
+    ),
+    show_col_types = FALSE) |>
+    janitor::clean_names() |>
+    dplyr::select(
+      cosmic_gene_id,
+      entrez_id
+    ) |>
+    dplyr::rename(
+      entrez_gene_id = entrez_id
+    ) |>
+    dplyr::distinct()
+  
+  cosmic_cgc <- readr::read_tsv(
     file = file.path(
       "data-raw", 
       "cancer_gene_census",
-      paste0("cancer_gene_census_",
-             cgc_version,".csv")
+      paste0("Cosmic_CancerGeneCensus_v",
+             cgc_version,"_GRCh38.tsv.gz")
     ),
     show_col_types = FALSE) |>
-    janitor::clean_names()
+    janitor::clean_names() |>
+    dplyr::left_join(
+      cosmic_genes,
+      by = "cosmic_gene_id") |>
+    dplyr::select(
+      -c("chromosome","genome_start","genome_stop",
+         "chr_band","synonyms")
+    )
 
   cgc_hallmark_genes <- readRDS(
     file = file.path(
@@ -365,11 +393,11 @@ get_cancer_gene_census <- function(origin = "somatic",
 
   if (origin == "somatic") {
     cosmic_cgc <- cosmic_cgc |>
-      dplyr::filter(somatic == "yes")
+      dplyr::filter(somatic == "y")
   } else {
     if (origin == "germline") {
       cosmic_cgc <- cosmic_cgc |>
-        dplyr::filter(germline == "yes")
+        dplyr::filter(germline == "y")
     }
   }
 
@@ -392,7 +420,8 @@ get_cancer_gene_census <- function(origin = "somatic",
       cgc_tier = tier,
       moi = molecular_genetics
     ) |>
-    dplyr::left_join(cgc_hallmark_genes, by = "symbol", multiple = "all") |>
+    dplyr::left_join(
+      cgc_hallmark_genes, by = "symbol", multiple = "all") |>
     dplyr::mutate(cgc_hallmark = dplyr::if_else(
       is.na(cgc_hallmark),
       FALSE,
@@ -442,9 +471,9 @@ get_cancer_gene_census <- function(origin = "somatic",
       cancer_syndrome,
       tumour_types_germline
     ) |>
+    
     ## bug in cancer gene census for ERCC5
     dplyr::mutate(entrezgene = dplyr::case_when(
-      symbol == "ERCC5" ~ as.integer(2073),
       symbol == "MDS2" ~ as.integer(259283),
       symbol == "DUX4L1" ~ as.integer(22947),
       symbol == "MALAT1" ~ as.integer(378938),

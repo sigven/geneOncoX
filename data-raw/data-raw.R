@@ -351,7 +351,7 @@ for(vbump in c('major','minor','patch')){
     )
 }
 
-bump_version_level <- "minor"
+bump_version_level <- "patch"
 version_bump <- version_bumps[[bump_version_level]]
 
 
@@ -365,11 +365,11 @@ db[["alias"]] <- gene_alias
 db[["predisposition"]] <- gene_predisposition
 db[["panels"]] <- gene_panels
 
-rm(gene_alias)
-rm(gene_basic)
-rm(gene_panels)
-rm(gene_predisposition)
-rm(gene_gencode)
+# rm(gene_alias)
+# rm(gene_basic)
+# rm(gene_panels)
+# rm(gene_predisposition)
+# rm(gene_gencode)
 
 # googledrive::drive_auth_configure(api_key = Sys.getenv("GD_KEY"))
 

@@ -568,7 +568,7 @@ get_dbnsfp_gene_annotations <- function() {
     "Retrieving gene damage scores/OMIM annotation from dbNSFP_gene"
   )
   dbnsfp_gene <- read.table(
-    file = gzfile(file.path("data-raw", "dbnsfp", "dbNSFP_gene.gz")),
+    file = gzfile(file.path("data-raw", "dbnsfp", "dbNSFP4.4_gene.gz")),
     sep = "\t",
     header = TRUE, stringsAsFactors = FALSE,
     na.strings = c(".", ""), comment.char = "",

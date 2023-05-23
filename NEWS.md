@@ -1,3 +1,10 @@
+# Version 0.7.2
+
+* Updated Cancer Gene Census (v98)
+* Updated gene annotations from dbNSFP (v4.4)
+* Updated Network of Cancer Genes (v7.1)
+* Updated UniProt (2023_02)
+
 # Version 0.7.1
 
 * Retrieved new PanelApp genes (March 2023)
