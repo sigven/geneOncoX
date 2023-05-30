@@ -1,3 +1,7 @@
+# Version 0.7.3
+
+* Minor change to column names in cancer predisposition gene records
+
 # Version 0.7.2
 
 * Updated Cancer Gene Census (v98)
