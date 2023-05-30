@@ -3,7 +3,7 @@
 #'
 #' @description
 #' Downloads and retrieves a pre-processed dataset of human cancer
-#' predisposition genes. Genes deemed relevant for cancer predisposition
+#' predisposition genes (CPGs). Genes deemed relevant for cancer predisposition
 #' have been collected from multiple resources:
 #'
 #' * \href{https://panelapp.genomicsengland.co.uk/}{Genomics England PanelApp}
@@ -41,15 +41,15 @@
 #' \itemize{
 #'   \item \emph{symbol} - official gene symbol
 #'   \item \emph{entrezgene} - Entrez gene identifier
-#'   \item \emph{moi} - mechanism of inheritance (AD, AR)
-#'   \item \emph{predisp_syndrome_cui} - Concept unique identifiers
+#'   \item \emph{cpg_moi} - mechanism of inheritance (AD, AR)
+#'   \item \emph{cpg_syndrome_cui} - Concept unique identifiers
 #'   (CUI, UMLS) - inherited cancer syndromes
-#'   \item \emph{predisp_cancer_cui} - Concept unique identifiers (CUI, UMLS) -
+#'   \item \emph{cpg_cancer_cui} - Concept unique identifiers (CUI, UMLS) -
 #'   inherited cancer conditions
-#'   \item \emph{predisp_source} - Sources supporting predisposition gene
+#'   \item \emph{cpg_source} - Sources supporting predisposition gene
 #'   PANEL_APP, CGC, TCGA_PANCAN_2018, OTHER, ACMG_SF
-#'   \item \emph{phenotypes} - associated cancer phenotypes
-#'   \item \emph{mechanism_of_disease} - mechanism of disease)
+#'   \item \emph{cpg_phenotypes} - associated cancer phenotypes
+#'   \item \emph{cpg_mod} - mechanism of disease)
 #' }
 #'
 #' @examples

@@ -722,7 +722,15 @@ get_predisposition_genes <- function(gene_info = NULL,
           stringr::str_detect(predisp_source, "&"),
         stringr::str_replace(predisp_source, "^CURATED_OTHER&|&CURATED_OTHER", ""),
         as.character(predisp_source)
-      ))
+      )) |>
+      dplyr::rename(
+        cpg_source = predisp_source,
+        cpg_syndrome_cui = predisp_syndrome_cui,
+        cpg_cancer_cui = predisp_cancer_cui,
+        cpg_mod = mechanism_of_disease,
+        cpg_moi = moi,
+        cpg_phenotypes = phenotypes
+      )
   )
 
   return(all_predisposition_incidental)

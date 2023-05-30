@@ -45,8 +45,8 @@ gencode_get_transcripts <-
   function(build = "grch38",
            append_regulatory_region = TRUE,
            gencode_version = 42,
-           ensembl_version = 108,
-           uniprot_version = "2022_03",
+           ensembl_version = 109,
+           uniprot_version = "2023_02",
            gene_info = NULL,
            gene_alias = NULL) {
     gencode_ftp_url <-
@@ -145,7 +145,7 @@ gencode_get_transcripts <-
         paste0(
           "Parameter 'append_regulatory_region' is TRUE: ",
           "expanding transcript start/end with 5kb ",
-          "(for VEP consequence compliance)"
+          "(for compliance with VEP upstream/downstream region)"
         )
       )
       chromosome_lengths <- data.frame(
@@ -365,7 +365,7 @@ gencode_expand_basic <- function(gencode) {
 
 gencode_resolve_xrefs <- function(transcript_df = NULL,
                                   build = "grch38",
-                                  ensembl_version = 107,
+                                  ensembl_version = 109,
                                   gene_info = NULL,
                                   gene_alias = NULL) {
   invisible(assertable::assert_colnames(
@@ -414,13 +414,12 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
 
   xref_biomart_1 <- biomaRt::getBM(
     attributes = queryAttributes1,
-    mart = ensembl_mart[[build]]
-  ) |>
+    mart = ensembl_mart[[build]]) |>
     dplyr::rename(entrezgene = entrezgene_id)
+  
   xref_biomart_2 <- biomaRt::getBM(
     attributes = queryAttributes2,
-    mart = ensembl_mart[[build]]
-  ) |>
+    mart = ensembl_mart[[build]]) |>
     dplyr::rename(uniprot_acc = uniprotswissprot)
 
   ## map MANE xrefs with grch38 mart (not available for grch37)
