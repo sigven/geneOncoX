@@ -525,8 +525,8 @@ assign_cancer_gene_evidence <- function(gox_basic = NULL,
         .data$oncogene == TRUE,
         paste0(
           "Oncogenic role (CGC): ",
-          "<a href=\"https://cancer.sanger.ac.uk/census",
-          "\" target=\"_blank\">",
+          "<a href='https://cancer.sanger.ac.uk/census",
+          "' target='_blank'>",
           "YES (TIER ",
           .data$cgc_tier, ")</a>"
         ),
@@ -536,8 +536,8 @@ assign_cancer_gene_evidence <- function(gox_basic = NULL,
         .data$tsg == TRUE,
         paste0(
           "Tumor suppressive role (CGC): ",
-          "<a href=\"https://cancer.sanger.ac.uk/census",
-          "\" target=\"_blank\">",
+          "<a href='https://cancer.sanger.ac.uk/census",
+          "' target='_blank'>",
           "YES (TIER ",
           .data$cgc_tier, ")</a>"
         ),
@@ -547,8 +547,8 @@ assign_cancer_gene_evidence <- function(gox_basic = NULL,
         .data$driver == TRUE,
         paste0(
           "Cancer driver role (CGC): ",
-          "<a href=\"https://cancer.sanger.ac.uk/census",
-          "\" target=\"_blank\">",
+          "<a href='https://cancer.sanger.ac.uk/census",
+          "' target='_blank'>",
           "YES (TIER ",
           .data$cgc_tier, ")</a>"
         ),
@@ -588,9 +588,9 @@ assign_cancer_gene_evidence <- function(gox_basic = NULL,
         .data$intogen_driver == TRUE,
         paste0(
           "Cancer driver role (IntOGen): ",
-          "<a href=\"https://www.intogen.org/search?gene=",
+          "<a href='https://www.intogen.org/search?gene=",
           .data$symbol,
-          "\" target=\"_blank\">",
+          "' target='_blank'>",
           "YES</a>"
         ),
         ""
@@ -618,10 +618,10 @@ assign_cancer_gene_evidence <- function(gox_basic = NULL,
         paste0(
           "Cancer driver role (TCGA PanCancer): ",
           paste0(
-            "<a href=\"https://gdc.cancer.gov/about-data/",
+            "<a href='https://gdc.cancer.gov/about-data/",
             "publications/pancan-driver"
           ),
-          "\" target=\"_blank\">YES</a>"
+          "' target='_blank'>YES</a>"
         ),
         ""
       )
@@ -1039,8 +1039,8 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         .data$oncogene == TRUE,
         paste0(
           "Oncogenic role (NCG): ",
-          "<a href=\"http://ncg.kcl.ac.uk/query.php?gene_name=",
-          .data$entrezgene, "\" target=\"_blank\">",
+          "<a href='http://ncg.kcl.ac.uk/query.php?gene_name=",
+          .data$entrezgene, "' target='_blank'>",
           .data$ncg_phenotype, "</a>"
         ),
         ""
@@ -1049,8 +1049,8 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         .data$tsg == TRUE,
         paste0(
           "Tumor suppressive role (NCG): ",
-          "<a href=\"http://ncg.kcl.ac.uk/query.php?gene_name=",
-          .data$entrezgene, "\" target=\"_blank\">",
+          "<a href='http://ncg.kcl.ac.uk/query.php?gene_name=",
+          .data$entrezgene, "' target='_blank'>",
           .data$ncg_phenotype, "</a>"
         ),
         ""
@@ -1059,8 +1059,8 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         .data$driver == TRUE,
         paste0(
           "Cancer driver role (NCG): ",
-          "<a href=\"http://ncg.kcl.ac.uk/query.php?gene_name=",
-          .data$entrezgene, "\" target=\"_blank\">",
+          "<a href='http://ncg.kcl.ac.uk/query.php?gene_name=",
+          .data$entrezgene, "' target='_blank'>",
           .data$ncg_phenotype, "</a>"
         ),
         ""
@@ -1113,8 +1113,8 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         .data$oncogene == TRUE,
         paste0(
           "Oncogenic role (CGC): ",
-          "<a href=\"https://cancer.sanger.ac.uk/census",
-          "\" target=\"_blank\">",
+          "<a href='https://cancer.sanger.ac.uk/census",
+          "' target='_blank'>",
           "YES (TIER ",
           .data$cgc_tier, ")</a>"
         ),
@@ -1124,8 +1124,8 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         .data$tsg == TRUE,
         paste0(
           "Tumor suppressive role (CGC): ",
-          "<a href=\"https://cancer.sanger.ac.uk/census",
-          "\" target=\"_blank\">",
+          "<a href='https://cancer.sanger.ac.uk/census",
+          "' target='_blank'>",
           "YES (TIER ",
           .data$cgc_tier, ")</a>"
         ),
@@ -1135,8 +1135,8 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         .data$driver == TRUE,
         paste0(
           "Cancer driver role (CGC): ",
-          "<a href=\"https://cancer.sanger.ac.uk/census",
-          "\" target=\"_blank\">",
+          "<a href='https://cancer.sanger.ac.uk/census",
+          "' target='_blank'>",
           "YES (TIER ",
           .data$cgc_tier, ")</a>"
         ),
@@ -1177,9 +1177,9 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         .data$intogen_driver == TRUE,
         paste0(
           "Cancer driver role (IntOGen): ",
-          "<a href=\"https://www.intogen.org/search?gene=",
+          "<a href='https://www.intogen.org/search?gene=",
           .data$symbol,
-          "\" target=\"_blank\">",
+          "' target='_blank'>",
           "YES</a>"
         ),
         ""
@@ -1207,10 +1207,10 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         paste0(
           "Cancer driver role (TCGA PanCancer): ",
           paste0(
-            "<a href=\"https://gdc.cancer.gov/about-data/",
+            "<a href='https://gdc.cancer.gov/about-data/",
             "publications/pancan-driver"
           ),
-          "\" target=\"_blank\">YES</a>"
+          "' target='_blank'>YES</a>"
         ),
         ""
       )
@@ -1648,7 +1648,22 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
     )) |>
     dplyr::mutate(cancergene_evidence = stringr::str_replace_all(
       cancergene_evidence, "(, ){2,}", ", "
-    )) 
+    )) |>
+    dplyr::mutate(driver_links = dplyr::if_else(
+      nchar(driver_links) == 0,
+      as.character(NA), 
+      as.character(driver_links)
+    )) |>
+    dplyr::mutate(tsg_links = dplyr::if_else(
+      nchar(tsg_links) == 0,
+      as.character(NA), 
+      as.character(tsg_links)
+    )) |>
+    dplyr::mutate(oncogene_links = dplyr::if_else(
+      nchar(oncogene_links) == 0,
+      as.character(NA), 
+      as.character(oncogene_links)
+    ))
   
   oncogene_all <-
     dplyr::filter(

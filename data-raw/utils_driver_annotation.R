@@ -23,22 +23,14 @@ get_intogen_driver_genes <- function(gene_info = NULL) {
           unique(Hmisc::capitalize(role)),
           collapse = "&"
         ),
-        intogen_phenotype = paste(unique(cancer_type), collapse = "&"),
+        intogen_phenotype = paste(
+          unique(cancer_type), collapse = "&"),
         .groups = "drop"
       ) |>
       dplyr::mutate(intogen_role = dplyr::if_else(
         is.na(intogen_role) | intogen_role == "NA",
         "Unknown",
         as.character(intogen_role)
-      )) |>
-      dplyr::mutate(symbol = dplyr::case_when(
-        symbol == "CARS" ~ "CARS1",
-        symbol == "FAM46C" ~ "TENT5C",
-        symbol == "H3F3A" ~ "H3-3A",
-        symbol == "HIST1H3B" ~ "H3C2",
-        symbol == "HIST1H4I" ~ "H4C9",
-        symbol == "SEPT9" ~ "SEPTIN9",
-        TRUE ~ as.character(symbol)
       )) |>
       dplyr::left_join(
         dplyr::select(gene_info, symbol, entrezgene),
