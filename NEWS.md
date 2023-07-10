@@ -1,3 +1,9 @@
+# Version 0.7.4
+
+* Updated IntOGen
+* Fixed hyphens in URLs (CGC, NCG, IntOGen)
+* Added licensing terms
+
 # Version 0.7.3
 
 * Minor change to column names in cancer predisposition gene records
