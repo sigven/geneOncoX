@@ -1,3 +1,7 @@
+# Version 0.7.5
+
+* Updated metadata table
+
 # Version 0.7.4
 
 * Updated IntOGen

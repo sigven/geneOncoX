@@ -8,16 +8,16 @@ source("data-raw/utils_other.R")
 metadata <- list()
 for (elem in c("basic", "predisposition", "panels", "alias", "gencode")) {
   metadata[[elem]] <- as.data.frame(openxlsx::read.xlsx(
-    "data-raw/metadata.xlsx",
+    "data-raw/metadata_gene_oncox.xlsx",
     sheet = elem, colNames = TRUE
   ) |>
-    dplyr::mutate(version = dplyr::if_else(
-      is.na(version) &
-        (abbreviation == "ncbi" |
-          abbreviation == "other" |
-          abbreviation == "appris"),
+    dplyr::mutate(source_version = dplyr::if_else(
+      is.na(source_version) &
+        (source_abbreviation == "ncbi" |
+          source_abbreviation == "other" |
+          source_abbreviation == "appris"),
       as.character(Sys.Date()),
-      as.character(version)
+      as.character(source_version)
     )))
 }
 
@@ -55,17 +55,17 @@ gene_gencode$metadata <- metadata[["gencode"]]
 gene_gencode$records[["grch38"]] <- gencode_get_transcripts(
   build = "grch38",
   gene_info = gene_info,
-  gencode_version = as.integer(metadata$gencode[1, ]$version),
-  ensembl_version = as.integer(metadata$gencode[2, ]$version),
-  uniprot_version = as.character(metadata$gencode[3, ]$version),
+  gencode_version = as.integer(metadata$gencode[1, ]$source_version),
+  ensembl_version = as.integer(metadata$gencode[2, ]$source_version),
+  uniprot_version = as.character(metadata$gencode[3, ]$source_version),
   gene_alias = gene_alias
 )
 gene_gencode$records[["grch37"]] <- gencode_get_transcripts(
   build = "grch37",
   gene_info = gene_info,
   gencode_version = as.integer(19),
-  ensembl_version = as.integer(metadata$gencode[2, ]$version),
-  uniprot_version = as.character(metadata$gencode[3, ]$version),
+  ensembl_version = as.integer(metadata$gencode[2, ]$source_version),
+  uniprot_version = as.character(metadata$gencode[3, ]$source_version),
   gene_alias = gene_alias
 )
 
