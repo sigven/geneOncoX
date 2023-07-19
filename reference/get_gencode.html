@@ -38,7 +38,7 @@ package), and UniProt accessions/identifiers."><meta property="og:image" content
     
     <a class="navbar-brand me-2" href="../index.html">geneOncoX</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -93,7 +93,7 @@ package), and UniProt accessions/identifiers.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_gencode</span><span class="op">(</span>cache_dir <span class="op">=</span> <span class="cn">NA</span>, force_download <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_gencode</span><span class="op">(</span>cache_dir <span class="op">=</span> <span class="cn">NA</span>, force_download <span class="op">=</span> <span class="cn">FALSE</span>, ensembl_release <span class="op">=</span> <span class="fl">110</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -112,6 +112,12 @@ package), and UniProt accessions/identifiers.</p>
 <dt>force_download</dt>
 <dd><p>Logical indicating if local cache should be overwritten
 (set to TRUE to re-download if file exists in cache)</p></dd>
+
+
+<dt>ensembl_release</dt>
+<dd><p>version of Ensembl to use - this will
+dictate the version of GENCODE used for grch38 (e.g. 110 implies
+GENCODE v44, 109 implies v43, 108 implies v42 and so on)</p></dd>
 
 </dl></div>
     <div class="section level2">
