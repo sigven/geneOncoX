@@ -21,6 +21,9 @@
 #' @param cache_dir Local directory for data download
 #' @param force_download Logical indicating if local cache should be overwritten
 #' (set to TRUE to re-download if file exists in cache)
+#' @param ensembl_release version of Ensembl to use - this will
+#' dictate the version of GENCODE used for grch38 (e.g. 110 implies
+#' GENCODE v44, 109 implies v43, 108 implies v42 and so on)
 #'
 #' @returns
 #' \strong{metadata} - A data frame with 3 rows and 6 columns:
@@ -93,11 +96,39 @@
 #'
 
 get_gencode <- function(cache_dir = NA,
-                        force_download = FALSE) {
+                        force_download = FALSE,
+                        ensembl_release = 110) {
+  
+  if(ensembl_release > 110 | ensembl_release < 105){
+    lgr::lgr$fatal(
+      paste0("ERROR: Ensembl release must be between 110 and",
+             "105 - exiting"))
+      return(0)
+  }
+  
+  gencode_release <- 44
+  if(ensembl_release == 109){
+    gencode_release <- 43
+  }
+  if(ensembl_release == 108){
+    gencode_release <- 42
+  }
+  if(ensembl_release == 107){
+    gencode_release <- 41
+  }
+  if(ensembl_release == 106){
+    gencode_release <- 40
+  }
+  if(ensembl_release == 105){
+    gencode_release <- 39
+  }
+  
   dat <- get_gox_data(
     cache_dir = cache_dir,
     force_download = force_download,
-    db = "gencode"
+    db = paste0(
+      "gencode_", gencode_release, 
+      "_", ensembl_release)
   )
   return(dat)
 }

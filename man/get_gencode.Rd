@@ -13,13 +13,17 @@
 \url{https://apprisws.bioinfo.cnio.es/landing_page/}
 }
 \usage{
-get_gencode(cache_dir = NA, force_download = FALSE)
+get_gencode(cache_dir = NA, force_download = FALSE, ensembl_release = 110)
 }
 \arguments{
 \item{cache_dir}{Local directory for data download}
 
 \item{force_download}{Logical indicating if local cache should be overwritten
 (set to TRUE to re-download if file exists in cache)}
+
+\item{ensembl_release}{version of Ensembl to use - this will
+dictate the version of GENCODE used for grch38 (e.g. 110 implies
+GENCODE v44, 109 implies v43, 108 implies v42 and so on)}
 }
 \value{
 \strong{metadata} - A data frame with 3 rows and 6 columns:

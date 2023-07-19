@@ -1,3 +1,8 @@
+# Version 0.7.6
+
+* Allowing the possibility to query and retrieve different versions of GENCODE transcripts (using Ensembl version 110 to 105, effectively querying GENCODE v44 to GENCODE v39). This will only
+effect grch38, for grch37, GENCODE v19 will always be used.
+
 # Version 0.7.5
 
 * Updated metadata table
