@@ -402,7 +402,8 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
   queryAttributes2 <- c(
     "ensembl_transcript_id",
     "uniprotswissprot",
-    "refseq_peptide"
+    "refseq_peptide",
+    "description"
   )
 
   queryAttributes3 <- c(
@@ -451,7 +452,8 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
     "uniprot_acc",
     "transcript_mane_select",
     "transcript_mane_plus_clinical",
-    "refseq_mrna"
+    "refseq_mrna",
+    "description"
   )) {
     xref_biomart[!is.na(xref_biomart[, n]) &
       (xref_biomart[, n] == "" |
@@ -463,7 +465,8 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
     "uniprot_acc",
     "transcript_mane_select",
     "transcript_mane_plus_clinical",
-    "refseq_mrna"
+    "refseq_mrna",
+    "description"
   )) {
     ensXref <- as.data.frame(
       xref_biomart |>
@@ -600,7 +603,13 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
 
   gencode_transcripts_xref <-
     do.call(rbind, gene_xrefs_maps) |>
-    dplyr::mutate(entrezgene = as.integer(entrezgene))
+    dplyr::mutate(entrezgene = as.integer(entrezgene)) |>
+    dplyr::mutate(name = dplyr::if_else(
+      is.na(name) & !is.na(description),
+      as.character(description),
+      as.character(name)
+    )) |>
+    dplyr::select(-description)
 
   ## Map remaining gene cross-refs against unambiguous gene alias
   unambiguous_aliases <-
@@ -633,9 +642,10 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
   return(gencode_transcripts_xref_final)
 }
 
-get_uniprot_map <- function(uniprot_version = "2023_02") {
+get_uniprot_map <- function(uniprot_version = "2023_03") {
   lgr::lgr$info("Retrieving UniProtKB annotation")
-  withr::local_options(timeout = max(30000000, getOption("timeout")))
+  withr::local_options(
+    timeout = max(30000000, getOption("timeout")))
 
   remote_idmapping_dat_fname <-
     paste0(
@@ -646,7 +656,8 @@ get_uniprot_map <- function(uniprot_version = "2023_02") {
 
   idmapping_up_kb <- readr::read_tsv(
     file = remote_idmapping_dat_fname,
-    col_names = FALSE, quote = "", show_col_types = FALSE
+    col_names = FALSE, quote = "", 
+    show_col_types = FALSE
   ) |>
     dplyr::filter(X2 == "Ensembl_TRS" |
       X2 == "UniProtKB-ID" |
@@ -660,8 +671,7 @@ get_uniprot_map <- function(uniprot_version = "2023_02") {
 
   ## UniProt accession to Ensembl transcript ID
   ensembl_up_acc <- dplyr::filter(
-    idmapping_up_kb, type == "Ensembl_TRS"
-  ) |>
+    idmapping_up_kb, type == "Ensembl_TRS") |>
     dplyr::select(acc, name) |>
     dplyr::rename(uniprot_acc = acc, ensembl_transcript_id = name) |>
     dplyr::distinct()
@@ -673,7 +683,9 @@ get_uniprot_map <- function(uniprot_version = "2023_02") {
   )
   ensembl_up_acc <- dplyr::semi_join(
     ensembl_up_acc,
-    dplyr::select(unique_ensembl_trans, ensembl_transcript_id),
+    dplyr::select(
+      unique_ensembl_trans, 
+      ensembl_transcript_id),
     by = c("ensembl_transcript_id")
   )
 
@@ -690,7 +702,8 @@ get_uniprot_map <- function(uniprot_version = "2023_02") {
   lgr::lgr$info(
     paste0(
       "A total of ",
-      nrow(up_id_acc), " UniProt protein accessions were parsed"
+      nrow(up_id_acc), 
+      " UniProt protein accessions were parsed"
     )
   )
 
@@ -712,10 +725,12 @@ get_uniprot_map <- function(uniprot_version = "2023_02") {
 
   uniprot_map <-
     dplyr::full_join(
-      dplyr::left_join(refseq_id_acc, up_id_acc, 
-                       by = c("uniprot_acc"), multiple = "all"),
-      dplyr::left_join(ensembl_up_acc, up_id_acc, 
-                       by = c("uniprot_acc"), multiple = "all"),
+      dplyr::left_join(
+        refseq_id_acc, up_id_acc, 
+        by = c("uniprot_acc"), multiple = "all"),
+      dplyr::left_join(
+        ensembl_up_acc, up_id_acc, 
+        by = c("uniprot_acc"), multiple = "all"),
       by = c("uniprot_acc", "uniprot_id"), multiple = "all"
     ) |>
     dplyr::filter(!is.na(uniprot_id)) |>
