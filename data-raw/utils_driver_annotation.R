@@ -318,9 +318,10 @@ get_signaling_pathway_genes <- function(gene_info) {
   return(signaling_genes)
 }
 
-get_cancer_gene_census <- function(origin = "somatic",
-                                   opentargets_version = "2023.02",
-                                   cgc_version = "98") {
+get_cancer_gene_census <- function(
+    origin = "somatic",
+    opentargets_version = "2023.06",
+    cgc_version = "98") {
   
   
   

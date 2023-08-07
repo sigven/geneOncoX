@@ -235,8 +235,8 @@ rm(cgc_all)
 rm(tcga_drivers)
 rm(cgc_som_gl)
 rm(f1cdx)
-rm(up_xref)
-rm(up_xref_grch38)
+#rm(up_xref)
+#rm(up_xref_grch38)
 
 
 ## upload to Google Drive

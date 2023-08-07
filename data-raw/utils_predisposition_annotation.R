@@ -217,7 +217,7 @@ get_acmg_secondary_findings <- function(gene_info = NULL,
       file.path(
         "data-raw", "predisposition",
         "acmg_secondary_findings",
-        "acmg_secondary_findings_v3.1.xlsx"
+        "acmg_secondary_findings_v3.2.xlsx"
       ),
       sheet = 1, startRow = 3
     ) |>

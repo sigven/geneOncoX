@@ -1,9 +1,19 @@
 url: https://sigven.github.io/geneOncoX/
 title: geneOncoX
-template:
-  bootstrap: 5
 toc:
   depth: 3
+template:
+  bootstrap: 5
+  includes:
+    in_header: |
+       <script async src="https://www.googletagmanager.com/gtag/js?id=G-GSP3QKXJ81"></script>
+       <script>
+         window.dataLayer = window.dataLayer || [];
+         function gtag(){dataLayer.push(arguments);}
+         gtag('js', new Date());
+
+         gtag('config', 'G-GSP3QKXJ81');
+       </script>
 authors:
   Sigve Nakken:
     href: "https://github.com/sigven"
