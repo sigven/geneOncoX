@@ -1,4 +1,9 @@
-# Version 0.7.6
+# Version 0.7.9
+
+* NCBI gene function update
+* Helper function `get_cancer_gene_roles` updated
+
+# Version 0.7.8
 
 * Grab gene names/descriptions from Ensembl if missing from NCBI
 

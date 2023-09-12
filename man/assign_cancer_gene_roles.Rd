@@ -7,20 +7,18 @@ driver etc. based on multiple lines of evidence.}
 \usage{
 assign_cancer_gene_roles(
   gox_basic = NULL,
-  citation_cutoff_cm1 = 5,
-  citation_cutoff_cm2 = 10,
-  citation_cutoff_cm3 = 20,
+  min_citation_support = 5,
+  min_citation_support_cm_only = 20,
   min_sources_driver = 2
 )
 }
 \arguments{
 \item{gox_basic}{output from geneOncoX::get_basic()}
 
-\item{citation_cutoff_cm1}{minimum citation count for genes with CancerMine
-support only (VERY STRONG)}
+\item{min_citation_support}{minimum citation count for support from CancerMine}
 
-\item{citation_cutoff_cm2}{minimum citation count for genes with CancerMine
-support only (STRONG)}
+\item{min_citation_support_cm_only}{minimum citation count for genes annotated
+with cancer gene roles from CancerMine only}
 
 \item{min_sources_driver}{minimum number of sources (NCG, CGC, CancerMine,
 TCGA, IntoGen) that must contribute to cancer driver gene status}

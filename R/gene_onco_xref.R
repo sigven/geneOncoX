@@ -63,7 +63,7 @@ get_gox_data <- function(cache_dir = NA,
         "', argument force_download = FALSE"
       ))
       lgr::lgr$info(paste0("Object 'gene_", db, "' sucessfully loaded"))
-      if (db == "gencode") {
+      if (startsWith(db,"gencode")) {
         lgr::lgr$info(paste0(
           "Retrieved n = ", nrow(dat[["records"]][["grch37"]]),
           " records for",
