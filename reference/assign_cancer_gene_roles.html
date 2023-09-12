@@ -20,7 +20,7 @@ driver etc. based on multiple lines of evidence."><meta property="og:image" cont
     
     <a class="navbar-brand me-2" href="../index.html">geneOncoX</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.9</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,9 +68,8 @@ driver etc. based on multiple lines of evidence.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">assign_cancer_gene_roles</span><span class="op">(</span></span>
 <span>  gox_basic <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  citation_cutoff_cm1 <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  citation_cutoff_cm2 <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  citation_cutoff_cm3 <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  min_citation_support <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  min_citation_support_cm_only <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  min_sources_driver <span class="op">=</span> <span class="fl">2</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -81,14 +80,13 @@ driver etc. based on multiple lines of evidence.</p>
 <dd><p>output from geneOncoX::get_basic()</p></dd>
 
 
-<dt>citation_cutoff_cm1</dt>
-<dd><p>minimum citation count for genes with CancerMine
-support only (VERY STRONG)</p></dd>
+<dt>min_citation_support</dt>
+<dd><p>minimum citation count for support from CancerMine</p></dd>
 
 
-<dt>citation_cutoff_cm2</dt>
-<dd><p>minimum citation count for genes with CancerMine
-support only (STRONG)</p></dd>
+<dt>min_citation_support_cm_only</dt>
+<dd><p>minimum citation count for genes annotated
+with cancer gene roles from CancerMine only</p></dd>
 
 
 <dt>min_sources_driver</dt>
