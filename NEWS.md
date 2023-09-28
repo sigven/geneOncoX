@@ -1,3 +1,8 @@
+# Version 0.7.10
+
+* Removed trailing lines from Genomics England PanelApp
+phenotype descriptions
+
 # Version 0.7.9
 
 * NCBI gene function update

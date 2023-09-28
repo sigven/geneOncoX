@@ -198,6 +198,12 @@ get_panel_app_genes <-
       dplyr::select(
         genome_build, id, entrezgene, genename, ensembl_gene_id,
         dplyr::everything()
+      ) |>
+      dplyr::mutate(
+        gepa_phenotype = stringr::str_replace_all(
+          gepa_phenotype, 
+          "[\r\n\t]", 
+          "")
       )
 
 
@@ -730,6 +736,12 @@ get_predisposition_genes <- function(gene_info = NULL,
         cpg_mod = mechanism_of_disease,
         cpg_moi = moi,
         cpg_phenotypes = phenotypes
+      ) |>
+      dplyr::mutate(
+        cpg_phenotypes = stringr::str_replace_all(
+          cpg_phenotypes, 
+          "[\r\n\t]", 
+          "")
       )
   )
 
