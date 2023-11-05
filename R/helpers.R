@@ -987,8 +987,6 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
          "cancermine_n_cit_oncogene",
          "cancermine_oncogene_tsg_citratio"))
   
-  
-  
   tsg_oncogene_driver_evidence <-
     dplyr::full_join(driver_genes, tsgs, by = "entrezgene") |>
     dplyr::full_join(oncogenes, by = "entrezgene") |>

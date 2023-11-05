@@ -63,8 +63,8 @@
 #'   (GENCODE))
 #'   \item \emph{tag} -
 #'   \href{https://www.gencodegenes.org/pages/biotypes.html}{tag} (GENCODE))
-#'   \item \emph{refseq_peptide} - RefSeq peptide identifier
-#'   \item \emph{refseq_mrna} - RefSeq mRNA identifier
+#'   \item \emph{refseq_protein_id} - RefSeq peptide identifier
+#'   \item \emph{refseq_transcript_id} - RefSeq mRNA identifier
 #'   \item \emph{mane_select} -
 #'   \href{https://www.ncbi.nlm.nih.gov/refseq/MANE/}{MANE} Select
 #'   \item \emph{mane_plus_clinical} -

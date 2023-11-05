@@ -284,8 +284,8 @@ gencode_get_transcripts <-
         gene_biotype,
         transcript_biotype,
         tag,
-        refseq_peptide,
-        refseq_mrna,
+        refseq_protein_id,
+        refseq_transcript_id,
         mane_select,
         mane_plus_clinical,
         principal_isoform_flag,
@@ -445,14 +445,18 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
     dplyr::distinct() |>
     dplyr::mutate(hgnc_id = as.integer(
       stringr::str_replace(hgnc_id, "HGNC:", "")
-    ))
+    )) |>
+    dplyr::rename(
+      refseq_transcript_id = refseq_mrna,
+      refseq_protein_id = refseq_peptide
+    )
 
   for (n in c(
-    "refseq_peptide",
+    "refseq_protein_id",
+    "refseq_transcript_id",
     "uniprot_acc",
     "transcript_mane_select",
     "transcript_mane_plus_clinical",
-    "refseq_mrna",
     "description"
   )) {
     xref_biomart[!is.na(xref_biomart[, n]) &
@@ -461,11 +465,11 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
   }
 
   for (xref in c(
-    "refseq_peptide",
+    "refseq_protein_id",
+    "refseq_transcript_id",
     "uniprot_acc",
     "transcript_mane_select",
     "transcript_mane_plus_clinical",
-    "refseq_mrna",
     "description"
   )) {
     ensXref <- as.data.frame(
@@ -716,7 +720,7 @@ get_uniprot_map <- function(uniprot_version = "2023_03") {
       )) |>
       dplyr::group_by(acc) |>
       dplyr::summarise(
-        refseq_mrna = paste(unique(name), collapse = "&"),
+        refseq_transcript_id = paste(unique(name), collapse = "&"),
         .groups = "drop"
       ) |>
       dplyr::rename(uniprot_acc = acc)

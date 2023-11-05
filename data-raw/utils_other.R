@@ -568,7 +568,7 @@ get_dbnsfp_gene_annotations <- function() {
     "Retrieving gene damage scores/OMIM annotation from dbNSFP_gene"
   )
   dbnsfp_gene <- read.table(
-    file = gzfile(file.path("data-raw", "dbnsfp", "dbNSFP4.4_gene.gz")),
+    file = gzfile(file.path("data-raw", "dbnsfp", "dbNSFP4.5_gene.gz")),
     sep = "\t",
     header = TRUE, stringsAsFactors = FALSE,
     na.strings = c(".", ""), comment.char = "",
@@ -624,25 +624,6 @@ get_dbnsfp_gene_annotations <- function() {
       signif(as.numeric(dbnsfp_gene[, e]), digits = 4)
     )
   }
-
-  # pmid_hits <- stringr::str_match_all(
-  #   dbnsfp_gene$function_description,"PubMed:[0-9]{1,}")
-  # i <- 1
-  # pmid_all <- data.frame()
-  # while(i <= length(pmid_hits)){
-  #   pmid_df <- data.frame(
-  #     'function_description_pmid' = paste(unique(sort(
-  #       stringr::str_replace_all(pmid_hits[[i]][,1],"PubMed:",""))),
-  #       collapse=","),
-  #     stringsAsFactors = F) |>
-  #     dplyr::mutate(function_description_pmid = dplyr::if_else(
-  #       function_description_pmid == "",
-  #       as.character(NA),
-  #       as.character(function_description_pmid)))
-  #   pmid_all <- dplyr::bind_rows(pmid_all, pmid_df)
-  #   i <- i + 1
-  #
-  # }
 
   dbnsfp_gene <- dbnsfp_gene |>
     dplyr::mutate(function_description = stringr::str_replace_all(
@@ -747,3 +728,137 @@ get_dbnsfp_gene_annotations <- function() {
 
   return(dbnsfp_gene)
 }
+
+get_gene_signatures <- function(
+    raw_db_dir = NULL,
+    db_version = 'v2023.1.Hs (March 2023)'){
+  
+  ## get full dataset: Broad Institute's Molecular Signatures Database
+  invisible(assertthat::assert_that(
+    dir.exists(raw_db_dir),
+    msg = paste0("Directory '",
+                 raw_db_dir,"' does not exist")))
+  msigdb_xml_fname <- file.path(
+    raw_db_dir, "msigdb", "msigdb.xml")
+  invisible(assertthat::assert_that(
+    file.exists(msigdb_xml_fname),
+    msg = paste0("File '",
+                 msigdb_xml_fname,
+                 "' does not exist")))
+  
+  msig_data_xml <- xml2::read_xml(msigdb_xml_fname)
+  
+  ## make data frame with signatures, one record pr. gene-signature association
+  all_genesets <- msig_data_xml |> xml2::xml_find_all("//GENESET")
+  category_code <- all_genesets |> xml2::xml_attr("CATEGORY_CODE")
+  all_msigdb <- data.frame('category_code' = category_code, stringsAsFactors = F)
+  all_msigdb$description <- all_genesets |> xml2::xml_attr("DESCRIPTION_BRIEF")
+  all_msigdb$standard_name <- all_genesets |> xml2::xml_attr("STANDARD_NAME")
+  all_msigdb$organism <- all_genesets |> xml2::xml_attr("ORGANISM")
+  all_msigdb$pmid <- all_genesets |> xml2::xml_attr("PMID")
+  all_msigdb$systematic_name <- all_genesets |> xml2::xml_attr("SYSTEMATIC_NAME")
+  all_msigdb$subcategory_code <- all_genesets |> xml2::xml_attr("SUB_CATEGORY_CODE")
+  all_msigdb$entrezgene <- all_genesets |> xml2::xml_attr("MEMBERS_EZID")
+  all_msigdb$contributor <- all_genesets |> xml2::xml_attr("CONTRIBUTOR")
+  all_msigdb$exact_source <- all_genesets |> xml2::xml_attr("EXACT_SOURCE")
+  all_msigdb$external_url <- all_genesets |> xml2::xml_attr("EXTERNAL_DETAILS_URL")
+  all_msigdb <- all_msigdb |>
+    tidyr::separate_rows(entrezgene,sep=",") |>
+    dplyr::filter(organism == "Homo sapiens") |>
+    #dplyr::filter(subcategory_code != 'CP:KEGG') |>
+    dplyr::arrange(category_code) |>
+    dplyr::mutate(pmid = dplyr::if_else(
+      nchar(pmid) == 0,
+      as.character(NA),
+      as.character(pmid))) |>
+    dplyr::mutate(subcategory_code = dplyr::if_else(
+      nchar(subcategory_code) == 0,
+      as.character("ALL"),
+      as.character(subcategory_code))) |>
+    dplyr::filter(
+      category_code != "ARCHIVED" &
+        category_code != "C1") |>
+    dplyr::mutate(external_url = dplyr::if_else(
+      nchar(external_url) == 0,
+      paste0("http://software.broadinstitute.org/gsea/msigdb/cards/",standard_name),
+      as.character(external_url))) |>
+    dplyr::mutate(description = stringr::str_replace_all(
+      description,
+      "( \\[ICI [0-9]{1,}(;[0-9]{1,})*\\]( )?)|( \\[GeneID=[0-9]{1,}(;[0-9]{1,})*\\]( )?)|( \\[PubChem=[0-9]{1,}(;[0-9]{1,})*\\]( )?)",""))
+  
+  msigdb_category_description <- read.table(
+    file = file.path(
+      raw_db_dir, "msigdb",
+      "msigdb_collection_description.tsv"),
+    sep = "\t", header = T, stringsAsFactors = F)
+  
+  msigdb_complete <- as.data.frame(
+    all_msigdb |>
+      dplyr::left_join(msigdb_category_description,
+                       by = c("category_code", "subcategory_code"),
+                       multiple = "all") |>
+      dplyr::mutate(db = "MSigDB", db_version = db_version) |>
+      dplyr::select(
+        db, db_version, category_code, category_description,
+        subcategory_code, subcategory_description,
+        standard_name, description, organism,
+        entrezgene) |>
+      dplyr::rename(signature_description = description)) |>
+    dplyr::filter(subcategory_code != "MIR:MIR_Legacy") |>
+    dplyr::filter(subcategory_code != "TFT:TFT_Legacy") |>
+    dplyr::filter(subcategory_code != "VAX") |>
+    dplyr::distinct() |>
+    dplyr::mutate(db = dplyr::if_else(
+      stringr::str_detect(standard_name,"^GO(BP|CC|MF)_"),
+      subcategory_code,as.character(NA))) |>
+    dplyr::mutate(db = dplyr::if_else(
+      stringr::str_detect(standard_name,"^HP_"),
+      subcategory_code,as.character(db))) |>
+    dplyr::mutate(db = dplyr::if_else(
+      stringr::str_detect(standard_name,"^REACTOME_"),
+      "REACTOME",as.character(db))) |>
+    dplyr::mutate(db = dplyr::if_else(
+      stringr::str_detect(standard_name,"^BIOCARTA_"),
+      "BIOCARTA",as.character(db))) |>
+    dplyr::mutate(db = dplyr::if_else(
+      stringr::str_detect(standard_name,"^WP_"),
+      "WIKIPATHWAYS",as.character(db))) |>
+    dplyr::mutate(db = dplyr::if_else(
+      stringr::str_detect(standard_name,"^KEGG_"),
+      "KEGG",as.character(db))) |>
+    dplyr::mutate(db = dplyr::if_else(
+      stringr::str_detect(standard_name,"^PID_"),
+      "PATHWAY_INTERACTION_DB",as.character(db))) |>
+    dplyr::mutate(db = dplyr::if_else(
+      category_code == "H",
+      "HALLMARK",as.character(db))) |>
+    dplyr::mutate(db = dplyr::if_else(
+      category_code == "C2" & subcategory_code == "CGP",
+      "CHEM_GEN_PERTURB",as.character(db))) |>
+    dplyr::mutate(db = dplyr::if_else(
+      category_code == "C2" & subcategory_code == "CP",
+      "CANONICAL_PATHWAY",as.character(db))) |>
+    dplyr::mutate(db = dplyr::if_else(
+      category_code == "C3" & subcategory_code == "MIR:MIRDB",
+      "MICRORNA_TARGET_MIRDB",as.character(db))) |>
+    dplyr::mutate(db = dplyr::if_else(
+      category_code == "C3" & subcategory_code == "TFT:GTRD",
+      "TF_TARGET_GTRD",as.character(db))) |>
+    dplyr::mutate(db = dplyr::if_else(
+      category_code == "C4" & subcategory_code == "CGN",
+      "CANCER_NEIGHBOURHOOD",as.character(db))) |>
+    dplyr::mutate(db = dplyr::if_else(
+      category_code == "C4" & subcategory_code == "CM",
+      "CANCER_MODULE",as.character(db))) |>
+    dplyr::mutate(db = dplyr::if_else(
+      category_code == "C6","ONCOGENIC",as.character(db))) |>
+    dplyr::mutate(db = dplyr::if_else(
+      category_code == "C7","IMMUNESIGDB",as.character(db))) |>
+    dplyr::mutate(db = dplyr::if_else(
+      category_code == "C8","CELLTYPE_SIGNATURES",as.character(db))) |>
+    dplyr::rename(signature_name = standard_name)
+  
+  return(msigdb_complete)
+}
+  
+  

@@ -1,3 +1,9 @@
+# Version 0.7.11
+
+* Renamed columns of GENCODE data frame: 
+     - `refseq_mrna` -> `refseq_transcript_id` 
+     - `refseq_peptide` -> `refseq_protein_id`
+
 # Version 0.7.10
 
 * Removed trailing lines from Genomics England PanelApp
