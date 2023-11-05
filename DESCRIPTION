@@ -1,7 +1,7 @@
 Package: geneOncoX
 Type: Package
 Title: Human gene annotations for the oncology domain
-Version: 0.7.10
+Version: 0.7.11
 Date: 2023-11-05
 Authors@R: person(given = "Sigve", family = "Nakken", role = c("aut", "cre"),
              email = "sigven@ifi.uio.no",
