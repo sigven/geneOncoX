@@ -21,8 +21,9 @@ Inherited MMR deficiency (Lynch Syndrome)	503
 Inherited non-medullary thyroid cancer	171
 Inherited ovarian cancer (without breast cancer)	143
 Inherited pancreatic cancer	524
-Inherited polyposis	504
+Inherited polyposis and early onset colorectal cancer	504
 Inherited predisposition to acute myeloid leukaemia (AML)	525
+Inherited susceptibility to acute lymphoblastoid leukaemia (ALL)	1349
 Inherited predisposition to GIST	523
 Inherited renal cancer	521
 Inherited phaeochromocytoma and paraganglioma	97

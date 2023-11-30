@@ -52,9 +52,18 @@ gene_alias$records <- get_gene_aliases_ncbi(
 
 gene_summary <- get_function_summary_ncbi(gene_df = gene_info)
 
-cgc_all <- get_cancer_gene_census(origin = "all")
-cgc_som <- get_cancer_gene_census(origin = "somatic")
-cgc_gl <- get_cancer_gene_census(origin = "germline")
+cgc_all <- get_cancer_gene_census(
+  origin = "all", 
+  cgc_version = 
+    metadata$basic[metadata$basic$source_abbreviation == "cgc","source_version"])
+cgc_som <- get_cancer_gene_census(
+  origin = "somatic",
+  cgc_version = 
+    metadata$basic[metadata$basic$source_abbreviation == "cgc","source_version"])
+cgc_gl <- get_cancer_gene_census(
+  origin = "germline",
+  cgc_version = 
+    metadata$basic[metadata$basic$source_abbreviation == "cgc","source_version"])
 
 cgc_som_gl <- cgc_som |>
   dplyr::full_join(

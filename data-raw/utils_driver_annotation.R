@@ -320,16 +320,14 @@ get_signaling_pathway_genes <- function(gene_info) {
 
 get_cancer_gene_census <- function(
     origin = "somatic",
-    opentargets_version = "2023.06",
-    cgc_version = "98") {
-  
-  
+    opentargets_version = "2023.09",
+    cgc_version = "v99") {
   
   cosmic_genes <- readr::read_tsv(
     file = file.path(
       "data-raw",
       "cancer_gene_census",
-      paste0("Cosmic_Genes_v",
+      paste0("Cosmic_Genes_",
              cgc_version,"_GRCh38.tsv.gz")
     ),
     show_col_types = FALSE) |>
@@ -347,7 +345,7 @@ get_cancer_gene_census <- function(
     file = file.path(
       "data-raw", 
       "cancer_gene_census",
-      paste0("Cosmic_CancerGeneCensus_v",
+      paste0("Cosmic_CancerGeneCensus_",
              cgc_version,"_GRCh38.tsv.gz")
     ),
     show_col_types = FALSE) |>

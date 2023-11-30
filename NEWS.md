@@ -1,3 +1,8 @@
+# Version 0.7.12
+
+- New panel from PanelApp included in cancer panels and included in list of cancer predisposition genes: _Inherited susceptibility to acute lymphoblastoid leukaemia (ALL) (GEP)_
+- Updated Cancer Gene Census to v99
+
 # Version 0.7.11
 
 * Renamed columns of GENCODE data frame: 
