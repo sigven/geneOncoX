@@ -1,3 +1,7 @@
+# Version 0.7.13
+
+- Updated gene descriptions, and updated helper function `assign_cancer_gene_roles`
+
 # Version 0.7.12
 
 - New panel from PanelApp included in cancer panels and included in list of cancer predisposition genes: _Inherited susceptibility to acute lymphoblastoid leukaemia (ALL) (GEP)_

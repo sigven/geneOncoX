@@ -830,7 +830,15 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
          "cancermine_n_cit_tsg",
          "ind",
          "cancermine_n_cit_oncogene",
-         "cancermine_oncogene_tsg_citratio"))
+         "cancermine_oncogene_tsg_citratio")) |>
+    dplyr::mutate(
+      oncogene_confidence_level = dplyr::case_when(
+        stringr::str_count(oncogene_support,"&") == 2 ~ "Very strong",
+        stringr::str_count(oncogene_support,"&") == 1 ~ "Strong",
+        stringr::str_count(oncogene_support,"&") == 0 ~ "Moderate",
+        TRUE ~ as.character(NA)
+      )
+    )
   
     
   tsgs <- as.data.frame(dplyr::bind_rows(
@@ -985,7 +993,15 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
          "cancermine_n_cit_tsg",
          "ind",
          "cancermine_n_cit_oncogene",
-         "cancermine_oncogene_tsg_citratio"))
+         "cancermine_oncogene_tsg_citratio")) |>
+    dplyr::mutate(
+      tsg_confidence_level = dplyr::case_when(
+        stringr::str_count(tsg_support,"&") == 2 ~ "Very strong",
+        stringr::str_count(tsg_support,"&") == 1 ~ "Strong",
+        stringr::str_count(tsg_support,"&") == 0 ~ "Moderate",
+        TRUE ~ as.character(NA)
+      )
+    )
   
   tsg_oncogene_driver_evidence <-
     dplyr::full_join(driver_genes, tsgs, by = "entrezgene") |>
