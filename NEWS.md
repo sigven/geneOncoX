@@ -1,3 +1,7 @@
+# Version 0.7.14
+
+- Added support for GENCODE v45
+
 # Version 0.7.13
 
 - Updated gene descriptions, and updated helper function `assign_cancer_gene_roles`
