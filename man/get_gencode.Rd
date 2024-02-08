@@ -13,7 +13,7 @@
 \url{https://apprisws.bioinfo.cnio.es/landing_page/}
 }
 \usage{
-get_gencode(cache_dir = NA, force_download = FALSE, ensembl_release = 110)
+get_gencode(cache_dir = NA, force_download = FALSE, ensembl_release = 111)
 }
 \arguments{
 \item{cache_dir}{Local directory for data download}

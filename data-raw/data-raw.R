@@ -6,7 +6,7 @@ source("data-raw/utils_other.R")
 
 ## get metadata from metadata.xlsx
 metadata <- list()
-for (elem in c("basic", "predisposition", "panels", "alias", "gencode")) {
+for (elem in c("basic", "predisposition", "panels", "alias", "gencode","otp_rank")) {
   metadata[[elem]] <- as.data.frame(openxlsx::read.xlsx(
     "data-raw/metadata_gene_oncox.xlsx",
     sheet = elem, colNames = TRUE
@@ -224,6 +224,9 @@ gene_predisposition[["records"]] <-
     )
   )
 
+
+
+
 ## clean up
 rm(cgc_gl)
 rm(cgc)
@@ -257,7 +260,7 @@ for(vbump in c('major','minor','patch')){
     )
 }
 
-bump_version_level <- "patch"
+bump_version_level <- "minor"
 version_bump <- version_bumps[[bump_version_level]]
 
 
@@ -280,7 +283,7 @@ ensembl_release_current <-
   as.integer(metadata[['gencode']][
     metadata$gencode$source_abbreviation == "ensembl",]$source_version)
 ensembl_iter <- 0
-while(ensembl_iter <= 5){
+while(ensembl_iter < 5){
   gencode_release <- gencode_release_current - ensembl_iter
   ensembl_release <- ensembl_release_current - ensembl_iter
   ensembl_iter <- ensembl_iter + 1
@@ -442,9 +445,22 @@ while(ensembl_iter <= 5){
   
 }
 
+gene_otp_rank <- list()
+gene_otp_rank[["metadata"]] <- metadata$otp_rank
+gene_otp_rank[["records"]] <- readRDS(
+  file="~/project_data/packages/package__oncoEnrichR/db/output/v1.4.3/otdb_v1.4.3.rds")$gene_rank 
 
 
+ens2entrez <- 
+  dplyr::select(gene_gencode$records$grch38, ensembl_gene_id, entrezgene) |> 
+  dplyr::distinct()
 
+gene_otp_rank[["records"]] <- gene_otp_rank[["records"]] |>
+  dplyr::inner_join(ens2entrez, by = "ensembl_gene_id") |>
+  dplyr::select(-ensembl_gene_id) |>
+  dplyr::select(entrezgene, dplyr::everything())
+
+db[['otp_rank']] <- gene_otp_rank
 
 
 # rm(gene_alias)
@@ -457,7 +473,7 @@ while(ensembl_iter <= 5){
 
 for (elem in c(
   "basic", "predisposition",
-  "panels", "alias")) {
+  "panels", "alias","otp_rank")) {
   saveRDS(db[[elem]],
     file = paste0(
       "data-raw/gd_local/gene_", elem, "_v",

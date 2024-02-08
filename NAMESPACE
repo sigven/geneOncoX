@@ -3,6 +3,7 @@
 export(get_alias)
 export(get_basic)
 export(get_gencode)
+export(get_otp_rank)
 export(get_panels)
 export(get_predisposition)
 importFrom(rlang,":=")
