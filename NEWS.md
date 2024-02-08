@@ -1,3 +1,7 @@
+# Version 0.8.0
+
+- Added cancer gene ranks from OTP
+
 # Version 0.7.14
 
 - Added support for GENCODE v45
