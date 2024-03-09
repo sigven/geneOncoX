@@ -260,7 +260,7 @@ for(vbump in c('major','minor','patch')){
     )
 }
 
-bump_version_level <- "minor"
+bump_version_level <- "patch"
 version_bump <- version_bumps[[bump_version_level]]
 
 
@@ -283,7 +283,7 @@ ensembl_release_current <-
   as.integer(metadata[['gencode']][
     metadata$gencode$source_abbreviation == "ensembl",]$source_version)
 ensembl_iter <- 0
-while(ensembl_iter < 5){
+while(ensembl_iter < 2){
   gencode_release <- gencode_release_current - ensembl_iter
   ensembl_release <- ensembl_release_current - ensembl_iter
   ensembl_iter <- ensembl_iter + 1

@@ -365,7 +365,7 @@ gencode_expand_basic <- function(gencode) {
 
 gencode_resolve_xrefs <- function(transcript_df = NULL,
                                   build = "grch38",
-                                  ensembl_version = 109,
+                                  ensembl_version = 111,
                                   gene_info = NULL,
                                   gene_alias = NULL) {
   invisible(assertable::assert_colnames(

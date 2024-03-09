@@ -3,7 +3,7 @@ get_gene_info_ncbi <- function(update = T) {
   datestamp <- Sys.Date()
   remote_url <-
     paste0(
-      "https://ftp.ncbi.nih.gov/gene/DATA/GENE_INFO/",
+      "https://ftp.ncbi.nlm.nih.gov/gene/DATA/GENE_INFO/",
       "Mammalia/Homo_sapiens.gene_info.gz"
     )
   if (RCurl::url.exists(remote_url)) {
