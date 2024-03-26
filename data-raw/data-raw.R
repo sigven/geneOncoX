@@ -6,7 +6,8 @@ source("data-raw/utils_other.R")
 
 ## get metadata from metadata.xlsx
 metadata <- list()
-for (elem in c("basic", "predisposition", "panels", "alias", "gencode","otp_rank")) {
+for (elem in c("basic", "predisposition", "panels", 
+               "alias", "gencode","otp_rank")) {
   metadata[[elem]] <- as.data.frame(openxlsx::read.xlsx(
     "data-raw/metadata_gene_oncox.xlsx",
     sheet = elem, colNames = TRUE
@@ -283,7 +284,7 @@ ensembl_release_current <-
   as.integer(metadata[['gencode']][
     metadata$gencode$source_abbreviation == "ensembl",]$source_version)
 ensembl_iter <- 0
-while(ensembl_iter < 2){
+while(ensembl_iter < 1){
   gencode_release <- gencode_release_current - ensembl_iter
   ensembl_release <- ensembl_release_current - ensembl_iter
   ensembl_iter <- ensembl_iter + 1

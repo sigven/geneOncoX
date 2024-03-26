@@ -1,3 +1,7 @@
+# Version 0.8.2
+
+- Updated cancer gene ranks from OTP (v24.03)
+
 # Version 0.8.1
 
 - Updated NCBI gene info

@@ -99,27 +99,14 @@ get_gencode <- function(cache_dir = NA,
                         force_download = FALSE,
                         ensembl_release = 111) {
   
-  if(ensembl_release > 111 | ensembl_release < 110){
+  if(ensembl_release > 111 | ensembl_release < 111){
     lgr::lgr$fatal(
-      paste0("ERROR: Ensembl release must be between 111 and",
-             "110 - exiting"))
+      paste0("ERROR: Ensembl release must be between equal to 111",
+             " - exiting"))
       return(0)
   }
   
   gencode_release <- 45
-  if(ensembl_release == 110){
-    gencode_release <- 44
-  }
-  if(ensembl_release == 109){
-    gencode_release <- 43
-  }
-  if(ensembl_release == 108){
-    gencode_release <- 42
-  }
-  if(ensembl_release == 107){
-    gencode_release <- 41
-  }
- 
   
   dat <- get_gox_data(
     cache_dir = cache_dir,
