@@ -19,11 +19,14 @@
 #' package), and UniProt accessions/identifiers.
 #'
 #' @param cache_dir Local directory for data download
-#' @param force_download Logical indicating if local cache should be overwritten
-#' (set to TRUE to re-download if file exists in cache)
+#' @param force_download Logical indicating if local cache should 
+#' be overwritten (set to TRUE to re-download if file exists in 
+#' cache)
 #' @param ensembl_release version of Ensembl to use - this will
-#' dictate the version of GENCODE used for grch38 (e.g. 110 implies
-#' GENCODE v44, 109 implies v43, 108 implies v42 and so on)
+#' dictate the version of GENCODE used for grch38
+#' @param chromosomes_only Logical indicating if transcripts returned
+#' should belong to ordinary chromosomes only (scaffolds etc. 
+#' should be ignored)
 #'
 #' @returns
 #' \strong{metadata} - A data frame with 3 rows and 6 columns:
@@ -97,6 +100,7 @@
 
 get_gencode <- function(cache_dir = NA,
                         force_download = FALSE,
+                        chromosomes_only = TRUE,
                         ensembl_release = 111) {
   
   if(ensembl_release > 111 | ensembl_release < 111){
@@ -115,5 +119,15 @@ get_gencode <- function(cache_dir = NA,
       "gencode_", gencode_release, 
       "_", ensembl_release)
   )
+  
+  if(chromosomes_only == TRUE){
+    dat$records$grch37 <- dat$records$grch37 |> 
+      dplyr::filter(
+        stringr::str_detect(chrom, "^chr"))
+    
+    dat$records$grch38 <- dat$records$grch38 |> 
+      dplyr::filter(
+        stringr::str_detect(chrom, "^chr"))
+  }
   return(dat)
 }

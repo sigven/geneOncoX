@@ -1,6 +1,8 @@
-# Version 0.8.2
+# Version 0.8.3
 
 - Updated cancer gene ranks from OTP (v24.03)
+- Added GENCODE entries for transcripts originating on
+scaffolds etc. (not just chromosomes)
 
 # Version 0.8.1
 

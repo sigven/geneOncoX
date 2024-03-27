@@ -44,9 +44,9 @@ get_transcript_appris_annotation <-
 gencode_get_transcripts <-
   function(build = "grch38",
            append_regulatory_region = TRUE,
-           gencode_version = 42,
-           ensembl_version = 109,
-           uniprot_version = "2023_02",
+           gencode_version = 45,
+           ensembl_version = 111,
+           uniprot_version = "2024_01",
            gene_info = NULL,
            gene_alias = NULL) {
     gencode_ftp_url <-
@@ -56,15 +56,37 @@ gencode_get_transcripts <-
       gencode_version, ", build ", build
     ))
 
+    remote_gtf_all <-
+      paste0(
+        gencode_ftp_url, "release_", gencode_version, "/",
+        "gencode.v", gencode_version, 
+        ".chr_patch_hapl_scaff",
+        ".annotation.gtf.gz"
+      )
+    
     remote_gtf <-
       paste0(
         gencode_ftp_url, "release_", gencode_version, "/",
-        "gencode.v", gencode_version, ".annotation.gtf.gz"
+        "gencode.v", gencode_version, 
+        ".annotation.gtf.gz"
       )
+    
+    #https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_45/gencode.v45.chr_patch_hapl_scaff.annotation.gtf.gz
 
     options(timeout = 10000000)
-    gencode_gtf_transcripts <- valr::read_gtf(remote_gtf) |>
+    gencode_gtf_transcripts <- valr::read_gtf(remote_gtf_all) |>
       dplyr::filter(type == "transcript")
+    
+    if(gencode_version == 19){
+      gencode_gtf_transcripts_chr <- valr::read_gtf(remote_gtf) |>
+        dplyr::filter(type == "transcript") |>
+        dplyr::select(transcript_id, protein_id)
+      
+      gencode_gtf_transcripts <- gencode_gtf_transcripts |>
+        dplyr::left_join(
+          gencode_gtf_transcripts_chr, by = "transcript_id"
+        )
+    }
 
     gencode_gtf <- gencode_gtf_transcripts |>
       dplyr::rename(
@@ -108,7 +130,7 @@ gencode_get_transcripts <-
     ## Temporary fix: Need additional processing to get multiple tag-value
     ## pairs in a proper fashion
     gencode_gtf_fix <- as.data.frame(
-      data.table::fread(remote_gtf, skip = 5, verbose = F) |>
+      data.table::fread(remote_gtf_all, skip = 5, verbose = F) |>
         dplyr::filter(V3 == "transcript")
     )
     tag_cols <- stringr::str_match_all(
@@ -186,14 +208,16 @@ gencode_get_transcripts <-
           dplyr::rowwise() |>
           dplyr::mutate(
             start = dplyr::if_else(
-              chrom != "chrM",
+              startsWith(chrom,"chr") &
+                chrom != "chrM",
               as.integer(
                 max(1, transcript_start - 5001)
               ),
               as.integer(transcript_start)
             ),
             end = dplyr::if_else(
-              chrom != "chrM",
+              startsWith(chrom,"chr") &
+                chrom != "chrM",
               as.integer(
                 min(chrom_length, transcript_end + 5001)
               ),
@@ -759,6 +783,7 @@ get_uniprot_map <- function(uniprot_version = "2024_01") {
 
 sort_bed_regions <- function(unsorted_regions) {
   sorted_regions <- NULL
+  all_regions <- NULL
   assertable::assert_colnames(
     unsorted_regions, c("start", "end"),
     only_colnames = FALSE, quiet = TRUE
@@ -766,20 +791,28 @@ sort_bed_regions <- function(unsorted_regions) {
   if ("chrom" %in% colnames(unsorted_regions) &
     "start" %in% colnames(unsorted_regions) &
     "end" %in% colnames(unsorted_regions)) {
-    chrOrder <- paste0("chr", c(as.character(c(1:22)), "X", "Y", "M"))
-    unsorted_regions$chrom <- factor(
-      unsorted_regions$chrom,
+    chrOrder <- paste0(
+      "chr", c(as.character(c(1:22)), "X", "Y", "M"))
+   
+    scaffold_regions <- unsorted_regions |>
+      dplyr::filter(!(chrom %in% chrOrder))
+    
+    chrom_unsorted_regions <- unsorted_regions |>
+      dplyr::filter(chrom %in% chrOrder)
+    
+    chrom_unsorted_regions$chrom <- factor(
+      chrom_unsorted_regions$chrom,
       levels = chrOrder
     )
-    unsorted_regions <- unsorted_regions[order(unsorted_regions$chrom), ]
+    chrom_unsorted_regions <- chrom_unsorted_regions[order(chrom_unsorted_regions$chrom), ]
 
     sorted_regions <- data.frame()
     for (chrom in chrOrder) {
       if (nrow(
-        unsorted_regions[unsorted_regions$chrom == chrom, ]
+        chrom_unsorted_regions[chrom_unsorted_regions$chrom == chrom, ]
       ) > 0) {
         chrom_regions <-
-          unsorted_regions[unsorted_regions$chrom == chrom, ]
+          chrom_unsorted_regions[chrom_unsorted_regions$chrom == chrom, ]
         chrom_regions_sorted <-
           chrom_regions[with(chrom_regions, order(start, end)), ]
         sorted_regions <- dplyr::bind_rows(
@@ -790,6 +823,12 @@ sort_bed_regions <- function(unsorted_regions) {
 
     sorted_regions$start <- as.integer(sorted_regions$start)
     sorted_regions$end <- as.integer(sorted_regions$end)
+    
+    all_regions <- sorted_regions |>
+      dplyr::bind_rows(scaffold_regions)
   }
-  return(sorted_regions)
+  
+  
+  
+  return(all_regions)
 }
