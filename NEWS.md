@@ -1,3 +1,8 @@
+# Versio 0.8.4
+
+- Including references to non-coding RNA identifiers from RefSeq in
+`refseq_transcript_id` column
+
 # Version 0.8.3
 
 - Updated cancer gene ranks from OTP (v24.03)

@@ -436,6 +436,11 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
     "transcript_mane_plus_clinical"
   )
 
+  queryAttributes4 <- c(
+    "ensembl_transcript_id",
+    "refseq_ncrna"
+  )
+  
 
   xref_biomart_1 <- biomaRt::getBM(
     attributes = queryAttributes1,
@@ -453,6 +458,10 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
     mart = ensembl_mart[["grch38"]]
   )
 
+  xref_biomart_4 <- biomaRt::getBM(
+    attributes = queryAttributes4,
+    mart = ensembl_mart[[build]])
+  
   xref_biomart <- xref_biomart_1 |>
     dplyr::left_join(
       xref_biomart_2,
@@ -466,6 +475,12 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
       multiple = "all",
       relationship = "many-to-many"
     ) |>
+    dplyr::left_join(
+      xref_biomart_4,
+      by = "ensembl_transcript_id", 
+      multiple = "all",
+      relationship = "many-to-many"
+    ) |>
     dplyr::distinct() |>
     dplyr::mutate(hgnc_id = as.integer(
       stringr::str_replace(hgnc_id, "HGNC:", "")
@@ -473,7 +488,12 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
     dplyr::rename(
       refseq_transcript_id = refseq_mrna,
       refseq_protein_id = refseq_peptide
-    )
+    ) |>
+    dplyr::mutate(refseq_transcript_id = dplyr::if_else(
+      refseq_transcript_id == "", 
+      as.character(refseq_ncrna),
+      as.character(refseq_transcript_id)
+    ))
 
   for (n in c(
     "refseq_protein_id",
