@@ -1,4 +1,4 @@
-# Versio 0.8.4
+# Version 0.8.5
 
 - Including references to non-coding RNA identifiers from RefSeq in
 `refseq_transcript_id` column
