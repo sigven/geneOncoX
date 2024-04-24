@@ -1,3 +1,8 @@
+# Version 0.8.6
+
+- Added more gene aliases (one edit distance away from existing aliases, found 
+as substrings in other genename designations)
+
 # Version 0.8.5
 
 - Including references to non-coding RNA identifiers from RefSeq in

@@ -291,126 +291,137 @@ while(ensembl_iter < 1){
   cat(ensembl_release, " - ", gencode_release)
   cat("\n")
 
-  gene_gencode <- list()
-  gene_gencode$records <- list()
-  gene_gencode$metadata <- metadata[["gencode"]]
-  
-  gene_gencode$metadata[
-    gene_gencode$metadata$source_abbreviation == "gencode",
-    "source_version"] <- gencode_release
-  gene_gencode$metadata[
-    gene_gencode$metadata$source_abbreviation == "ensembl",
-    "source_version"] <- ensembl_release
-  
-  gene_gencode$records[["grch38"]] <- gencode_get_transcripts(
-    build = "grch38",
-    gene_info = gene_info,
-    gencode_version = gencode_release,
-    ensembl_version = ensembl_release,
-    uniprot_version = as.character(
-      metadata$gencode[3, ]$source_version),
-    gene_alias = gene_alias
-  )
-  gene_gencode$records[["grch37"]] <- gencode_get_transcripts(
-    build = "grch37",
-    gene_info = gene_info,
-    gencode_version = as.integer(19),
-    ensembl_version = ensembl_release,
-    uniprot_version = as.character(
-      metadata$gencode[3, ]$source_version),
-    gene_alias = gene_alias
-  )
-  
-  ## "Rescue" some UniProt identifiers from
-  ## grch38 - missing/not found for grch37
-  
-  up_xref_grch38 <- gene_gencode[["records"]][["grch38"]] |>
-    dplyr::select(
-      entrezgene, uniprot_acc,
-      uniprot_id
-    ) |>
-    dplyr::filter(!is.na(entrezgene) &
-                    !is.na(uniprot_acc) &
-                    !is.na(uniprot_id)) |>
-    # dplyr::select(-uniprot_acc) |>
-    dplyr::distinct()
-  
-  up_xref <- list()
-  up_xref[["found"]] <-
-    gene_gencode[["records"]][["grch37"]] |>
-    dplyr::select(
-      entrezgene, uniprot_acc,
-      ensembl_transcript_id, uniprot_id
-    ) |>
-    dplyr::filter(!is.na(entrezgene) &
-                    !is.na(uniprot_acc) &
-                    !is.na(uniprot_id)) |>
-    dplyr::distinct()
-  
-  up_xref[["rescued_from_grch38"]] <-
-    gene_gencode[["records"]][["grch37"]] |>
-    dplyr::select(
-      entrezgene, uniprot_acc,
-      ensembl_transcript_id, uniprot_id
-    ) |>
-    dplyr::filter(!is.na(entrezgene) &
-                    !is.na(uniprot_acc) &
-                    is.na(uniprot_id)) |>
-    dplyr::select(-c(uniprot_id)) |>
-    dplyr::left_join(
-      up_xref_grch38,
-      by = c("entrezgene", "uniprot_acc")
-    ) |>
-    dplyr::filter(!is.na(uniprot_id)) |>
-    dplyr::distinct()
-  
-  up_xref[["found"]] <- as.data.frame(
-    up_xref[["found"]] |>
-      dplyr::bind_rows(up_xref[["rescued_from_grch38"]]) |>
-      dplyr::distinct() |>
-      dplyr::group_by(
-        ensembl_transcript_id,
-        uniprot_acc, uniprot_id
-      ) |>
-      dplyr::summarise(
-        entrezgene = paste(entrezgene, collapse = "&"),
-        .groups = "drop"
-      ) |>
-      dplyr::filter(!stringr::str_detect(
-        entrezgene, "&"
-      )) |>
-      dplyr::group_by(
-        entrezgene
-      ) |>
-      dplyr::mutate(
-        entrezgene = as.integer(entrezgene)
-      )
-  )
-  
-  
-  gene_gencode$records[["grch37"]] <-
-    gene_gencode$records[["grch37"]] |>
-    dplyr::select(-c(uniprot_id, uniprot_acc)) |>
-    dplyr::left_join(
-      up_xref$found,
-      by = c(
-        "entrezgene",
-        "ensembl_transcript_id"
-      )
-    ) |>
-    dplyr::distinct()
-  
-  
   elem <- paste0(
     "gencode_", gencode_release, "_", ensembl_release)
-  
-  saveRDS(
-    gene_gencode,
-    file = paste0(
-      "data-raw/gd_local/gene_", elem, "_v",
-      version_bump, ".rds"
-    )
+
+  gene_gencode_fname = paste0(
+    "data-raw/gd_local/gene_", elem, "_v",
+    version_bump, ".rds"
   )
+  
+  if(!file.exists(gene_gencode_fname)){
+  
+    gene_gencode <- list()
+    gene_gencode$records <- list()
+    gene_gencode$metadata <- metadata[["gencode"]]
+    
+    gene_gencode$metadata[
+      gene_gencode$metadata$source_abbreviation == "gencode",
+      "source_version"] <- gencode_release
+    gene_gencode$metadata[
+      gene_gencode$metadata$source_abbreviation == "ensembl",
+      "source_version"] <- ensembl_release
+    
+    gene_gencode$records[["grch38"]] <- gencode_get_transcripts(
+      build = "grch38",
+      gene_info = gene_info,
+      gencode_version = gencode_release,
+      ensembl_version = ensembl_release,
+      uniprot_version = as.character(
+        metadata$gencode[3, ]$source_version),
+      gene_alias = gene_alias
+    )
+    gene_gencode$records[["grch37"]] <- gencode_get_transcripts(
+      build = "grch37",
+      gene_info = gene_info,
+      gencode_version = as.integer(19),
+      ensembl_version = ensembl_release,
+      uniprot_version = as.character(
+        metadata$gencode[3, ]$source_version),
+      gene_alias = gene_alias
+    )
+    
+    ## "Rescue" some UniProt identifiers from
+    ## grch38 - missing/not found for grch37
+    
+    up_xref_grch38 <- gene_gencode[["records"]][["grch38"]] |>
+      dplyr::select(
+        entrezgene, uniprot_acc,
+        uniprot_id
+      ) |>
+      dplyr::filter(!is.na(entrezgene) &
+                      !is.na(uniprot_acc) &
+                      !is.na(uniprot_id)) |>
+      # dplyr::select(-uniprot_acc) |>
+      dplyr::distinct()
+    
+    up_xref <- list()
+    up_xref[["found"]] <-
+      gene_gencode[["records"]][["grch37"]] |>
+      dplyr::select(
+        entrezgene, uniprot_acc,
+        ensembl_transcript_id, uniprot_id
+      ) |>
+      dplyr::filter(!is.na(entrezgene) &
+                      !is.na(uniprot_acc) &
+                      !is.na(uniprot_id)) |>
+      dplyr::distinct()
+    
+    up_xref[["rescued_from_grch38"]] <-
+      gene_gencode[["records"]][["grch37"]] |>
+      dplyr::select(
+        entrezgene, uniprot_acc,
+        ensembl_transcript_id, uniprot_id
+      ) |>
+      dplyr::filter(!is.na(entrezgene) &
+                      !is.na(uniprot_acc) &
+                      is.na(uniprot_id)) |>
+      dplyr::select(-c(uniprot_id)) |>
+      dplyr::left_join(
+        up_xref_grch38,
+        by = c("entrezgene", "uniprot_acc")
+      ) |>
+      dplyr::filter(!is.na(uniprot_id)) |>
+      dplyr::distinct()
+    
+    up_xref[["found"]] <- as.data.frame(
+      up_xref[["found"]] |>
+        dplyr::bind_rows(up_xref[["rescued_from_grch38"]]) |>
+        dplyr::distinct() |>
+        dplyr::group_by(
+          ensembl_transcript_id,
+          uniprot_acc, uniprot_id
+        ) |>
+        dplyr::summarise(
+          entrezgene = paste(entrezgene, collapse = "&"),
+          .groups = "drop"
+        ) |>
+        dplyr::filter(!stringr::str_detect(
+          entrezgene, "&"
+        )) |>
+        dplyr::group_by(
+          entrezgene
+        ) |>
+        dplyr::mutate(
+          entrezgene = as.integer(entrezgene)
+        )
+    )
+    
+    
+    gene_gencode$records[["grch37"]] <-
+      gene_gencode$records[["grch37"]] |>
+      dplyr::select(-c(uniprot_id, uniprot_acc)) |>
+      dplyr::left_join(
+        up_xref$found,
+        by = c(
+          "entrezgene",
+          "ensembl_transcript_id"
+        )
+      ) |>
+      dplyr::distinct()
+    
+    
+    elem <- paste0(
+      "gencode_", gencode_release, "_", ensembl_release)
+    
+    saveRDS(
+      gene_gencode,
+      file = paste0(
+        "data-raw/gd_local/gene_", elem, "_v",
+        version_bump, ".rds"
+      )
+    )
+  }
   
   (gd_records[[elem]] <- googledrive::drive_upload(
     paste0(

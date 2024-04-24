@@ -212,7 +212,89 @@ get_gene_aliases_ncbi <- function(gene_info,
       TRUE,
       FALSE
     ))
-
+  
+  ## Find more aliases by looking at substrings
+  ## (among other gene name designations) that are very
+  ## similar to existing aliases - e.g. Trop-2
+  
+  valid_aliases <-
+    gene_alias_info |> 
+    dplyr::filter(ambiguous == FALSE) |> 
+    dplyr::arrange(entrezgene)
+  
+  ambiguous_aliases <- 
+    gene_alias_info |> 
+    dplyr::filter(ambiguous == TRUE) |> 
+    dplyr::arrange(entrezgene)
+  
+  other_designations <- 
+    gene_info |> 
+    dplyr::select(entrezgene, other_genename_designations) |> 
+    tidyr::separate_rows(other_genename_designations, sep="\\|") |> 
+    dplyr::mutate(other_index = dplyr::row_number()) |> 
+    dplyr::rename(designation_substring = other_genename_designations) |> 
+    tidyr::separate_rows(designation_substring, sep=" ") |> 
+    dplyr::filter(
+      stringr::str_detect(
+        designation_substring, "[0-9]") & 
+        nchar(designation_substring) > 4) |> 
+    dplyr::mutate(
+      designation_substring = stringr::str_replace_all(
+        designation_substring,"^\\(|\\)$|,$","")) |>
+    dplyr::mutate(
+      designation_substring = stringr::str_replace_all(
+        designation_substring,"\\)$","")) |>
+    dplyr::filter(
+        nchar(designation_substring) > 4)
+  
+  more_alias_candidates <- valid_aliases |> 
+    dplyr::left_join(
+      other_designations, relationship = "many-to-many") |> 
+    dplyr::mutate(
+      substring_distance = stringdist::stringdist(
+        tolower(alias),tolower(designation_substring))) |> 
+    dplyr::filter(substring_distance == 1) |>
+    dplyr::select(
+      entrezgene, other_index, designation_substring) |>
+    dplyr::rename(alias = designation_substring) |>
+    dplyr::distinct() |>
+    dplyr::group_by(alias) |>
+    dplyr::summarise(
+      other_index = paste(
+        unique(other_index), collapse=", "),
+      entrezgene = paste(
+        unique(entrezgene), collapse=", "
+      )) |>
+    dplyr::filter(!stringr::str_detect(
+      entrezgene,","
+    )) |>
+    dplyr::mutate(
+      source = "NCBI_designation_substring",
+      entrezgene = as.integer(entrezgene)) |>
+    dplyr::anti_join(
+      valid_aliases, by = c("alias", "entrezgene")) |>
+    dplyr::anti_join(
+      ambiguous_aliases, by = c("alias", "entrezgene")) |>
+    dplyr::filter(
+      stringr::str_detect(
+        alias, "[A-Za-z]{3,}"
+      )
+    ) |>
+    dplyr::mutate(
+      ambiguous = FALSE,
+      n_primary_map = 1,
+      is_primary_symbol = FALSE
+    ) |>
+    dplyr::left_join(
+      dplyr::select(
+        gene_info, entrezgene, symbol
+      ), by = "entrezgene"
+    ) |>
+    dplyr::distinct()
+  
+  gene_alias_info <- gene_alias_info |>
+    dplyr::bind_rows(more_alias_candidates)
+  
   return(gene_alias_info)
 }
 
