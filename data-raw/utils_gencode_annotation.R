@@ -407,12 +407,14 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
   ensembl_mart[["grch38"]] <- biomaRt::useEnsembl(
     biomart = "genes",
     dataset = "hsapiens_gene_ensembl",
+    host = "https://www.ensembl.org",
     version = ensembl_version
   )
 
   ensembl_mart[["grch37"]] <- biomaRt::useEnsembl(
     biomart = "genes",
     GRCh = "37",
+    host = "https://www.ensembl.org",
     dataset = "hsapiens_gene_ensembl"
   )
 
@@ -690,7 +692,7 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
   return(gencode_transcripts_xref_final)
 }
 
-get_uniprot_map <- function(uniprot_version = "2024_01") {
+get_uniprot_map <- function(uniprot_version = "2024_02") {
   lgr::lgr$info("Retrieving UniProtKB annotation")
   withr::local_options(
     timeout = max(30000000, getOption("timeout")))

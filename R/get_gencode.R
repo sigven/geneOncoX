@@ -105,7 +105,7 @@ get_gencode <- function(cache_dir = NA,
   
   if(ensembl_release > 111 | ensembl_release < 111){
     lgr::lgr$fatal(
-      paste0("ERROR: Ensembl release must be between equal to 111",
+      paste0("ERROR: Ensembl release must be equal to 111",
              " - exiting"))
       return(0)
   }

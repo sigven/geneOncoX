@@ -1,3 +1,7 @@
+# Version 0.8.7
+
+- CGC v100
+
 # Version 0.8.6
 
 - Added more gene aliases (one edit distance away from existing aliases, found 
