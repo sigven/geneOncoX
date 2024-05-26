@@ -1,6 +1,7 @@
-# Version 0.8.7
+# Version 0.8.8
 
 - CGC v100
+- add gene biotype
 
 # Version 0.8.6
 

@@ -29,9 +29,14 @@ lgr::lgr$appenders$console$set_layout(
 
 gene_info <- get_gene_info_ncbi() |>
   dplyr::select(
-    entrezgene, symbol, gene_biotype,
-    synonyms, name, other_genename_designations,
-    ensembl_gene_id, hgnc_id
+    entrezgene, 
+    symbol, 
+    gene_biotype,
+    synonyms, 
+    name, 
+    other_genename_designations,
+    ensembl_gene_id, 
+    hgnc_id
   ) |>
   dplyr::distinct()
 
@@ -41,6 +46,8 @@ gene_panels$records <- dplyr::bind_rows(
   get_panel_app_genes(gene_info = gene_info, build = "grch37"),
   get_panel_app_genes(gene_info = gene_info, build = "grch38")
 )
+
+
 
 gene_alias <- list()
 gene_alias$metadata <- metadata[["alias"]]
@@ -273,6 +280,19 @@ db[["basic"]] <- gene_basic
 #db[["gencode"]] <- gene_gencode
 db[["alias"]] <- gene_alias
 db[["predisposition"]] <- gene_predisposition
+
+gene_panels$records <- gene_panels$records |>
+  dplyr::left_join(
+    dplyr::select(
+      gene_info, entrezgene, gene_biotype
+    ),
+    by = "entrezgene"
+  ) |>
+  dplyr::select(
+    genome_build,
+    id, entrezgene, gene_biotype,
+    dplyr::everything()
+  )
 db[["panels"]] <- gene_panels
 
 

@@ -46,8 +46,17 @@ get_gene_info_ncbi <- function(update = T) {
       gene_biotype == "protin-coding",
       "protein_coding", as.character(gene_biotype)
     )) |>
+    dplyr::mutate(
+      gene_biotype = stringr::str_replace(
+        gene_biotype, "-","_"
+      )) |>
+    dplyr::mutate(gene_biotype = dplyr::case_when(
+      gene_biotype == "ncRNA" ~ "lincRNA",
+      gene_biotype == "pseudo" ~ "pseudogene",
+      TRUE ~ as.character(gene_biotype)
+    )) |>
     dplyr::filter(
-      gene_biotype != "biological-region"
+      gene_biotype != "biological_region"
     ) |>
     dplyr::select(-c(X1, X6))
 
@@ -309,11 +318,10 @@ get_function_summary_ncbi <- function(gene_df = NULL,
   )
 
   pcg <- gene_df |>
-    dplyr::filter(gene_biotype == "protein-coding") |>
+    dplyr::filter(gene_biotype == "protein_coding" |
+                    gene_biotype == "lincRNA") |>
     dplyr::select(entrezgene) |>
     dplyr::distinct()
-
-  # pcg <- gene_df
 
   i <- 1
   ncbi_gene_summary <- data.frame()

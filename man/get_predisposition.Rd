@@ -27,6 +27,7 @@ get_predisposition(cache_dir = NA, force_download = FALSE)
 \itemize{
 \item \emph{symbol} - official gene symbol
 \item \emph{entrezgene} - Entrez gene identifier
+\item \emph{gene_biotype} - gene biotype
 \item \emph{cpg_moi} - mechanism of inheritance (AD, AR)
 \item \emph{cpg_syndrome_cui} - Concept unique identifiers
 (CUI, UMLS) - inherited cancer syndromes

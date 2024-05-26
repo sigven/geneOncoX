@@ -282,12 +282,13 @@ get_acmg_secondary_findings <- function(gene_info = NULL,
       ) |>
       # dplyr::rename(predisp_syndrome_cui = cui) |>
       dplyr::left_join(
-        dplyr::select(gene_info, symbol, entrezgene),
+        dplyr::select(
+          gene_info, gene_biotype, symbol, entrezgene),
         by = c("symbol"), multiple = "all",
         relationship = "many-to-many"
       ) |>
       dplyr::group_by(
-        entrezgene, gene_mim,
+        entrezgene, gene_biotype, gene_mim,
         variants_to_report, inheritance, sf_list_version
       ) |>
       dplyr::summarise(
@@ -393,8 +394,9 @@ get_predisposition_genes_huang018 <- function(gene_info = NULL) {
       -c(cancer_syndrome, mode_of_inheritance, tumor_type)
     ) |>
     dplyr::left_join(
-      dplyr::select(gene_info, symbol, entrezgene),
-      by = c("symbol"), multiple = "all",
+      dplyr::select(gene_info, symbol, 
+                    entrezgene, gene_biotype),
+      by = c("symbol"), 
       relationship = "many-to-many"
     ) |>
     dplyr::mutate(source = "TCGA_PANCAN_2018") |>
@@ -458,12 +460,15 @@ get_curated_predisposition_genes <- function(gene_info = NULL) {
       dplyr::select(
         gene_info,
         entrezgene,
+        gene_biotype,
         ensembl_gene_id
       ),
       by = c("ensembl_gene_id"), multiple = "all"
     ) |>
     dplyr::select(
-      entrezgene, source,
+      entrezgene, 
+      gene_biotype, 
+      source,
       moi, reference
     )
 
@@ -486,16 +491,21 @@ get_curated_predisposition_genes <- function(gene_info = NULL) {
     dplyr::left_join(
       dplyr::select(
         gene_info,
-        symbol, entrezgene
+        gene_biotype,
+        symbol, 
+        entrezgene
       ),
       by = c("symbol"), multiple = "all"
     ) |>
-    dplyr::select(entrezgene, source)
+    dplyr::select(
+      entrezgene, 
+      source, 
+      gene_biotype)
 
   curated_predisposition_genes <- as.data.frame(
     curated_other |>
       dplyr::bind_rows(curated_ncgc) |>
-      dplyr::group_by(entrezgene, source) |>
+      dplyr::group_by(entrezgene, source, gene_biotype) |>
       dplyr::summarise(
         moi = paste(unique(moi), collapse = ","),
         reference = paste(unique(reference), collapse = ","),
@@ -577,6 +587,7 @@ get_predisposition_genes <- function(gene_info = NULL,
                                      gene_panels = NULL,
                                      cache_dir = NA) {
   cpg_collections <- list()
+  
   cpg_collections[["TCGA_PANCAN_2018"]] <-
     get_predisposition_genes_huang018(gene_info = gene_info)
   cpg_collections[["ACMG_SF"]] <-
@@ -584,27 +595,47 @@ get_predisposition_genes <- function(gene_info = NULL,
       gene_info = gene_info,
       cache_dir = cache_dir
     ) |>
-    dplyr::select(entrezgene, inheritance, disease_phenotype) |>
-    dplyr::rename(moi = inheritance, phenotypes = disease_phenotype) |>
+    dplyr::select(entrezgene, gene_biotype, 
+                  inheritance, disease_phenotype) |>
+    dplyr::rename(moi = inheritance, 
+                  phenotypes = disease_phenotype) |>
     dplyr::mutate(source = "ACMG_SF")
   cpg_collections[["CURATED_OTHER"]] <-
     get_curated_predisposition_genes(gene_info = gene_info) |>
     dplyr::select(-reference)
   cpg_collections[["CGC"]] <- get_cancer_gene_census(origin = "germline") |>
-    dplyr::rename(moi = cgc_moi, phenotypes = cgc_phenotype_germline) |>
-    dplyr::select(entrezgene, moi, phenotypes) |>
-    dplyr::mutate(source = "CGC")
+    dplyr::rename(moi = cgc_moi, 
+                  phenotypes = cgc_phenotype_germline) |>
+    dplyr::select(entrezgene, 
+                  moi, phenotypes) |>
+    dplyr::mutate(source = "CGC") |>
+    dplyr::left_join(
+      dplyr::select(
+        gene_info, entrezgene, 
+        gene_biotype
+      ),
+      by = "entrezgene"
+    )
 
   mod_moi_predisposition <- get_moi_mod_maxwell2016(
     gene_info = gene_info)
 
   cpg_collections[["PANEL_APP"]] <- as.data.frame(
     gene_panels$records |>
-      dplyr::select(entrezgene, gepa_moi, gepa_phenotype) |>
+      dplyr::left_join(
+        dplyr::select(
+          gene_info, entrezgene, gene_biotype
+        ),
+        by = "entrezgene"
+      ) |>
+      dplyr::select(entrezgene, gene_biotype, 
+                    gepa_moi, gepa_phenotype) |>
       dplyr::distinct() |>
-      dplyr::group_by(entrezgene) |>
+      dplyr::group_by(entrezgene, gene_biotype) |>
       dplyr::summarise(
-        moi = paste(unique(sort(gepa_moi)), collapse = "&"),
+        moi = paste(
+          unique(sort(gepa_moi)), 
+          collapse = "&"),
         phenotypes = paste(
           unique(sort(gepa_phenotype)),
           collapse = ";"
@@ -653,11 +684,12 @@ get_predisposition_genes <- function(gene_info = NULL,
       dplyr::left_join(
         dplyr::select(
           gene_info,
-          symbol, entrezgene
+          symbol, 
+          entrezgene
         ),
         by = c("entrezgene"), multiple = "all"
       ) |>
-      dplyr::group_by(symbol, entrezgene) |>
+      dplyr::group_by(symbol, entrezgene, gene_biotype) |>
       dplyr::summarise(
         moi = paste(unique(sort(moi)), collapse = "&"),
         predisp_syndrome_cui = paste(
@@ -744,6 +776,6 @@ get_predisposition_genes <- function(gene_info = NULL,
           "")
       )
   )
-
+  
   return(all_predisposition_incidental)
 }

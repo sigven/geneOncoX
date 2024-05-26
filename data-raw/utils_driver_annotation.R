@@ -410,9 +410,10 @@ get_cancer_gene_census <- function(
       entrezgene = entrez_gene_id,
       cgc_tier = tier,
       moi = molecular_genetics
-    ) |>
+    ) |> 
     dplyr::left_join(
-      cgc_hallmark_genes, by = "symbol", multiple = "all") |>
+      cgc_hallmark_genes, by = "symbol", 
+      relationship = "many-to-many") |>
     dplyr::mutate(cgc_hallmark = dplyr::if_else(
       is.na(cgc_hallmark),
       FALSE,

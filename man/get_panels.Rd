@@ -29,6 +29,7 @@ get_panels(cache_dir = NA, force_download = FALSE)
 \item \emph{genome_build} - human assembly build (grch37/grch38)
 \item \emph{id} - panel identifier (local)
 \item \emph{entrezgene} - Entrez gene identifier
+\item \emph{gene_biotype} - gene biotype
 \item \emph{genename} - Gene name
 \item \emph{ensembl_gene_id} - Ensembl gene identifier
 \item \emph{gepa_moi} - mechanism of inheritance
