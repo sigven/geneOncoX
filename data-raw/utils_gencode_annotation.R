@@ -46,7 +46,7 @@ gencode_get_transcripts <-
            append_regulatory_region = TRUE,
            gencode_version = 45,
            ensembl_version = 111,
-           uniprot_version = "2024_01",
+           uniprot_version = "2024_02",
            gene_info = NULL,
            gene_alias = NULL) {
     gencode_ftp_url <-
@@ -319,7 +319,24 @@ gencode_get_transcripts <-
         gencode_version,
         uniprot_version
       )
-
+    
+    if(build == "grch37"){
+      gencode <- gencode |>
+        dplyr::mutate(gene_biotype = dplyr::case_when(
+          gene_biotype == "lincRNA" ~ "lncRNA",
+          TRUE ~ as.character(gene_biotype)
+        ))
+    }
+    
+    if(build == "grch38"){
+      gencode <- gencode |>
+        dplyr::mutate(gene_biotype = dplyr::case_when(
+          stringr::str_detect(gene_biotype, "processed") &
+            stringr::str_detect(gene_biotype, "pseudogene") ~ "pseudogene",
+          TRUE ~ as.character(gene_biotype)
+        ))
+    }
+    
 
     lgr::lgr$info(paste0(
       "A total of ",

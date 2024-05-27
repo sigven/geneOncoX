@@ -51,7 +51,7 @@ get_gene_info_ncbi <- function(update = T) {
         gene_biotype, "-","_"
       )) |>
     dplyr::mutate(gene_biotype = dplyr::case_when(
-      gene_biotype == "ncRNA" ~ "lincRNA",
+      gene_biotype == "ncRNA" ~ "lncRNA",
       gene_biotype == "pseudo" ~ "pseudogene",
       TRUE ~ as.character(gene_biotype)
     )) |>

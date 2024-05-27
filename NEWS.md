@@ -1,7 +1,7 @@
-# Version 0.8.8
+# Version 0.8.9
 
 - CGC v100
-- add gene biotype
+- make gene biotype more uniform across GENCODE builds
 
 # Version 0.8.6
 
