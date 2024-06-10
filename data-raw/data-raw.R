@@ -304,7 +304,7 @@ ensembl_release_current <-
   as.integer(metadata[['gencode']][
     metadata$gencode$source_abbreviation == "ensembl",]$source_version)
 ensembl_iter <- 0
-while(ensembl_iter < 1){
+while(ensembl_iter < 2){
   gencode_release <- gencode_release_current - ensembl_iter
   ensembl_release <- ensembl_release_current - ensembl_iter
   ensembl_iter <- ensembl_iter + 1

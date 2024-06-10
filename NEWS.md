@@ -1,3 +1,7 @@
+# Version 0.8.10
+
+- Support for GENCODE v46
+
 # Version 0.8.9
 
 - CGC v100

@@ -424,14 +424,14 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
   ensembl_mart[["grch38"]] <- biomaRt::useEnsembl(
     biomart = "genes",
     dataset = "hsapiens_gene_ensembl",
-    host = "https://www.ensembl.org",
+    #host = "https://www.ensembl.org",
     version = ensembl_version
   )
 
   ensembl_mart[["grch37"]] <- biomaRt::useEnsembl(
     biomart = "genes",
     GRCh = "37",
-    host = "https://www.ensembl.org",
+    #host = "https://www.ensembl.org",
     dataset = "hsapiens_gene_ensembl"
   )
 

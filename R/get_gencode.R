@@ -103,14 +103,17 @@ get_gencode <- function(cache_dir = NA,
                         chromosomes_only = TRUE,
                         ensembl_release = 111) {
   
-  if(ensembl_release > 111 | ensembl_release < 111){
+  if(ensembl_release > 112 | ensembl_release < 111){
     lgr::lgr$fatal(
-      paste0("ERROR: Ensembl release must be equal to 111",
+      paste0("ERROR: Ensembl release must be equal to 111 or 112",
              " - exiting"))
       return(0)
   }
   
   gencode_release <- 45
+  if(ensembl_release == 112){
+    gencode_release <- 46
+  }
   
   dat <- get_gox_data(
     cache_dir = cache_dir,
