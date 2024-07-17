@@ -127,7 +127,9 @@ get_panel_app_genes <-
       repair_genes_panel <- all_repair_genes |>
         dplyr::rename(gepa_panel_name = level4) |>
         dplyr::mutate(
-          id = i, gepa_moi = NA, gepa_panel_id = 256,
+          id = i, 
+          gepa_moi = NA, 
+          gepa_panel_id = 256,
           gepa_panel_version = as.character(version),
           gepa_penetrance = NA,
           gepa_phenotype = NA,
