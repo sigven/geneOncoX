@@ -1,66 +1,24 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/404.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/articles/geneOncoX.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/index.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/reference/assign_cancer_gene_roles.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/reference/create_virtual_panel_bed.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/reference/get_alias.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/reference/get_basic.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/reference/get_gencode.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/reference/get_gox_data.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/reference/get_otp_rank.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/reference/get_panels.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/reference/get_predisposition.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/reference/sort_bed_regions.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/reference/tidyeval.html</loc>
-  </url>
-  <url>
-    <loc>https://sigven.github.io/geneOncoX/reference/write_bed_file.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://sigven.github.io/geneOncoX/404.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/LICENSE-text.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/articles/geneOncoX.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/articles/index.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/authors.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/index.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/news/index.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/reference/assign_cancer_gene_roles.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/reference/create_virtual_panel_bed.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/reference/get_alias.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/reference/get_basic.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/reference/get_gencode.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/reference/get_gox_data.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/reference/get_otp_rank.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/reference/get_panels.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/reference/get_predisposition.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/reference/index.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/reference/sort_bed_regions.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/reference/tidyeval.html</loc></url>
+<url><loc>https://sigven.github.io/geneOncoX/reference/write_bed_file.html</loc></url>
 </urlset>
+
