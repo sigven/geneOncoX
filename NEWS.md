@@ -1,3 +1,7 @@
+# Version 0.9.0
+
+- Update NCBI gene information
+
 # Version 0.8.10
 
 - Support for GENCODE v46
