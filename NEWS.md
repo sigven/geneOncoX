@@ -1,3 +1,8 @@
+# Version 0.9.1
+
+- Use up-to-date gene symbols from NCBI in GENCODE tracks, ignore outdated Entrez
+gene identifiers from BioMart
+
 # Version 0.9.0
 
 - Update NCBI gene information

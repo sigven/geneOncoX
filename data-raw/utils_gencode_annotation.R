@@ -44,9 +44,9 @@ get_transcript_appris_annotation <-
 gencode_get_transcripts <-
   function(build = "grch38",
            append_regulatory_region = TRUE,
-           gencode_version = 45,
-           ensembl_version = 111,
-           uniprot_version = "2024_02",
+           gencode_version = 46,
+           ensembl_version = 112,
+           uniprot_version = "2024_04",
            gene_info = NULL,
            gene_alias = NULL) {
     gencode_ftp_url <-
@@ -237,6 +237,8 @@ gencode_get_transcripts <-
         symbol
       ) |>
       dplyr::distinct()
+    
+    
 
     ## get gene and transcript cross-references (biomart + gene_info)
     gencode_xrefs <- gencode_resolve_xrefs(
@@ -246,6 +248,24 @@ gencode_get_transcripts <-
       gene_info = gene_info,
       gene_alias = gene_alias
     )
+    
+    #if(build == "grch37"){
+    gene_info2 <- gene_info |>
+      dplyr::select(entrezgene, symbol) |>
+      dplyr::distinct()
+    gencode_xrefs1 <- gencode_xrefs |>
+      dplyr::filter(!is.na(entrezgene)) |>
+      dplyr::select(-c("symbol")) |>
+      dplyr::left_join(
+        gene_info2,
+        by = c("entrezgene")
+      ) |>
+      dplyr::distinct()
+    
+    gencode_xrefs2 <- gencode_xrefs |>
+      dplyr::filter(is.na(entrezgene))
+    gencode_xrefs3 <- dplyr::bind_rows(
+      gencode_xrefs1, gencode_xrefs2)
 
     appris_annotation <- get_transcript_appris_annotation(
       build = build
@@ -255,20 +275,27 @@ gencode_get_transcripts <-
       dplyr::select(-uniprot_version)
 
     gencode <- gencode |>
+      dplyr::rename(symbol_gencode = symbol) |>
       dplyr::left_join(
         gencode_xrefs,
         by = c(
-          "symbol", "ensembl_gene_id",
+          #"symbol", "ensembl_gene_id",
+          "ensembl_gene_id",
           "ensembl_transcript_id"
         ), multiple = "all"
       ) |>
+      dplyr::mutate(symbol = dplyr::case_when(
+        is.na(symbol) ~ symbol_gencode,
+        TRUE ~ as.character(symbol)
+      )) |>
       dplyr::left_join(
         dplyr::select(
           appris_annotation,
           principal_isoform_flag,
           ensembl_transcript_id
         ),
-        by = "ensembl_transcript_id", multiple = "all"
+        by = "ensembl_transcript_id", 
+        multiple = "all"
       ) |>
       gencode_expand_basic() |>
       dplyr::left_join(
@@ -302,6 +329,7 @@ gencode_get_transcripts <-
         ensembl_transcript_id_full,
         ensembl_protein_id,
         symbol,
+        symbol_gencode,
         hgnc_id,
         entrezgene,
         name,
@@ -369,7 +397,8 @@ gencode_expand_basic <- function(gencode) {
         ensembl_gene_id, symbol, tag,
         ensembl_transcript_id
       ) |>
-      dplyr::anti_join(gencode_basicset, by = "ensembl_gene_id") |>
+      dplyr::anti_join(
+        gencode_basicset, by = "ensembl_gene_id") |>
       dplyr::group_by(symbol, ensembl_gene_id) |>
       dplyr::summarise(
         n = dplyr::n(),
@@ -513,6 +542,40 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
       as.character(refseq_ncrna),
       as.character(refseq_transcript_id)
     ))
+  
+  valid_entrez_recs <- xref_biomart |> 
+    dplyr::filter(!is.na(entrezgene) & 
+                    !is.na(hgnc_id)) |> 
+    #dplyr::select(ensembl_gene_id, 
+    #              ensembl_transcript_id, 
+    #              entrezgene, 
+    #              hgnc_id) |> 
+    dplyr::distinct()
+  
+  valid_other_recs <- xref_biomart |> 
+    dplyr::filter(is.na(entrezgene)) |> 
+    #dplyr::select(ensembl_gene_id, 
+    #              ensembl_transcript_id, 
+    #              entrezgene, 
+    #              hgnc_id) |> 
+    dplyr::distinct()
+  
+  invalid_entrez_recs <- xref_biomart |> 
+    dplyr::filter(!is.na(entrezgene) & is.na(hgnc_id)) |> 
+    #dplyr::select(
+    #  ensembl_gene_id, ensembl_transcript_id, 
+    #  entrezgene, hgnc_id) |> 
+    dplyr::distinct() |> 
+    dplyr::semi_join(
+      valid_entrez_recs, by = "entrezgene") |> 
+    dplyr::distinct() |>
+    dplyr::mutate(entrezgene = as.integer(NA))
+  
+  xref_biomart <- rbind(
+    valid_entrez_recs,
+    valid_other_recs,
+    invalid_entrez_recs
+  )
 
   for (n in c(
     "refseq_protein_id",
@@ -709,7 +772,7 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
   return(gencode_transcripts_xref_final)
 }
 
-get_uniprot_map <- function(uniprot_version = "2024_02") {
+get_uniprot_map <- function(uniprot_version = "2024_04") {
   lgr::lgr$info("Retrieving UniProtKB annotation")
   withr::local_options(
     timeout = max(30000000, getOption("timeout")))
