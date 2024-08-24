@@ -1,9 +1,9 @@
 # Version 0.9.2
 
-- GENCODE transcript tracs:
+- GENCODE transcript tracks:
    - Pull in more up-to-date MANE select transcripts from NCBI
    - Pull in RefSeq Select identifiers (grch37)
-   - Use exact version numbers for transcripts/MANE select etc.
+   - Use exact version numbers for transcripts/MANE select.
 
 # Version 0.9.1
 
