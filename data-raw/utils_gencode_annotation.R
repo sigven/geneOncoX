@@ -1157,9 +1157,27 @@ biomart_ensg2entrez <- function(build = "grch37",
                                  "entrezgene" = "entrezgene")) |>
     dplyr::anti_join(mappings_in_gene_info, by = "ensembl_gene_id")
   
-  return(dplyr::bind_rows(
+  tmp_mappings <- dplyr::bind_rows(
     mappings_in_gene_info,
-    other_mappings))
+    other_mappings)
+  
+  other_mappings2 <- gene_info |> 
+    dplyr::mutate(entrezgene = as.character(entrezgene)) |> 
+    dplyr::select(hgnc_id, ensembl_gene_id, name, entrezgene) |> 
+    dplyr::rename(description = name) |>
+    dplyr::anti_join(tmp_mappings, 
+                     by = c("entrezgene" = "entrezgene")) |> 
+    dplyr::filter(!is.na(ensembl_gene_id))
+  
+  tmp_mappings <- tmp_mappings |>
+    dplyr::anti_join(
+      dplyr::select(other_mappings2, ensembl_gene_id), 
+      by = "ensembl_gene_id")
+  
+  
+  return(dplyr::bind_rows(
+    tmp_mappings,
+    other_mappings2))
   
 }
 
