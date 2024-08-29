@@ -1,4 +1,4 @@
-# Version 0.9.3
+# Version 0.9.4
 
 - fix bug in Entrez gene identifiers (grch37)
 
