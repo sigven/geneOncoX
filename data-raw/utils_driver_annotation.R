@@ -670,7 +670,7 @@ get_network_of_cancer_genes <- function(ncg_version = "7.0") {
   return(ncg)
 }
 
-get_cancermine_genes <- function(cancermine_version = "49") {
+get_cancermine_genes <- function(cancermine_version = "50") {
   cancermine_sentences_fname <-
     paste0(
       "data-raw/cancermine/cancermine_sentences.v",

@@ -224,6 +224,7 @@ gencode_get_transcripts <-
               as.integer(transcript_end)
             )
           ) |>
+          dplyr::filter(!is.na(chrom_length)) |>
           dplyr::select(-chrom_length)
       )
     }
@@ -441,14 +442,12 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
   ensembl_mart[["grch38"]] <- biomaRt::useEnsembl(
     biomart = "genes",
     dataset = "hsapiens_gene_ensembl",
-    #host = "https://www.ensembl.org",
     version = ensembl_version
   )
 
   ensembl_mart[["grch37"]] <- biomaRt::useEnsembl(
     biomart = "genes",
     GRCh = "37",
-    #host = "https://www.ensembl.org",
     dataset = "hsapiens_gene_ensembl"
   )
 
@@ -456,54 +455,12 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
   
   ensembl2entrez <- biomart_ensg2entrez(
     build = build,
+    gene_info = gene_info,
     ensembl_mart = ensembl_mart
   )
   
-  entrez2hgnc <- biomart_entrez2hgnc(
-    build = build,
-    ensembl_mart = ensembl_mart
-  )
-  
-  ensembl2entrez_hgnc <- ensembl2entrez |> 
-    dplyr::left_join(
-      entrez2hgnc, by = "entrezgene",
-      relationship = "many-to-many")
-  
-  hgnc_map <- readr::read_tsv(
-    file="~/Downloads/hgnc_complete_set.txt", 
-    guess_max = 100000, show_col_types = F) |> 
-    dplyr::select(hgnc_id, ensembl_gene_id, entrez_id) |> 
-    dplyr::mutate(hgnc_id = stringr::str_replace(
-      hgnc_id, "HGNC:","")) |> 
-    dplyr::rename(entrezgene = entrez_id) |> 
-    dplyr::arrange(entrezgene)
-
-  
-  ## Consider HGNC map more trustworthy than BioMart - 
-  ## use that if possible
-  ensembl2entrez_hgnc_part1 <- 
-    ensembl2entrez_hgnc |> 
-    dplyr::semi_join(
-      hgnc_map, by = "ensembl_gene_id") |> 
-    dplyr::select(-c("entrezgene","hgnc_id")) |> 
-    dplyr::distinct() |> 
-    dplyr::left_join(
-      hgnc_map, relationship = "many-to-many") |>
-    dplyr::mutate(entrezgene = as.character(
-      entrezgene
-    ))
-  
-  ensembl2entrez_hgnc_part2 <-
-    ensembl2entrez_hgnc |> 
-    dplyr::anti_join(
-      hgnc_map, by = "ensembl_gene_id")
-  
-  ensembl2entrez_hgnc <- 
-    dplyr::bind_rows(
-      ensembl2entrez_hgnc_part1,
-      ensembl2entrez_hgnc_part2
-    )
-  
+  ensembl2entrez_hgnc <- ensembl2entrez 
+   
   queryAttributes1 <- c(
     "ensembl_transcript_id",
     "refseq_mrna",
@@ -524,6 +481,13 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
   xref_biomart_1 <- biomaRt::getBM(
     attributes = queryAttributes1,
     mart = ensembl_mart[[build]]) |>
+    dplyr::mutate(
+      refseq_mrna = dplyr::if_else(
+        nchar(refseq_mrna) == 0,
+        as.character(NA),
+        as.character(refseq_mrna)
+      )
+    ) |>
     dplyr::left_join(
       ensembl2entrez_hgnc, by = "ensembl_gene_id",
       relationship = "many-to-many") |>
@@ -533,7 +497,7 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
               "refseq_mrna" = "rs_transcript_id_stripped")) |>
     dplyr::mutate(
        refseq_transcript_id = dplyr::if_else(
-         is.na(rs_transcript_id),
+         is.na(rs_transcript_id) & !is.na(refseq_mrna),
          refseq_mrna,
          rs_transcript_id
        ) 
@@ -560,7 +524,12 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
 
   xref_biomart_4 <- biomaRt::getBM(
     attributes = queryAttributes4,
-    mart = ensembl_mart[[build]])
+    mart = ensembl_mart[[build]]) |>
+    dplyr::mutate(refseq_ncrna = dplyr::if_else(
+      nchar(refseq_ncrna) == 0,
+      as.character(NA),
+      refseq_ncrna
+    ))
   
   xref_biomart <- xref_biomart_1 |>
     dplyr::left_join(
@@ -578,20 +547,11 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
       refseq_protein_id = refseq_peptide
     ) |>
     dplyr::mutate(refseq_transcript_id = dplyr::if_else(
-      refseq_transcript_id == "", 
+      is.na(refseq_transcript_id) & !is.na(refseq_ncrna), 
       as.character(refseq_ncrna),
       as.character(refseq_transcript_id)
     )) |>
     dplyr::select(-refseq_ncrna) |>
-    dplyr::mutate(refseq_transcript_id = dplyr::if_else(
-      nchar(refseq_transcript_id) == 0,
-      as.character(NA),
-      as.character(refseq_transcript_id))) |>
-    dplyr::mutate(hgnc_id = dplyr::if_else(
-      nchar(hgnc_id) == 0,
-      as.character(NA),
-      as.character(hgnc_id)
-    )) |>
     dplyr::distinct()
   
   valid_entrez_recs <- xref_biomart |> 
@@ -617,6 +577,27 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
     invalid_entrez_recs
   )
 
+    for (n in c(
+      "refseq_protein_id",
+      "refseq_transcript_id",
+      "uniprot_acc",
+      "refseq_select",
+      "hgnc_id",
+      "transcript_mane_select",
+      "transcript_mane_plus_clinical",
+      "description")) {
+      if(n %in% colnames(xref_biomart)){
+        if(NROW(
+          xref_biomart[!is.na(xref_biomart[, n]) &
+                       (xref_biomart[, n] == "" |
+                        xref_biomart[, n] == "NA"), ]) > 0){
+          xref_biomart[!is.na(xref_biomart[, n]) &
+                         (xref_biomart[, n] == "" |
+                            xref_biomart[, n] == "NA"), ][, n] <- NA
+        }
+      }
+    }
+  
   for (xref in c(
     "refseq_protein_id",
     "refseq_transcript_id",
@@ -639,7 +620,8 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
           ensembl_gene_id
         ) |>
         dplyr::summarise(
-          !!rlang::sym(xref) := paste(unique(!!rlang::sym(xref)),
+          !!rlang::sym(xref) := paste(
+            unique(sort(!!rlang::sym(xref), decreasing = T)),
             collapse = "&"
           ),
           .groups = "drop"
@@ -673,7 +655,8 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
           ensembl_gene_id
         ) |>
         dplyr::summarise(
-          !!rlang::sym(xref) := paste(unique(!!rlang::sym(xref)),
+          !!rlang::sym(xref) := paste(
+            unique(sort(!!rlang::sym(xref), decreasing = T)),
             collapse = "&"
           ),
           .groups = "drop"
@@ -952,6 +935,9 @@ get_refseq_map <- function(build = "grch37"){
       .data$db_xref, "GeneID:",""
     )) |>
     dplyr::rename(rs_transcript_id = transcript_id) |>
+    dplyr::filter(
+      !stringr::str_detect(rs_transcript_id, "\\.[0-9]{1,}_[0-9]$")
+    ) |>
     dplyr::mutate(
       rs_transcript_id_stripped = stringr::str_replace(
         .data$rs_transcript_id, "\\.[0-9]{1,}$", ""
@@ -1006,6 +992,9 @@ get_refseq_map <- function(build = "grch37"){
       )) |>
       dplyr::rename(rs_transcript_id = transcript_id,
                     rs_select = tag) |>
+      dplyr::filter(
+        !stringr::str_detect(rs_transcript_id, "\\.[0-9]{1,}_[0-9]$")
+      ) |>
       dplyr::mutate(refseq_select = dplyr::if_else(
         !is.na(.data$rs_select), TRUE, FALSE
       )) |>
@@ -1124,127 +1113,52 @@ biomart_mane_select <- function(build = "grch38",
 }
 
 biomart_ensg2entrez <- function(build = "grch37",
+                                gene_info = NULL,
                                 ensembl_mart = NULL){
   
   queryAttributes <- c(
     "ensembl_gene_id",
+    "hgnc_id",
     "entrezgene_id",
     "description"
   )
   
   ensg2entrez_final <- data.frame()
   ensg2entrez <- list()
-  ensg2entrez[['grch38']] <- biomaRt::getBM(
-    mart = ensembl_mart$grch38, 
+  ensg2entrez[[build]] <- biomaRt::getBM(
+    mart = ensembl_mart[[build]], 
     attributes = queryAttributes) |>
     dplyr::rename(ensembl_gene_id = ensembl_gene_id,
                   entrezgene = entrezgene_id) |>
     dplyr::mutate(entrezgene = as.character(entrezgene)) |>
-    dplyr::filter(nchar(entrezgene) > 0 & !is.na(entrezgene)) |>
+    dplyr::filter(
+      nchar(entrezgene) > 0 & 
+        !is.na(entrezgene)) |>
     dplyr::mutate(description = dplyr::if_else(
-      nchar(description) > 0, description, NA_character_
-    ))
+      nchar(description) > 0, 
+      description, 
+      NA_character_
+    )) |>
+    dplyr::mutate(hgnc_id = as.character(hgnc_id))
   
-  if(build == "grch38"){
-    if(!is.null(ensembl_mart$grch38)){
-      ensg2entrez_final <- ensg2entrez$grch38
-    }
-  } else {
-    if(!is.null(ensembl_mart$grch37)){
-      ensg2entrez[['grch37']] <- biomaRt::getBM(
-        mart = ensembl_mart$grch37, 
-        attributes = queryAttributes) |>
-        dplyr::rename(ensembl_gene_id = ensembl_gene_id,
-                      entrezgene = entrezgene_id) |>
-        dplyr::mutate(entrezgene = as.character(entrezgene)) |>
-        dplyr::filter(nchar(entrezgene) > 0 & !is.na(entrezgene)) |>
-        dplyr::mutate(description = dplyr::if_else(
-          nchar(description) > 0, description, NA_character_
-        ))
-      
-      
-      ensg2entrez_grch37_exclusive <- ensg2entrez[['grch37']] |>
-        dplyr::anti_join(ensg2entrez[['grch38']], 
-                         by = "ensembl_gene_id")
-      
-      ensg2entrez_grch37_common <- ensg2entrez[['grch37']] |>
-        dplyr::semi_join(ensg2entrez[['grch38']], 
-                         by = "ensembl_gene_id") |>
-        dplyr::select(-c("entrezgene","description")) |>
-        dplyr::distinct() |>
-        dplyr::left_join(ensg2entrez[['grch38']], 
-                        by = "ensembl_gene_id",
-                        relationship = "many-to-many")
-      
-      ensg2entrez_final <- dplyr::bind_rows(
-        ensg2entrez_grch37_exclusive,
-        ensg2entrez_grch37_common
-      )
-      
-    }
-  }
+  gene_info_complete <- gene_info |>
+    dplyr::filter(!is.na(hgnc_id)) |>
+    dplyr::mutate(entrezgene = as.character(entrezgene))
   
-  return(ensg2entrez_final)
+  mappings_in_gene_info <- ensg2entrez[[build]] |>
+    dplyr::semi_join(
+      gene_info_complete, by = c("hgnc_id" = "hgnc_id",
+                                 "entrezgene" = "entrezgene"))
   
-}
-
-
-biomart_entrez2hgnc <- function(build = "grch37",
-                                ensembl_mart = NULL){
+  other_mappings <- ensg2entrez[[build]] |>
+    dplyr::anti_join(
+      gene_info_complete, by = c("hgnc_id" = "hgnc_id",
+                                 "entrezgene" = "entrezgene")) |>
+    dplyr::anti_join(mappings_in_gene_info, by = "ensembl_gene_id")
   
-  queryAttributes <- c(
-    "hgnc_id",
-    "entrezgene_id"
-  )
-  
-  entrez2hgnc_final <- data.frame()
-  entrez2hgnc <- list()
-  entrez2hgnc[['grch38']] <- biomaRt::getBM(
-    mart = ensembl_mart$grch38, 
-    attributes = queryAttributes) |>
-    dplyr::rename(entrezgene = entrezgene_id) |>
-    dplyr::mutate(entrezgene = as.character(entrezgene)) |>
-    dplyr::filter(nchar(entrezgene) > 0 & !is.na(entrezgene)) |>
-    dplyr::mutate(hgnc_id = stringr::str_replace(
-      as.character(hgnc_id), "HGNC:",""))
-  
-  if(build == "grch38"){
-    if(!is.null(ensembl_mart$grch38)){
-      entrez2hgnc_final <- entrez2hgnc$grch38
-    }
-  } else {
-    if(!is.null(ensembl_mart$grch37)){
-      entrez2hgnc[['grch37']] <- biomaRt::getBM(
-        mart = ensembl_mart$grch37, 
-        attributes = queryAttributes) |>
-        dplyr::rename(entrezgene = entrezgene_id) |>
-        dplyr::mutate(entrezgene = as.character(entrezgene)) |>
-        dplyr::filter(nchar(entrezgene) > 0 & !is.na(entrezgene)) |>
-        dplyr::mutate(hgnc_id = as.character(hgnc_id))
-      
-      
-      entrez2hgnc_grch37_exclusive <- entrez2hgnc[['grch37']] |>
-        dplyr::anti_join(entrez2hgnc[['grch38']], 
-                         by = "entrezgene")
-      
-      entrez2hgnc_grch37_common <- entrez2hgnc[['grch37']] |>
-        dplyr::semi_join(entrez2hgnc[['grch38']], 
-                         by = "entrezgene") |>
-        dplyr::select(-c("hgnc_id")) |>
-        dplyr::distinct() |>
-        dplyr::left_join(entrez2hgnc[['grch38']], 
-                         by = "entrezgene",
-                         relationship = "many-to-many")
-      
-      entrez2hgnc_final <- dplyr::bind_rows(
-        entrez2hgnc_grch37_exclusive,
-        entrez2hgnc_grch37_common
-      )
-      
-    }
-  }
-  
-  return(entrez2hgnc_final)
+  return(dplyr::bind_rows(
+    mappings_in_gene_info,
+    other_mappings))
   
 }
 
