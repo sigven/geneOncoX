@@ -1139,7 +1139,8 @@ biomart_ensg2entrez <- function(build = "grch37",
       description, 
       NA_character_
     )) |>
-    dplyr::mutate(hgnc_id = as.character(hgnc_id))
+    dplyr::mutate(hgnc_id = as.character(
+      stringr::str_replace(hgnc_id,"HGNC:","")))
   
   gene_info_complete <- gene_info |>
     dplyr::filter(!is.na(hgnc_id)) |>

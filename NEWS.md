@@ -1,6 +1,7 @@
-# Version 0.9.4
+# Version 0.9.5
 
 - fix bug in Entrez gene identifiers (grch37)
+- fix bug in HGNC id map (grch38)
 
 # Version 0.9.2
 
