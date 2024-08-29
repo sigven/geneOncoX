@@ -1,3 +1,7 @@
+# Version 0.9.3
+
+- fix bug in Entrez gene identifiers (grch37)
+
 # Version 0.9.2
 
 - GENCODE transcript tracks:
