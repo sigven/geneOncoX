@@ -576,27 +576,27 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
     valid_other_recs,
     invalid_entrez_recs
   )
-
-    for (n in c(
-      "refseq_protein_id",
-      "refseq_transcript_id",
-      "uniprot_acc",
-      "refseq_select",
-      "hgnc_id",
-      "transcript_mane_select",
-      "transcript_mane_plus_clinical",
-      "description")) {
-      if(n %in% colnames(xref_biomart)){
-        if(NROW(
-          xref_biomart[!is.na(xref_biomart[, n]) &
+  
+  for (n in c(
+    "refseq_protein_id",
+    "refseq_transcript_id",
+    "uniprot_acc",
+    "refseq_select",
+    "hgnc_id",
+    "transcript_mane_select",
+    "transcript_mane_plus_clinical",
+    "description")) {
+    if(n %in% colnames(xref_biomart)){
+      if(NROW(
+        xref_biomart[!is.na(xref_biomart[, n]) &
+                     (xref_biomart[, n] == "" |
+                      xref_biomart[, n] == "NA"), ]) > 0){
+        xref_biomart[!is.na(xref_biomart[, n]) &
                        (xref_biomart[, n] == "" |
-                        xref_biomart[, n] == "NA"), ]) > 0){
-          xref_biomart[!is.na(xref_biomart[, n]) &
-                         (xref_biomart[, n] == "" |
-                            xref_biomart[, n] == "NA"), ][, n] <- NA
-        }
+                          xref_biomart[, n] == "NA"), ][, n] <- NA
       }
     }
+  }
   
   for (xref in c(
     "refseq_protein_id",
@@ -797,7 +797,111 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
 
   rownames(gencode_transcripts_xref_final) <- NULL
   attr(gencode_transcripts_xref_final, "groups") <- NULL
-
+  
+  
+  
+  for (n in c(
+    "refseq_protein_id",
+    "refseq_transcript_id",
+    "uniprot_acc",
+    "refseq_select",
+    "hgnc_id",
+    "transcript_mane_select",
+    "transcript_mane_plus_clinical",
+    "name")) {
+    if(n %in% colnames(gencode_transcripts_xref_final)){
+      if(NROW(
+        gencode_transcripts_xref_final[!is.na(gencode_transcripts_xref_final[, n]) &
+                     (gencode_transcripts_xref_final[, n] == "" |
+                      gencode_transcripts_xref_final[, n] == "NA"), ]) > 0){
+        gencode_transcripts_xref_final[!is.na(gencode_transcripts_xref_final[, n]) &
+                       (gencode_transcripts_xref_final[, n] == "" |
+                          gencode_transcripts_xref_final[, n] == "NA"), ][, n] <- NA
+      }
+    }
+  }
+  
+  gene_info_complete1 <- gene_info |>
+    dplyr::filter(!is.na(entrezgene) & !is.na(ensembl_gene_id)) |>
+    #dplyr::mutate(entrezgene = as.character(entrezgene)) |>
+    dplyr::select(c("hgnc_id","entrezgene",
+                     "symbol","ensembl_gene_id")) |>
+    dplyr::rename(symbol2 = symbol)
+  
+  #gene_info_complete2 <- gene_info |>
+  #dplyr::filter(!is.na(entrezgene) & is.na(ensembl_gene_id)) |>
+  #   dplyr::mutate(entrezgene = as.character(entrezgene)) |>
+  #   dplyr::select(c("hgnc_id","entrezgene",
+  #                    "symbol"))
+  
+  missing_entrez1 <- gencode_transcripts_xref_final |>
+    dplyr::filter(is.na(entrezgene)) |>
+    dplyr::select(-c("entrezgene","hgnc_id")) |>
+    dplyr::left_join(
+      dplyr::select(
+        gene_info_complete1,
+        c("hgnc_id","entrezgene","symbol2","ensembl_gene_id")),
+      by = c("ensembl_gene_id")
+    ) |>
+    dplyr::mutate(symbol = dplyr::if_else(
+      !is.na(symbol2) &
+        stringr::str_detect(symbol,"^ENSG"),
+      symbol2,
+      as.character(symbol)
+    )) |>
+    dplyr::select(-c("symbol2"))
+  
+  not_missing_entrez <- gencode_transcripts_xref_final |>
+    dplyr::filter(!is.na(entrezgene)) |>
+    dplyr::left_join(
+      dplyr::select(
+        gene_info_complete1,
+        c("entrezgene","symbol2")),
+      by = c("entrezgene")
+    ) |>
+    dplyr::mutate(symbol = dplyr::if_else(
+      !is.na(symbol2) &
+        stringr::str_detect(symbol,"^ENSG"),
+      symbol2,
+      as.character(symbol)
+    )) |>
+    dplyr::select(-c("symbol2"))
+  
+  gencode_transcripts_xref_final <- dplyr::bind_rows(
+    missing_entrez1,not_missing_entrez) |>
+    dplyr::arrange(entrezgene)
+  
+  
+  set1 <- gencode_transcripts_xref_final |>
+    dplyr::filter(!is.na(entrezgene) & is.na(name)) |>
+    dplyr::select(-c("name")) |>
+    dplyr::left_join(
+      dplyr::select(
+        gene_info,
+        c("entrezgene","name")),
+      by = c("entrezgene")
+    )
+  
+  set1 <- gencode_transcripts_xref_final |>
+    dplyr::filter(!is.na(entrezgene))
+  set2 <- gencode_transcripts_xref_final |>
+    dplyr::filter(is.na(entrezgene) & 
+                    !is.na(name) & !is.na(symbol)) |>
+    dplyr::select(-c("name")) |>
+    dplyr::left_join(
+      dplyr::select(
+        gene_info,
+        c("symbol","name")),
+      by = c("symbol" = "symbol")
+    )
+  
+  set3 <- gencode_transcripts_xref_final |> dplyr::filter(
+    is.na(entrezgene) & is.na(name))
+  
+  gencode_transcripts_xref_final <- 
+    dplyr::bind_rows(set1,set2,set3) |>
+    dplyr::distinct()
+  
   return(gencode_transcripts_xref_final)
 }
 

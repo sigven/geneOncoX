@@ -269,8 +269,8 @@ for(vbump in c('major','minor','patch')){
 }
 
 bump_version_level <- "patch"
-version_bump <- version_bumps[[bump_version_level]]
-
+#version_bump <- version_bumps[[bump_version_level]]
+version_bump <- "0.9.7"
 
 gd_records <- list()
 db_id_ref <- data.frame()
