@@ -1,3 +1,8 @@
+# Version 0.9.9
+
+- Updated NCBI gene information
+- Added `cds_start` to GENCODE transcripts
+
 # Version 0.9.7
 
 - fixed bug in Entrez gene identifiers (grch37)

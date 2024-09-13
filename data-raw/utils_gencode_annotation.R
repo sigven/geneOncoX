@@ -74,7 +74,21 @@ gencode_get_transcripts <-
     #https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_45/gencode.v45.chr_patch_hapl_scaff.annotation.gtf.gz
 
     options(timeout = 10000000)
-    gencode_gtf_transcripts <- valr::read_gtf(remote_gtf_all) |>
+    gencode_gtf_all <- valr::read_gtf(remote_gtf_all)
+    
+    cds_start_positions <- gencode_gtf_all |>
+      dplyr::filter(.data$type == "start_codon" & phase == 0) |>
+      dplyr::mutate(cds_start = dplyr::if_else(
+        .data$strand == "-", 
+        as.numeric(.data$end),
+        as.numeric(.data$start)
+      )) |>
+      dplyr::select(c("transcript_id", "cds_start")) |>
+      dplyr::rename(
+        ensembl_transcript_id_full = "transcript_id") |>
+      dplyr::distinct()
+    
+    gencode_gtf_transcripts <- gencode_gtf_all |>
       dplyr::filter(type == "transcript")
     
     if(gencode_version == 19){
@@ -147,7 +161,11 @@ gencode_get_transcripts <-
       )) |>
       dplyr::filter(!is.na(ensembl_gene_id) &
         !is.na(ensembl_transcript_id)) |>
-      dplyr::distinct()
+      dplyr::distinct() |>
+      dplyr::left_join(
+        cds_start_positions, 
+        by = "ensembl_transcript_id_full"
+      )
 
     #
     lgr::lgr$info(paste0(
@@ -309,6 +327,7 @@ gencode_get_transcripts <-
         end,
         transcript_start,
         transcript_end,
+        cds_start,
         strand,
         ensembl_gene_id,
         ensembl_gene_id_full,
