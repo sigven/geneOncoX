@@ -1,3 +1,11 @@
+# Version 1.0.0
+
+- Updated IntOGen (v2024.10)
+- Updated NCBI summary information
+- Updated GENCODE to v47
+- moved from bump2version (deprecated) to 
+[bump-my-version](https://github.com/callowayproject/bump-my-version)
+
 # Version 0.9.9
 
 - Updated NCBI gene information

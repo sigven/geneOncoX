@@ -101,16 +101,16 @@
 get_gencode <- function(cache_dir = NA,
                         force_download = FALSE,
                         chromosomes_only = TRUE,
-                        ensembl_release = 112) {
+                        ensembl_release = 113) {
   
-  if(ensembl_release > 112 | ensembl_release < 112){
+  if(ensembl_release > 113 | ensembl_release < 113){
     lgr::lgr$fatal(
-      paste0("ERROR: Ensembl release must be equal to 112",
+      paste0("ERROR: Ensembl release must be equal to 113",
              " - exiting"))
       return(0)
   }
   
-  gencode_release <- 46
+  gencode_release <- 47
   # if(ensembl_release == 112){
   #   gencode_release <- 46
   # }

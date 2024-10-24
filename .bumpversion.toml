@@ -1,0 +1,25 @@
+[tool.bumpversion]
+current_version = "0.9.9"
+search = "{current_version}"
+replace = "{new_version}"
+message = "Bump version: {current_version} → {new_version}"
+regex = false
+ignore_missing_version = false
+ignore_missing_files = false
+commit = true
+parse = """(?x)
+    (?P<major>0|[1-9]\\d*)\\.
+    (?P<minor>0|[1-9]\\d*)\\.
+    (?P<patch>0|[1-9]\\d*)
+    (?:\\.(?P<dev>\\d+))?
+"""
+
+serialize = [
+    "{major}.{minor}.{patch}.{dev}",
+    "{major}.{minor}.{patch}",
+]
+
+[[tool.bumpversion.files]]
+filename = "pcgrr/DESCRIPTION"
+search = "Version: {current_version}"
+replace = "Version: {new_version}"

@@ -458,10 +458,18 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
 
   options(timeout = 10000000)
   ensembl_mart <- list()
-  ensembl_mart[["grch38"]] <- biomaRt::useEnsembl(
-    biomart = "genes",
-    dataset = "hsapiens_gene_ensembl",
-  )
+  if(ensembl_version == 113){
+    ensembl_mart[["grch38"]] <- biomaRt::useEnsembl(
+      biomart = "genes",
+      dataset = "hsapiens_gene_ensembl",
+    )
+  }else{
+    ensembl_mart[["grch38"]] <- biomaRt::useEnsembl(
+      biomart = "genes",
+      dataset = "hsapiens_gene_ensembl",
+      version = ensembl_version
+    )
+  }
 
   ensembl_mart[["grch37"]] <- biomaRt::useEnsembl(
     biomart = "genes",

@@ -34,7 +34,7 @@ library(geneOncoX)
 ```{r install, echo = T, eval = F}
 
 if (!("remotes" %in% installed.packages())) {
-  install.packages("remotes")
+ install.packages("remotes")
 }
 remotes::install_github('sigven/geneOncoX')
 ```
@@ -51,8 +51,8 @@ predicted cancer driver genes.
 library(geneOncoX)
 
 ## load the data
-download_dir <- tempdir()
-#download_dir <- "/Users/sigven/project_data/packages/package__geneOncoX/geneOncoX/data-raw/gd_local"
+#download_dir <- tempdir()
+download_dir <- "/Users/sigven/project_data/packages/package__geneOncoX/geneOncoX/data-raw/gd_local"
 gene_basic <- get_basic(cache_dir = download_dir)
 
 ## Number of records

@@ -270,7 +270,7 @@ for(vbump in c('major','minor','patch')){
 
 bump_version_level <- "patch"
 #version_bump <- version_bumps[[bump_version_level]]
-version_bump <- "0.9.9"
+version_bump <- "1.0.0"
 
 gd_records <- list()
 db_id_ref <- data.frame()
@@ -518,7 +518,8 @@ for (elem in c(
       "data-raw/gd_local/gene_",
       elem, "_v", version_bump, ".rds"
     ),
-    paste0("geneOncoX/gene_", elem, "_v", version_bump, ".rds")
+    paste0("geneOncoX/gene_", 
+           elem, "_v", version_bump, ".rds")
   ))
 
   google_rec_df <-
