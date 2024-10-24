@@ -480,7 +480,7 @@ while(ensembl_iter < 1){
 gene_otp_rank <- list()
 gene_otp_rank[["metadata"]] <- metadata$otp_rank
 gene_otp_rank[["records"]] <- readRDS(
-  file="~/project_data/packages/package__oncoEnrichR/db/output/v1.5.0/otdb_v1.5.0.rds")$gene_rank 
+  file="~/project_data/packages/package__oncoEnrichR/db/output/v1.5.3/otdb_v1.5.3.rds")$gene_rank 
 
 
 ens2entrez <- 

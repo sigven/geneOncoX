@@ -3,7 +3,7 @@ get_intogen_driver_genes <- function(gene_info = NULL) {
     read.table(
       file = file.path(
         "data-raw", "intogen",
-        "Compendium_Cancer_Genes_IntOGen.tsv"
+        "Compendium_Cancer_Genes.tsv"
       ), sep = "\t",
       header = TRUE, quote = NULL, stringsAsFactors = FALSE
     ) |>

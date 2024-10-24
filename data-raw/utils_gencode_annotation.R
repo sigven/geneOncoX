@@ -44,9 +44,9 @@ get_transcript_appris_annotation <-
 gencode_get_transcripts <-
   function(build = "grch38",
            append_regulatory_region = TRUE,
-           gencode_version = 46,
-           ensembl_version = 112,
-           uniprot_version = "2024_04",
+           gencode_version = 47,
+           ensembl_version = 113,
+           uniprot_version = "2024_05",
            gene_info = NULL,
            gene_alias = NULL) {
     gencode_ftp_url <-
@@ -442,7 +442,7 @@ gencode_expand_basic <- function(gencode) {
 
 gencode_resolve_xrefs <- function(transcript_df = NULL,
                                   build = "grch38",
-                                  ensembl_version = 112,
+                                  ensembl_version = 113,
                                   gene_info = NULL,
                                   gene_alias = NULL) {
   invisible(assertable::assert_colnames(
@@ -461,7 +461,6 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
   ensembl_mart[["grch38"]] <- biomaRt::useEnsembl(
     biomart = "genes",
     dataset = "hsapiens_gene_ensembl",
-    version = ensembl_version
   )
 
   ensembl_mart[["grch37"]] <- biomaRt::useEnsembl(
@@ -924,7 +923,7 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
   return(gencode_transcripts_xref_final)
 }
 
-get_uniprot_map <- function(uniprot_version = "2024_04") {
+get_uniprot_map <- function(uniprot_version = "2024_05") {
   lgr::lgr$info("Retrieving UniProtKB annotation")
   withr::local_options(
     timeout = max(30000000, getOption("timeout")))
