@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">geneOncoX</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -104,15 +104,15 @@ proto-oncogenes, and predicted cancer driver genes.</p>
 <span><span class="va">download_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">gene_basic</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_basic.html">get_basic</a></span><span class="op">(</span>cache_dir <span class="op">=</span> <span class="va">download_dir</span><span class="op">)</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:45] Downloading remote dataset from Google Drive to cache_dir</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:49] Reading from cache_dir = '/tmp/RtmpkhtWFA', argument force_download = FALSE</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:49] Object 'gene_basic' sucessfully loaded</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:49] md5 checksum is valid: e6ad1203a668a0ae7ba3cfd1be7828df</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:49] Retrieved 64903 records</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:12] Downloading remote dataset from Google Drive to cache_dir</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:16] Reading from cache_dir = '/tmp/RtmpkIrYDI', argument force_download = FALSE</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:16] Object 'gene_basic' sucessfully loaded</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:16] md5 checksum is valid: e2386049fe7e3f5e4b184aac555ef018</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:16] Retrieved 64902 records</span></span>
 <span></span>
 <span><span class="co">## Number of records</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">gene_basic</span><span class="op">$</span><span class="va">records</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 64903</span></span>
+<span><span class="co">#&gt; [1] 64902</span></span>
 <span></span>
 <span><span class="co">## Show metadata for underlying resources</span></span>
 <span><span class="va">gene_basic</span><span class="op">$</span><span class="va">metadata</span></span>
@@ -128,6 +128,7 @@ proto-oncogenes, and predicted cancer driver genes.</p>
 <span><span class="co">#&gt; 9                           TSO500</span></span>
 <span><span class="co">#&gt; 10        DNA repair gene database</span></span>
 <span><span class="co">#&gt; 11                          dbNSFP</span></span>
+<span><span class="co">#&gt; 12                            CPIC</span></span>
 <span><span class="co">#&gt;                                                                             source_description</span></span>
 <span><span class="co">#&gt; 1          Predicted tumor suppressors/oncogenes/cancer drivers from text mining of literature</span></span>
 <span><span class="co">#&gt; 2                                                                  Tumor suppressors/oncogenes</span></span>
@@ -140,6 +141,7 @@ proto-oncogenes, and predicted cancer driver genes.</p>
 <span><span class="co">#&gt; 9                           Collection of genes covered by Illumina's TSO500 cancer gene panel</span></span>
 <span><span class="co">#&gt; 10                                                  Collection of genes involved in DNA repair</span></span>
 <span><span class="co">#&gt; 11             Gene indispensability prediction, loss-of-function intolerance predictions etc.</span></span>
+<span><span class="co">#&gt; 12              Clinical Pharmacogenomics Implementation Consortium - gene/oncology drug pairs</span></span>
 <span><span class="co">#&gt;                                                                   source_url</span></span>
 <span><span class="co">#&gt; 1                                         http://bionlp.bcgsc.ca/cancermine/</span></span>
 <span><span class="co">#&gt; 2                                                      http://ncg.kcl.ac.uk/</span></span>
@@ -152,18 +154,20 @@ proto-oncogenes, and predicted cancer driver genes.</p>
 <span><span class="co">#&gt; 9  https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0260089</span></span>
 <span><span class="co">#&gt; 10                        https://panelapp.genomicsengland.co.uk/panels/256/</span></span>
 <span><span class="co">#&gt; 11                              https://sites.google.com/site/jpopgen/dbNSFP</span></span>
+<span><span class="co">#&gt; 12                                          https://cpicpgx.org/genes-drugs/</span></span>
 <span><span class="co">#&gt;                                            source_citation   source_version</span></span>
 <span><span class="co">#&gt; 1                Lever et al., Nat Methods, 2019; 31110280 v50 (March 2023)</span></span>
 <span><span class="co">#&gt; 2               Repana et al., Genome Biol, 2019; 30606230             v7.1</span></span>
 <span><span class="co">#&gt; 3  Martínez-Jiménez et al., Nat Rev Cancer, 2020; 32778778       2023.05.31</span></span>
 <span><span class="co">#&gt; 4            Sondka et al., Nat Rev Cancer, 2018; 30293088             v100</span></span>
-<span><span class="co">#&gt; 5          Brown et al., Nucleic Acids Res, 2015; 25355515       2024-10-24</span></span>
+<span><span class="co">#&gt; 5          Brown et al., Nucleic Acids Res, 2015; 25355515       2024-11-11</span></span>
 <span><span class="co">#&gt; 6                      Bailey et al., Cell, 2018; 29625053             &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 7                Sanchez-Vega et al., Cell, 2018; 29625050             &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 8                                                     &lt;NA&gt;             &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 9                                                     &lt;NA&gt;             &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 10                   Woods et al., Science, 2001; 11181991             v1.1</span></span>
 <span><span class="co">#&gt; 11                  Liu et al., Genome Med, 2020; 33261662             v4.8</span></span>
+<span><span class="co">#&gt; 12           Caudle et al.,Curr Drug Metab, 2014; 24479687             &lt;NA&gt;</span></span>
 <span><span class="co">#&gt;    source_abbreviation</span></span>
 <span><span class="co">#&gt; 1           cancermine</span></span>
 <span><span class="co">#&gt; 2                  ncg</span></span>
@@ -176,6 +180,7 @@ proto-oncogenes, and predicted cancer driver genes.</p>
 <span><span class="co">#&gt; 9             illumina</span></span>
 <span><span class="co">#&gt; 10     woods_dnarepair</span></span>
 <span><span class="co">#&gt; 11              dbnsfp</span></span>
+<span><span class="co">#&gt; 12                cpic</span></span>
 <span><span class="co">#&gt;                                                              source_license</span></span>
 <span><span class="co">#&gt; 1                                                                   CC0 1.0</span></span>
 <span><span class="co">#&gt; 2                                                          Free/open access</span></span>
@@ -188,6 +193,7 @@ proto-oncogenes, and predicted cancer driver genes.</p>
 <span><span class="co">#&gt; 9                                                          Free/open access</span></span>
 <span><span class="co">#&gt; 10                                                         Free/open access</span></span>
 <span><span class="co">#&gt; 11                                   Free for non-commercial, academic use.</span></span>
+<span><span class="co">#&gt; 12                                                                  CC0 1.0</span></span>
 <span><span class="co">#&gt;                                        source_license_url</span></span>
 <span><span class="co">#&gt; 1      https://creativecommons.org/publicdomain/zero/1.0/</span></span>
 <span><span class="co">#&gt; 2                                                    &lt;NA&gt;</span></span>
@@ -199,7 +205,8 @@ proto-oncogenes, and predicted cancer driver genes.</p>
 <span><span class="co">#&gt; 8                                                    &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 9                                                    &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 10                                                   &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 11                                                   &lt;NA&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; 11                                                   &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 12                                                   &lt;NA&gt;</span></span></code></pre></div>
 <p><br><br></p>
 <div class="section level3">
 <h3 id="get-classified-tumor-suppressor-genes">Get classified tumor suppressor genes<a class="anchor" aria-label="anchor" href="#get-classified-tumor-suppressor-genes"></a>
@@ -344,17 +351,17 @@ other/user-curated entries.</p>
 <code class="sourceCode R"><span></span>
 <span><span class="co">## load the data</span></span>
 <span><span class="va">gene_predisposition</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_predisposition.html">get_predisposition</a></span><span class="op">(</span>cache_dir <span class="op">=</span> <span class="va">download_dir</span><span class="op">)</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:50] Downloading remote dataset from Google Drive to cache_dir</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:51] Reading from cache_dir = '/tmp/RtmpkhtWFA', argument force_download = FALSE</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:51] Object 'gene_predisposition' sucessfully loaded</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:51] md5 checksum is valid: 4ff891a9314a4a96940395fd47cac860</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:51] Retrieved 610 records</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:17] Downloading remote dataset from Google Drive to cache_dir</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:19] Reading from cache_dir = '/tmp/RtmpkIrYDI', argument force_download = FALSE</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:19] Object 'gene_predisposition' sucessfully loaded</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:19] md5 checksum is valid: 17153701466b0d4dd8e781f3ac771bbe</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:19] Retrieved 611 records</span></span>
 <span></span>
 <span><span class="co">## Number of cancer predisposition genes</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">gene_predisposition</span><span class="op">$</span><span class="va">records</span> <span class="op">|&gt;</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span></span>
 <span>  <span class="op">!</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">cpg_source</span>, <span class="st">"^ACMG_SF$"</span><span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 563</span></span>
+<span><span class="co">#&gt; [1] 564</span></span>
 <span></span>
 <span><span class="co">## Get statistics regarding how reference sources on </span></span>
 <span><span class="co">## cancer predisposition genes contribute</span></span>
@@ -372,7 +379,7 @@ other/user-curated entries.</p>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">x</span> <span class="op">!=</span> <span class="st">"ACMG_SF"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                         x freq</span></span>
 <span><span class="co">#&gt; 1                               PANEL_APP  281</span></span>
-<span><span class="co">#&gt; 2                           CURATED_OTHER  106</span></span>
+<span><span class="co">#&gt; 2                           CURATED_OTHER  107</span></span>
 <span><span class="co">#&gt; 3          CGC&amp;PANEL_APP&amp;TCGA_PANCAN_2018   57</span></span>
 <span><span class="co">#&gt; 4              PANEL_APP&amp;TCGA_PANCAN_2018   45</span></span>
 <span><span class="co">#&gt; 5  ACMG_SF&amp;CGC&amp;PANEL_APP&amp;TCGA_PANCAN_2018   28</span></span>
@@ -415,7 +422,7 @@ other/user-curated entries.</p>
 <span><span class="co">#&gt;                                   source_citation source_version</span></span>
 <span><span class="co">#&gt; 1        Martin et al., Nat Genet, 2019; 31676867       v1 (API)</span></span>
 <span><span class="co">#&gt; 2   Sondka et al., Nat Rev Cancer, 2018; 30293088           v100</span></span>
-<span><span class="co">#&gt; 3 Brown et al., Nucleic Acids Res, 2015; 25355515     2024-10-24</span></span>
+<span><span class="co">#&gt; 3 Brown et al., Nucleic Acids Res, 2015; 25355515     2024-11-11</span></span>
 <span><span class="co">#&gt; 4              Huang et al., Cell, 2018; 29625052           &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 5  Maxwell et al., Am J Hum Genet, 2016; 27153395           &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 6                                            &lt;NA&gt;       20221128</span></span>
@@ -455,11 +462,11 @@ Genomics England PanelApp.</p>
 <code class="sourceCode R"><span></span>
 <span><span class="co">## load the data</span></span>
 <span><span class="va">gene_panels</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_panels.html">get_panels</a></span><span class="op">(</span>cache_dir <span class="op">=</span> <span class="va">download_dir</span><span class="op">)</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:51] Downloading remote dataset from Google Drive to cache_dir</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:53] Reading from cache_dir = '/tmp/RtmpkhtWFA', argument force_download = FALSE</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:53] Object 'gene_panels' sucessfully loaded</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:53] md5 checksum is valid: 0ff8914f8b38e72624794c26e14bbbbd</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:53] Retrieved 2612 records</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:19] Downloading remote dataset from Google Drive to cache_dir</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:21] Reading from cache_dir = '/tmp/RtmpkIrYDI', argument force_download = FALSE</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:21] Object 'gene_panels' sucessfully loaded</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:21] md5 checksum is valid: 0ff8914f8b38e72624794c26e14bbbbd</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:21] Retrieved 2612 records</span></span>
 <span></span>
 <span><span class="co">## panel data for genome build grch38</span></span>
 <span><span class="va">panel_data</span> <span class="op">&lt;-</span> <span class="va">gene_panels</span><span class="op">$</span><span class="va">records</span> <span class="op">|&gt;</span></span>
@@ -529,15 +536,15 @@ Genomics England PanelApp.</p>
 <code class="sourceCode R"><span></span>
 <span><span class="co">## load the data</span></span>
 <span><span class="va">gene_alias</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_alias.html">get_alias</a></span><span class="op">(</span>cache_dir <span class="op">=</span> <span class="va">download_dir</span><span class="op">)</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:53] Downloading remote dataset from Google Drive to cache_dir</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:58] Reading from cache_dir = '/tmp/RtmpkhtWFA', argument force_download = FALSE</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:58] Object 'gene_alias' sucessfully loaded</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:58] md5 checksum is valid: 57b102ff8e105e0ca8f370107b45d5ca</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:58] Retrieved 138033 records</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:21] Downloading remote dataset from Google Drive to cache_dir</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:26] Reading from cache_dir = '/tmp/RtmpkIrYDI', argument force_download = FALSE</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:26] Object 'gene_alias' sucessfully loaded</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:26] md5 checksum is valid: 9a2a492f4392b8f41b11c2ebee377178</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:26] Retrieved 138052 records</span></span>
 <span></span>
 <span><span class="co">## number of gene synonyms that are ambiguous</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">gene_alias</span><span class="op">$</span><span class="va">records</span>, <span class="va">ambiguous</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 7065</span></span>
+<span><span class="co">#&gt; [1] 7081</span></span>
 <span></span>
 <span><span class="co">## show structure of alias records</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">gene_alias</span><span class="op">$</span><span class="va">records</span><span class="op">)</span></span>
@@ -566,11 +573,11 @@ Genomics England PanelApp.</p>
 <code class="sourceCode R"><span></span>
 <span><span class="co">## load the data</span></span>
 <span><span class="va">gene_gencode</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_gencode.html">get_gencode</a></span><span class="op">(</span>cache_dir <span class="op">=</span> <span class="va">download_dir</span><span class="op">)</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:32:58] Downloading remote dataset from Google Drive to cache_dir</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:33:08] Reading from cache_dir = '/tmp/RtmpkhtWFA', argument force_download = FALSE</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:33:08] Object 'gene_gencode_47_113' sucessfully loaded</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:33:08] md5 checksum is valid: 2ce67a55f3115661ee288ba0482e73d3</span></span>
-<span><span class="co">#&gt; INFO  [2024-10-24 16:33:08] Retrieved  records</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:26] Downloading remote dataset from Google Drive to cache_dir</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:37] Reading from cache_dir = '/tmp/RtmpkIrYDI', argument force_download = FALSE</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:37] Object 'gene_gencode_47_113' sucessfully loaded</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:37] md5 checksum is valid: 8315536d55e8249834c21b723f6d408e</span></span>
+<span><span class="co">#&gt; INFO  [2024-11-11 16:25:37] Retrieved  records</span></span>
 <span></span>
 <span><span class="co">## number of transcript records - grch37</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">gene_gencode</span><span class="op">$</span><span class="va">records</span><span class="op">$</span><span class="va">grch37</span><span class="op">)</span></span>
@@ -620,7 +627,7 @@ Genomics England PanelApp.</p>
 <span><span class="co">#&gt; 1    Frankish et al., Nucleic Acids Res, 2021; 33270111             47</span></span>
 <span><span class="co">#&gt; 2  Cunningham et al., Nucleic Acids Res, 2022; 34791404            113</span></span>
 <span><span class="co">#&gt; 3 UniProt Consortium, Nucleic Acids Res, 2021; 33237286        2024_05</span></span>
-<span><span class="co">#&gt; 4    Rodriguez et al, Nucleic Acids Res, 2022; 34755885     2024-10-24</span></span>
+<span><span class="co">#&gt; 4    Rodriguez et al, Nucleic Acids Res, 2022; 34755885     2024-11-11</span></span>
 <span><span class="co">#&gt;   source_abbreviation        source_license</span></span>
 <span><span class="co">#&gt; 1             gencode      Free/open access</span></span>
 <span><span class="co">#&gt; 2             ensembl EMBL-EBI terms of use</span></span>
@@ -732,7 +739,7 @@ Genomics England PanelApp.</p>
 <code class="sourceCode R"><span><span class="co"># set eval = FALSE if you don't want this info (useful for reproducibility) </span></span>
 <span><span class="co"># to appear</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R version 4.4.1 (2024-06-14)</span></span>
+<span><span class="co">#&gt; R version 4.4.2 (2024-10-31)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">#&gt; Running under: Ubuntu 22.04.5 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -753,22 +760,22 @@ Genomics England PanelApp.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] geneOncoX_1.0.0</span></span>
+<span><span class="co">#&gt; [1] geneOncoX_1.0.1</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] jsonlite_1.8.9    dplyr_1.1.4       compiler_4.4.1    crayon_1.5.3     </span></span>
-<span><span class="co">#&gt;  [5] Rcpp_1.0.13       tidyselect_1.2.1  stringr_1.5.1     jquerylib_0.1.4  </span></span>
+<span><span class="co">#&gt;  [1] jsonlite_1.8.9    dplyr_1.1.4       compiler_4.4.2    crayon_1.5.3     </span></span>
+<span><span class="co">#&gt;  [5] Rcpp_1.0.13-1     tidyselect_1.2.1  stringr_1.5.1     jquerylib_0.1.4  </span></span>
 <span><span class="co">#&gt;  [9] systemfonts_1.1.0 textshaping_0.4.0 yaml_2.3.10       fastmap_1.2.0    </span></span>
-<span><span class="co">#&gt; [13] plyr_1.8.9        R6_2.5.1          generics_0.1.3    curl_5.2.3       </span></span>
-<span><span class="co">#&gt; [17] knitr_1.48        htmlwidgets_1.6.4 tibble_3.2.1      desc_1.4.3       </span></span>
+<span><span class="co">#&gt; [13] plyr_1.8.9        R6_2.5.1          generics_0.1.3    curl_6.0.0       </span></span>
+<span><span class="co">#&gt; [17] knitr_1.49        htmlwidgets_1.6.4 tibble_3.2.1      desc_1.4.3       </span></span>
 <span><span class="co">#&gt; [21] bslib_0.8.0       pillar_1.9.0      rlang_1.1.4       DT_0.33          </span></span>
 <span><span class="co">#&gt; [25] utf8_1.2.4        stringi_1.8.4     cachem_1.1.0      lgr_0.4.4        </span></span>
-<span><span class="co">#&gt; [29] xfun_0.48         fs_1.6.4          sass_0.4.9        cli_3.6.3        </span></span>
-<span><span class="co">#&gt; [33] withr_3.0.1       pkgdown_2.1.1     magrittr_2.0.3    crosstalk_1.2.1  </span></span>
+<span><span class="co">#&gt; [29] xfun_0.49         fs_1.6.5          sass_0.4.9        cli_3.6.3        </span></span>
+<span><span class="co">#&gt; [33] withr_3.0.2       pkgdown_2.1.1     magrittr_2.0.3    crosstalk_1.2.1  </span></span>
 <span><span class="co">#&gt; [37] digest_0.6.37     lifecycle_1.0.4   vctrs_0.6.5       evaluate_1.0.1   </span></span>
 <span><span class="co">#&gt; [41] gargle_1.5.2      glue_1.8.0        ragg_1.3.3        googledrive_2.1.1</span></span>
-<span><span class="co">#&gt; [45] fansi_1.0.6       httr_1.4.7        rmarkdown_2.28    purrr_1.0.2      </span></span>
-<span><span class="co">#&gt; [49] tools_4.4.1       pkgconfig_2.0.3   htmltools_0.5.8.1</span></span></code></pre></div>
+<span><span class="co">#&gt; [45] fansi_1.0.6       httr_1.4.7        rmarkdown_2.29    purrr_1.0.2      </span></span>
+<span><span class="co">#&gt; [49] tools_4.4.2       pkgconfig_2.0.3   htmltools_0.5.8.1</span></span></code></pre></div>
 <p><br><br></p>
 </div>
 <div class="section level2">
