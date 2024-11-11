@@ -107,6 +107,7 @@ fp_drivers <- get_curated_fp_cancer_genes(gene_info = gene_info)
 ncg <- get_network_of_cancer_genes()
 tcga_drivers <- get_tcga_driver_genes()
 f1cdx <- get_f1cdx(gene_info = gene_info)
+cpic <- get_cpic_genes(gene_info = gene_info)
 tso500 <- get_tso500(gene_info = gene_info, gene_alias = gene_alias)
 dna_repair <- get_dna_repair_genes(gene_info = gene_info)
 cancermine_genes <- get_cancermine_genes(
@@ -135,6 +136,8 @@ gene_basic$records <- gene_info |>
   dplyr::left_join(tso500,
                    by = "symbol", multiple = "all") |>
   dplyr::left_join(f1cdx,
+                   by = "entrezgene", multiple = "all") |>
+  dplyr::left_join(cpic,
                    by = "entrezgene", multiple = "all") |>
   dplyr::left_join(signaling_genes,
                    by = "entrezgene", multiple = "all") |>
@@ -270,7 +273,7 @@ for(vbump in c('major','minor','patch')){
 
 bump_version_level <- "patch"
 #version_bump <- version_bumps[[bump_version_level]]
-version_bump <- "1.0.0"
+version_bump <- "1.0.1"
 
 gd_records <- list()
 db_id_ref <- data.frame()

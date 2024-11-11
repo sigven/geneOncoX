@@ -74,6 +74,7 @@
 #'   (SNV_INDEL, CNA_GAIN, CNA_LOSS, RNA_FUSION)
 #'   \item \emph{foundation_one_f1cdx} - gene is part of Foundation
 #'   One's F1CDx panel (SNV_INDEL, CNA, FUSION, PROMOTER)
+#'   \item \emph{cpic_pgx} - gene related to pharmacogenomics (CPIC, antineoplastic drugs)
 #'   \item \emph{sanchezvega2018_signaling_pathway} - curated signalling
 #'   pathways (Sanchez-Vega et al., Cell, 2018)
 #'   \item \emph{cancermine_pmid_driver} - PMIDs that support

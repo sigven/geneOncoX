@@ -1,3 +1,44 @@
+get_cpic_genes <- function(update = T,
+                           gene_info = NULL){
+  datestamp <- Sys.Date()
+  remote_url <-
+    paste0(
+      "https://files.cpicpgx.org/data/report/current/",
+      "pair/cpic_gene-drug_pairs.xlsx"
+    )
+  cpic_genes_oncology <- data.frame()
+  if (RCurl::url.exists(remote_url)) {
+    cpic_genes <- openxlsx2::read_xlsx(file=remote_url, col_names = T)
+    colnames(cpic_genes) <- 
+      c('symbol','drug_name','drug_rxnorm_id',
+        'atc_id','guideline','cpic_level',
+        'cpic_level_status',
+        'pharmgkb_evidence_level', 
+        'pgx_on_fda_label','pmids')
+    cpic_genes_oncology <- cpic_genes |>
+      dplyr::filter(
+        stringr::str_detect(atc_id,"^L|, L")
+      ) |>
+      dplyr::mutate(cpic_entry = paste(
+        cpic_level,
+        stringr::str_replace_all(atc_id, ", ", "&"),
+        sep=":")) |>
+      dplyr::group_by(symbol) |>
+      dplyr::summarise(
+        cpic_pgx_oncology = paste(sort(cpic_entry), collapse=";"), 
+        .groups="drop")
+  }
+  cpic_genes_oncology <- cpic_genes_oncology |>
+    dplyr::inner_join(
+      dplyr::select(gene_info, symbol, entrezgene), 
+      multiple = "all", by = "symbol"
+    ) |>
+    dplyr::select(-symbol) |>
+    dplyr::distinct()
+  
+  return(cpic_genes_oncology)
+  
+}
 
 get_gene_info_ncbi <- function(update = T) {
   datestamp <- Sys.Date()
