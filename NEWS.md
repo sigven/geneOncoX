@@ -1,3 +1,7 @@
+# Version 1.0.2
+
+- Cancer Gene Census v101
+
 # Version 1.0.0
 
 - Updated IntOGen (v2024.10)

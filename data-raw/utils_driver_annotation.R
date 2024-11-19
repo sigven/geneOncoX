@@ -320,8 +320,8 @@ get_signaling_pathway_genes <- function(gene_info) {
 
 get_cancer_gene_census <- function(
     origin = "somatic",
-    opentargets_version = "2024.03",
-    cgc_version = "v100") {
+    opentargets_version = "2024.09",
+    cgc_version = "v101") {
   
   cosmic_genes <- readr::read_tsv(
     file = file.path(
@@ -467,7 +467,6 @@ get_cancer_gene_census <- function(
     ## bug in cancer gene census for ERCC5
     dplyr::mutate(entrezgene = dplyr::case_when(
       symbol == "MDS2" ~ as.integer(259283),
-      symbol == "DUX4L1" ~ as.integer(22947),
       symbol == "MALAT1" ~ as.integer(378938),
       symbol == "HMGN2P46" ~ as.integer(283651),
       TRUE ~ as.integer(entrezgene)
@@ -527,7 +526,7 @@ get_cancer_gene_census <- function(
   return(cosmic_cgc)
 }
 
-get_network_of_cancer_genes <- function(ncg_version = "7.0") {
+get_network_of_cancer_genes <- function(ncg_version = "7.1") {
   ncg <- read.table(
     file = file.path(
       "data-raw", "ncg", "ncg.tsv"
