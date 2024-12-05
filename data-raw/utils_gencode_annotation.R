@@ -46,7 +46,7 @@ gencode_get_transcripts <-
            append_regulatory_region = TRUE,
            gencode_version = 47,
            ensembl_version = 113,
-           uniprot_version = "2024_05",
+           uniprot_version = "2024_06",
            gene_info = NULL,
            gene_alias = NULL) {
     gencode_ftp_url <-
@@ -927,6 +927,38 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
   gencode_transcripts_xref_final <- 
     dplyr::bind_rows(set1,set2,set3) |>
     dplyr::distinct()
+  
+  gene_info_valid <- 
+    gene_info |> 
+    dplyr::select(
+      c("entrezgene", "hgnc_id", 
+        "symbol")) |> 
+    dplyr::filter(!is.na(entrezgene))
+  
+  gencode_missing_entrez_hgnc <- 
+    gencode_transcripts_xref_final |>
+    dplyr::filter(is.na(entrezgene) &
+                    is.na(hgnc_id)) |>
+    dplyr::select(
+      -c("entrezgene","hgnc_id")) |>
+    dplyr::left_join(
+      gene_info_valid, by = "symbol"
+    )
+  
+  
+  gencode_nonmissing_entrez_hgnc <- 
+    gencode_transcripts_xref_final |>
+    dplyr::filter(!(is.na(entrezgene) &
+                      is.na(hgnc_id)))
+  
+  gencode_transcripts_xref_final <- 
+    dplyr::bind_rows(
+      gencode_missing_entrez_hgnc,
+      gencode_nonmissing_entrez_hgnc
+    ) |>
+    dplyr::arrange(entrezgene)
+  
+  
   
   return(gencode_transcripts_xref_final)
 }
