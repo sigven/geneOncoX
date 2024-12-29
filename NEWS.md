@@ -1,3 +1,8 @@
+# Version 1.0.6
+
+- Updated NCBI summary information
+- added custom gene aliases
+
 # Version 1.0.4
 
 - Update curated cancer predisposition genes
