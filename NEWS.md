@@ -1,3 +1,8 @@
+# Version 1.0.7
+
+- added custom gene aliases (KRAS, BRAF)
+- Updated NCBI summary information
+
 # Version 1.0.6
 
 - Updated NCBI summary information
