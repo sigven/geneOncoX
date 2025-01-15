@@ -1,3 +1,7 @@
+# Version 1.0.8
+
+- added DPYD as pgx-related gene with respect to chemotherapy (included among CPG genes)
+
 # Version 1.0.7
 
 - added custom gene aliases (KRAS, BRAF)

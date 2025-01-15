@@ -602,6 +602,14 @@ get_predisposition_genes <- function(gene_info = NULL,
     dplyr::rename(moi = inheritance, 
                   phenotypes = disease_phenotype) |>
     dplyr::mutate(source = "ACMG_SF")
+  cpg_collections[["CPIC_PGX_ONCOLOGY"]] <-
+    get_cpic_genes(gene_info = gene_info) |>
+    dplyr::filter(entrezgene == 1806) |> ## DPYD for now
+    dplyr::left_join(
+      dplyr::select(gene_info, entrezgene, gene_biotype),
+      by = "entrezgene") |>
+    dplyr::select(-cpic_pgx_oncology) |>
+    dplyr::mutate(source = "CPIC_PGX_ONCOLOGY")
   cpg_collections[["CURATED_OTHER"]] <-
     get_curated_predisposition_genes(gene_info = gene_info) |>
     dplyr::select(-reference)
@@ -667,6 +675,7 @@ get_predisposition_genes <- function(gene_info = NULL,
       dplyr::bind_rows(cpg_collections[["CURATED_OTHER"]]) |>
       dplyr::bind_rows(cpg_collections[["PANEL_APP"]]) |>
       dplyr::bind_rows(cpg_collections[["ACMG_SF"]]) |>
+      dplyr::bind_rows(cpg_collections[["CPIC_PGX_ONCOLOGY"]]) |>
       dplyr::filter(!is.na(entrezgene)) |>
       dplyr::mutate(moi = dplyr::if_else(
         is.na(moi), "", as.character(moi)

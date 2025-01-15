@@ -228,7 +228,7 @@ gene_predisposition <- get_predisposition(cache_dir = download_dir)
 
 ## Number of cancer predisposition genes
 nrow(gene_predisposition$records |> dplyr::filter(
-  !stringr::str_detect(cpg_source, "^ACMG_SF$")
+  !stringr::str_detect(cpg_source, "^(ACMG_SF|CPIX_PGX_ONCOLOGY)$")
 ))
 
 ## Get statistics regarding how reference sources on 
@@ -241,10 +241,10 @@ nrow(gene_predisposition$records |> dplyr::filter(
 ## TCGA_PANCAN_2018 - TCGA's pancancer analysis of
 ##                    germline variants in cancer
 ##                    (Huang et al., Cell, 2019)
-## ACMG_SF - Secondary findings list (ACMG, v3.1)
 plyr::count(gene_predisposition$records$cpg_source) |>
   dplyr::arrange(dplyr::desc(freq)) |>
-  dplyr::filter(x != "ACMG_SF")
+  dplyr::filter(x != "ACMG_SF") |>
+  dplyr::filter(x != "CPIC_PGX_ONCOLOGY")
 
 
 ## Cancer predisposition metadata
