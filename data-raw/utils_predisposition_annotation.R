@@ -597,6 +597,7 @@ get_predisposition_genes <- function(gene_info = NULL,
       gene_info = gene_info,
       cache_dir = cache_dir
     ) |>
+    
     dplyr::select(entrezgene, gene_biotype, 
                   inheritance, disease_phenotype) |>
     dplyr::rename(moi = inheritance, 
@@ -604,7 +605,9 @@ get_predisposition_genes <- function(gene_info = NULL,
     dplyr::mutate(source = "ACMG_SF")
   cpg_collections[["CPIC_PGX_ONCOLOGY"]] <-
     get_cpic_genes(gene_info = gene_info) |>
-    dplyr::filter(entrezgene == 1806) |> ## DPYD for now
+    dplyr::filter(entrezgene == 1806 |
+                     entrezgene ==  7172 |
+                     entrezgene == 55270) |> ## DPYD, TPMT and NUDT15 for now
     dplyr::left_join(
       dplyr::select(gene_info, entrezgene, gene_biotype),
       by = "entrezgene") |>

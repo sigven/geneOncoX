@@ -1,6 +1,6 @@
-# Version 1.0.8
+# Version 1.0.9
 
-- added DPYD as pgx-related gene with respect to chemotherapy (included among CPG genes)
+- added DPYD, NUDT15 and TPMT as PgX-related genes with respect to chemotherapy (included among CPG genes)
 
 # Version 1.0.7
 
