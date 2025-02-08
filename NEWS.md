@@ -1,3 +1,7 @@
+# Version 1.0.10
+
+- Added PAH as putative CPG gene
+
 # Version 1.0.9
 
 - added DPYD, NUDT15 and TPMT as PgX-related genes with respect to chemotherapy (included among CPG genes)
