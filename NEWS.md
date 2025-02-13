@@ -1,3 +1,7 @@
+# Version 1.0.11
+
+- Added MYO3A, MYO5B, CHD1L as susceptibility genes
+
 # Version 1.0.10
 
 - Added PAH as putative CPG gene
