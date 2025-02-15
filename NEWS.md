@@ -1,6 +1,7 @@
-# Version 1.0.11
+# Version 1.0.12
 
 - Added MYO3A, MYO5B, CHD1L as susceptibility genes
+- Updated NCBI gene, UniProt KB 2025-01
 
 # Version 1.0.10
 
@@ -8,7 +9,8 @@
 
 # Version 1.0.9
 
-- added DPYD, NUDT15 and TPMT as PgX-related genes with respect to chemotherapy (included among CPG genes)
+- added DPYD, NUDT15 and TPMT as PgX-related genes with respect to chemotherapy 
+(included among CPG genes)
 
 # Version 1.0.7
 
