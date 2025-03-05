@@ -1,3 +1,8 @@
+# Version 1.1.0
+
+- Added SAMHD1 and FAM111A as susceptibility genes
+- Updated NCBI gene
+
 # Version 1.0.12
 
 - Added MYO3A, MYO5B, CHD1L as susceptibility genes
