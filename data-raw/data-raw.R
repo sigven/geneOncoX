@@ -273,7 +273,7 @@ for(vbump in c('major','minor','patch')){
 
 bump_version_level <- "minor"
 #version_bump <- version_bumps[[bump_version_level]]
-version_bump <- "1.1.0"
+version_bump <- "1.1.1"
 
 gd_records <- list()
 db_id_ref <- data.frame()
@@ -307,6 +307,8 @@ ensembl_release_current <-
   as.integer(metadata[['gencode']][
     metadata$gencode$source_abbreviation == "ensembl",]$source_version)
 ensembl_iter <- 0
+gene_gencode <- list()
+
 while(ensembl_iter < 1){
   gencode_release <- gencode_release_current - ensembl_iter
   ensembl_release <- ensembl_release_current - ensembl_iter
@@ -324,7 +326,6 @@ while(ensembl_iter < 1){
   
   if(!file.exists(gene_gencode_fname)){
   
-    gene_gencode <- list()
     gene_gencode$records <- list()
     gene_gencode$metadata <- metadata[["gencode"]]
     

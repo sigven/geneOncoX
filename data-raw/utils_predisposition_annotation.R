@@ -524,6 +524,58 @@ get_curated_predisposition_genes <- function(gene_info = NULL) {
   return(curated_predisposition_genes)
 }
 
+get_moi_clingen <- function(gene_info = NULL){
+  
+  clingene_disease_validity <- 
+    readr::read_csv(
+      file = file.path(
+        "data-raw",
+        "predisposition",
+        "clingen",
+        "clingen_gene_disease_summary.csv"), 
+        show_col_types = F, skip = 4) |> 
+        janitor::clean_names() |> 
+        dplyr::filter(!startsWith(gene_symbol, "++")) |> 
+        dplyr::rename(moi_clingen = moi, symbol = gene_symbol) |>
+    dplyr::filter(
+      stringr::str_detect(
+        tolower(disease_label), 
+        paste0(
+          "tumor|cancer|neoplasm|carcinoma|sarcoma|leukemia|lymphoma|",
+          "melanoma|medulloblastoma|neuroblastoma|myeloma|glioma|",
+          "cholangiocar|lynch|fraumeni|dicer|neurofibromatosis|",
+          "retinoblastoma|schwannoma")
+      )
+    ) |> 
+    dplyr::rename(hgnc_id = gene_id_hgnc) |> 
+    dplyr::group_by(symbol, hgnc_id) |> 
+    dplyr::summarise(
+      disease_label = paste(unique(disease_label), collapse=";"), 
+      disease_id_mondo = paste(unique(disease_id_mondo), collapse=";"), 
+      moi_clingen = paste(
+        moi_clingen = paste(unique(moi_clingen), collapse=";")), 
+      classification = paste(unique(sort(classification)), collapse=";"),
+      .groups = "drop") |>
+    dplyr::ungroup() |>
+    dplyr::filter(
+      classification != "Refuted" &
+        classification != "No Known Disease Relationship" &
+        classification != "No Known Disease Relationship;Refuted") |>
+    dplyr::left_join(
+      dplyr::select(
+        gene_info,
+        symbol, entrezgene
+      ),
+      by = c("symbol"), relationship = "many-to-many"
+    ) |>
+    dplyr::select(symbol, entrezgene, disease_label, 
+                  disease_id_mondo, moi_clingen) |>
+    dplyr::distinct()
+  
+  return(clingene_disease_validity)
+  
+}
+
 get_moi_mod_maxwell2016 <- function(gene_info = NULL) {
   mod_moi_predisposition <-
     openxlsx::read.xlsx(
@@ -576,7 +628,7 @@ get_moi_mod_maxwell2016 <- function(gene_info = NULL) {
         gene_info,
         symbol, entrezgene
       ),
-      by = c("symbol"), multiple = "all"
+      by = c("symbol"), relationship = "many-to-many"
     ) |>
     dplyr::select(entrezgene, mod_maxwell, moi_maxwell) |>
     dplyr::distinct()
