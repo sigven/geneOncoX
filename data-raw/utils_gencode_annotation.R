@@ -442,7 +442,7 @@ gencode_expand_basic <- function(gencode) {
 
 gencode_resolve_xrefs <- function(transcript_df = NULL,
                                   build = "grch38",
-                                  ensembl_version = 113,
+                                  ensembl_version = 114,
                                   gene_info = NULL,
                                   gene_alias = NULL) {
   invisible(assertable::assert_colnames(
@@ -458,7 +458,7 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
 
   options(timeout = 10000000)
   ensembl_mart <- list()
-  if(ensembl_version == 113){
+  if(ensembl_version == 114){
     ensembl_mart[["grch38"]] <- suppressWarnings(
       biomaRt::useEnsembl(
         biomart = "genes",
@@ -475,13 +475,15 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
     )
   }
 
-  ensembl_mart[["grch37"]] <- suppressWarnings(
-    biomaRt::useEnsembl(
-      biomart = "genes",
-      GRCh = "37",
-      dataset = "hsapiens_gene_ensembl"
+  if(build == "grch37"){
+    ensembl_mart[["grch37"]] <- suppressWarnings(
+      biomaRt::useEnsembl(
+        biomart = "genes",
+        GRCh = "37",
+        dataset = "hsapiens_gene_ensembl"
+      )
     )
-  )
+  }
 
   refseq_data <- get_refseq_map(build = build)
   

@@ -1,3 +1,12 @@
+# Version 1.1.2
+
+- GENCODE v48 (to be used for VEP v114)
+- Cancer relevance ranks now based on data from OTP v25.03
+- Removed some user-contributed cancer predisposition genes - no/very weak evidence for cancer relevance
+  - SERPINA1, GJB2, DHCR7, ASPM, UROD, SLC25A13
+- HFE now only listed in ACMG secondary findings list (not CPG candidate)
+- Updated NCBI gene info
+
 # Version 1.1.0
 
 - Added SAMHD1 and FAM111A as susceptibility genes

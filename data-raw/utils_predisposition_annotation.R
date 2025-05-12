@@ -402,6 +402,10 @@ get_predisposition_genes_huang018 <- function(gene_info = NULL) {
       relationship = "many-to-many"
     ) |>
     dplyr::mutate(source = "TCGA_PANCAN_2018") |>
+    # dplyr::filter(
+    #   !stringr::str_detect(
+    #     symbol,"^(HFE|SLC25A13)$")
+    # ) |>
     dplyr::select(-symbol)
   # dplyr::mutate(moi = NA)
 
@@ -755,6 +759,15 @@ get_predisposition_genes <- function(gene_info = NULL,
         ),
         by = c("entrezgene"), multiple = "all"
       ) |>
+      
+      ## black list genes - no prominent evidence
+      ## for cancer relevance
+      ## 1) SERPINA1, GJB2, DHCR7, ASPM, UROD, SLC25A13 
+      dplyr::filter(
+        !(entrezgene %in% c(5265, 2706, 1717, 259266,
+                            10165, 7389))
+      ) |>
+      
       dplyr::group_by(symbol, entrezgene, gene_biotype) |>
       dplyr::summarise(
         moi = paste(unique(sort(moi)), collapse = "&"),
@@ -782,6 +795,13 @@ get_predisposition_genes <- function(gene_info = NULL,
       )) |>
       dplyr::mutate(predisp_syndrome_cui = stringr::str_replace_all(
         predisp_syndrome_cui, ", ", "&"
+      )) |>
+      
+      ## Make HFE ACMG_SF only
+      dplyr::mutate(predisp_source = dplyr::if_else(
+        entrezgene == 3077,
+        "ACMG_SF",
+        as.character(predisp_source)
       )) |>
       dplyr::mutate(susceptibility_cui = stringr::str_replace_all(
         susceptibility_cui, "^&|&$", ""

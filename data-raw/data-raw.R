@@ -271,9 +271,9 @@ for(vbump in c('major','minor','patch')){
     )
 }
 
-bump_version_level <- "minor"
+bump_version_level <- "patch"
 #version_bump <- version_bumps[[bump_version_level]]
-version_bump <- "1.1.1"
+version_bump <- "1.1.2"
 
 gd_records <- list()
 db_id_ref <- data.frame()
@@ -357,15 +357,19 @@ while(ensembl_iter < 1){
           metadata$gencode[3, ]$source_version),
         gene_alias = gene_alias
       )
-      gene_gencode$records[["grch37"]] <- gencode_get_transcripts(
-        build = "grch37",
-        gene_info = gene_info,
-        gencode_version = as.integer(19),
-        ensembl_version = ensembl_release,
-        uniprot_version = as.character(
-          metadata$gencode[3, ]$source_version),
-        gene_alias = gene_alias
+      gene_gencode$records[["grch37"]] <- readRDS(
+        file = "data-raw/gd_local/gene_gencode_grch37_records.rds"
       )
+      #   fname_gencode_cache
+      # gene_gencode$records[["grch37"]] <- gencode_get_transcripts(
+      #   build = "grch37",
+      #   gene_info = gene_info,
+      #   gencode_version = as.integer(19),
+      #   ensembl_version = ensembl_release,
+      #   uniprot_version = as.character(
+      #     metadata$gencode[3, ]$source_version),
+      #   gene_alias = gene_alias
+      # )
       
       ## "Rescue" some UniProt identifiers from
       ## grch38 - missing/not found for grch37
@@ -495,7 +499,7 @@ while(ensembl_iter < 1){
 gene_otp_rank <- list()
 gene_otp_rank[["metadata"]] <- metadata$otp_rank
 gene_otp_rank[["records"]] <- readRDS(
-  file="~/project_data/packages/package__oncoEnrichR/db/output/v1.5.3/otdb_v1.5.3.rds")$gene_rank 
+  file="~/project_data/packages/package__oncoEnrichR/db/output/v1.5.4/otdb_v1.5.4.rds")$gene_rank 
 
 
 ens2entrez <- 
