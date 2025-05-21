@@ -8,8 +8,8 @@ __Which human genes are implicated in tumor development__?
 
 -   [IntOGen](https://www.intogen.org/download) - compendium of mutational cancer driver genes
 -   [Network of Cancer Genes](http://ncg.kcl.ac.uk/) - collection of curated cancer genes
+-   [CanVar-UK](https://canvaruk.org/) - cancer predisposition genes
 -   [CancerMine](http://bionlp.bcgsc.ca/cancermine/) - text-mined predictions of tumor suppressor genes, proto-oncogenes and cancer drivers
--   [Cancer Gene Census](https://cancer.sanger.ac.uk/census) - manually curated resource on cancer genes (soma and germline)
 -   [DNA repair genes](https://www.mdanderson.org/documents/Labs/Wood-Laboratory/human-dna-repair-genes.html) - collection of genes involved in DNA repair
 -   [Genomics England PanelApp](https://panelapp.genomicsengland.co.uk/) - collections of cancer gene panels used in clinical diagnostics
 -   [TSO500 targets](https://emea.illumina.com/products/by-brand/trusight-oncology/tso-500-portfolio.html) - cancer genes targeted by Illumina's TSO500 gene panel
@@ -31,7 +31,7 @@ The package offers (currently) five different functions, that each retrieves a s
 
 -   [`get_alias()`](https://sigven.github.io/geneOncoX/reference/get_alias.html) - retrieves a list of gene synonyms, indicating which synonyms are ambiguous or nonambiguous (with respect to primary gene symbols)
 
--   [`get_predisposition()`](https://sigven.github.io/geneOncoX/reference/get_predisposition.html) - retrieves a list of genes of relevance for cancer predisposition, utilizing multiple resources, including Cancer Gene Census, Genomics England PanelApp, [TCGA's PanCancer study](https://pubmed.ncbi.nlm.nih.gov/29625052/), and others.
+-   [`get_predisposition()`](https://sigven.github.io/geneOncoX/reference/get_predisposition.html) - retrieves a list of genes of relevance for cancer predisposition, utilizing multiple resources, including CanVar-UK, Genomics England PanelApp, [TCGA's PanCancer study](https://pubmed.ncbi.nlm.nih.gov/29625052/), and manually contributed entries.
 
 -   [`get_panels()`](https://sigven.github.io/geneOncoX/reference/get_panels.html) - retrieves a collection of \> 40 different panels for various cancer conditions, as found in the Genomics England PanelApp.
 
@@ -47,11 +47,10 @@ If you use the datasets provided with **geneOncoX**, make sure you properly cite
 1.  IntOGen - [Martínez-Jiménez et al., Nat Rev Cancer, 2020](https://pubmed.ncbi.nlm.nih.gov/32778778/) - [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)
 2.  CancerMine - [Lever et al., Nat Methods, 2019](https://pubmed.ncbi.nlm.nih.gov/31110280/) - [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)
 3.  Network of Cancer Genes - [Repana et al., Genome Biol, 2019](https://pubmed.ncbi.nlm.nih.gov/30606230/) - *Open Access*
-4.  Cancer Gene Census - [Sondka et al., Nat Rev Cancer, 2018](https://pubmed.ncbi.nlm.nih.gov/30293088/) - *Free for non-commercial, academic use - for commercial usage see [https://cancer.sanger.ac.uk/cosmic/license](https://cancer.sanger.ac.uk/cosmic/license)*
-5.  DNA repair genes database - [Woods et al., Science, 2001](https://pubmed.ncbi.nlm.nih.gov/11181991/) - *Open Access*
-6.  dbNSFP - [Liu et al., Genome Med, 2020](https://pubmed.ncbi.nlm.nih.gov/33261662/) - *Open Access*
-7.  Genomics England PanelApp - [Martin et al., Nat Genet, 2019](https://pubmed.ncbi.nlm.nih.gov/31676867/) - *Commercial use requires separate agreement with GEL, see [licensing terms](https://panelapp.genomicsengland.co.uk/media/files/GEL_-_PanelApp_Terms_of_Use_December_2019.pdf)*
-8.  GENCODE - [Frankish et al., Nucleic Acids Res, 2021](https://pubmed.ncbi.nlm.nih.gov/33270111) - *Open Access*
+4.  DNA repair genes database - [Woods et al., Science, 2001](https://pubmed.ncbi.nlm.nih.gov/11181991/) - *Open Access*
+5.  dbNSFP - [Liu et al., Genome Med, 2020](https://pubmed.ncbi.nlm.nih.gov/33261662/) - *Open Access*
+6.  Genomics England PanelApp - [Martin et al., Nat Genet, 2019](https://pubmed.ncbi.nlm.nih.gov/31676867/) - *Commercial use requires separate agreement with GEL, see [licensing terms](https://panelapp.genomicsengland.co.uk/media/files/GEL_-_PanelApp_Terms_of_Use_December_2019.pdf)*
+7.  GENCODE - [Frankish et al., Nucleic Acids Res, 2021](https://pubmed.ncbi.nlm.nih.gov/33270111) - *Open Access*
 
 ### Contact
 

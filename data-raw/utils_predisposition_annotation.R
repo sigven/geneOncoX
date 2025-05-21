@@ -445,6 +445,38 @@ get_predisposition_genes_huang018 <- function(gene_info = NULL) {
   return(tcga_pancan2018_genes)
 }
 
+get_canvar_cpgs <- function(gene_info = NULL){
+  
+  cpgs <-
+    readr::read_tsv(
+      file.path(
+        "data-raw",
+        "predisposition",
+        "canvar_uk",
+        "cancer_predisposition_genes_20250521.txt"
+      ),
+      show_col_types = F
+    ) |>
+    janitor::clean_names() |>
+    dplyr::mutate(source = "CANVAR_UK") |>
+    dplyr::select(symbol, source) |>
+    dplyr::left_join(
+      dplyr::select(
+        gene_info,
+        entrezgene,
+        gene_biotype,
+        symbol
+      ),
+      by = c("symbol"), multiple = "all"
+    ) |>
+    dplyr::select(
+      entrezgene, 
+      gene_biotype, 
+      source
+    )
+  
+}
+
 get_curated_predisposition_genes <- function(gene_info = NULL) {
   curated_other <-
     openxlsx::read.xlsx(
@@ -648,6 +680,10 @@ get_predisposition_genes <- function(gene_info = NULL,
   
   cpg_collections[["TCGA_PANCAN_2018"]] <-
     get_predisposition_genes_huang018(gene_info = gene_info)
+  
+  cpg_collections[['CANVAR_UK']] <-
+    get_canvar_cpgs(gene_info = gene_info)
+  
   cpg_collections[["ACMG_SF"]] <-
     get_acmg_secondary_findings(
       gene_info = gene_info,
@@ -672,19 +708,19 @@ get_predisposition_genes <- function(gene_info = NULL,
   cpg_collections[["CURATED_OTHER"]] <-
     get_curated_predisposition_genes(gene_info = gene_info) |>
     dplyr::select(-reference)
-  cpg_collections[["CGC"]] <- get_cancer_gene_census(origin = "germline") |>
-    dplyr::rename(moi = cgc_moi, 
-                  phenotypes = cgc_phenotype_germline) |>
-    dplyr::select(entrezgene, 
-                  moi, phenotypes) |>
-    dplyr::mutate(source = "CGC") |>
-    dplyr::left_join(
-      dplyr::select(
-        gene_info, entrezgene, 
-        gene_biotype
-      ),
-      by = "entrezgene"
-    )
+  # cpg_collections[["CGC"]] <- get_cancer_gene_census(origin = "germline") |>
+  #   dplyr::rename(moi = cgc_moi, 
+  #                 phenotypes = cgc_phenotype_germline) |>
+  #   dplyr::select(entrezgene, 
+  #                 moi, phenotypes) |>
+  #   dplyr::mutate(source = "CGC") |>
+  #   dplyr::left_join(
+  #     dplyr::select(
+  #       gene_info, entrezgene, 
+  #       gene_biotype
+  #     ),
+  #     by = "entrezgene"
+  #   )
 
   mod_moi_predisposition <- get_moi_mod_maxwell2016(
     gene_info = gene_info)
@@ -729,7 +765,9 @@ get_predisposition_genes <- function(gene_info = NULL,
   )
 
   all_predisposition_incidental <- as.data.frame(
-    cpg_collections[["CGC"]] |>
+    #cpg_collections[["CGC"]] |>
+    cpg_collections[['CANVAR_UK']] |>
+      #dplyr::bind_rows(cpg_collections[['CANVAR_UK']]) |>
       dplyr::bind_rows(cpg_collections[["TCGA_PANCAN_2018"]]) |>
       dplyr::bind_rows(cpg_collections[["CURATED_OTHER"]]) |>
       dplyr::bind_rows(cpg_collections[["PANEL_APP"]]) |>

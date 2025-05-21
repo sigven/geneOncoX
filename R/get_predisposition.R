@@ -8,8 +8,8 @@
 #'
 #' * \href{https://panelapp.genomicsengland.co.uk/}{Genomics England PanelApp}
 #' * \href{https://pubmed.ncbi.nlm.nih.gov/29625052/}{TCGA's PanCancer study}
-#' * \href{https://cancer.sanger.ac.uk/census}{Cancer Gene Census}
-#' * Other/curated
+#' * \href{https://canvaruk.org/}{CanVar-UK}
+#' * Other/manually curated
 #'
 #' The dataset comes as a `list` object, with two elements:
 #'
@@ -48,7 +48,7 @@
 #'   \item \emph{cpg_cancer_cui} - Concept unique identifiers (CUI, UMLS) -
 #'   inherited cancer conditions
 #'   \item \emph{cpg_source} - Sources supporting predisposition gene
-#'   PANEL_APP, CGC, TCGA_PANCAN_2018, OTHER, ACMG_SF
+#'   PANEL_APP, CANVAR-UK, TCGA_PANCAN_2018, OTHER, ACMG_SF
 #'   \item \emph{cpg_phenotypes} - associated cancer phenotypes
 #'   \item \emph{cpg_mod} - mechanism of disease)
 #' }
