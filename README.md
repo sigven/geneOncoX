@@ -4,7 +4,7 @@
 
 __Which human genes are implicated in tumor development__? 
 
-**geneOncoX** is an R package that address this question through the integration of a number of resources with respect to the functional roles of cancer genes, and also their representation in commercially available targeted sequencing assays (gene panels). Resources included among the integrated annotations include the following:
+**geneOncoX** is an R package that address this question through the integration of a number of resources with respect to the functional roles of cancer genes, and also their representation in commercially available targeted sequencing assays (gene panels). The integrated annotations include the following resources:
 
 -   [IntOGen](https://www.intogen.org/download) - compendium of mutational cancer driver genes
 -   [Network of Cancer Genes](http://ncg.kcl.ac.uk/) - collection of curated cancer genes
