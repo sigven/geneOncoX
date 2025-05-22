@@ -17,7 +17,7 @@ get_gencode(
   cache_dir = NA,
   force_download = FALSE,
   chromosomes_only = TRUE,
-  ensembl_release = 111
+  ensembl_release = 114
 )
 }
 \arguments{

@@ -34,7 +34,7 @@ get_predisposition(cache_dir = NA, force_download = FALSE)
 \item \emph{cpg_cancer_cui} - Concept unique identifiers (CUI, UMLS) -
 inherited cancer conditions
 \item \emph{cpg_source} - Sources supporting predisposition gene
-PANEL_APP, CGC, TCGA_PANCAN_2018, OTHER, ACMG_SF
+PANEL_APP, CANVAR-UK, TCGA_PANCAN_2018, OTHER, ACMG_SF
 \item \emph{cpg_phenotypes} - associated cancer phenotypes
 \item \emph{cpg_mod} - mechanism of disease)
 }
@@ -46,8 +46,8 @@ have been collected from multiple resources:
 \itemize{
 \item \href{https://panelapp.genomicsengland.co.uk/}{Genomics England PanelApp}
 \item \href{https://pubmed.ncbi.nlm.nih.gov/29625052/}{TCGA's PanCancer study}
-\item \href{https://cancer.sanger.ac.uk/census}{Cancer Gene Census}
-\item Other/curated
+\item \href{https://canvaruk.org/}{CanVar-UK}
+\item Other/manually curated
 }
 
 The dataset comes as a \code{list} object, with two elements:
