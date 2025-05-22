@@ -71,14 +71,13 @@ gene_basic$metadata
 ```{r tsg, echo = T, eval = T, results = "hide"}
 
 ## Get tumor suppressor genes - as indicated from either
-## Cancer Gene Census (CGC) or Network of Cancer Genes (NCG)
+## Network of Cancer Genes (NCG)
 ## - show literature support from CancerMine
 
 tsg <- gene_basic$records |>
-  dplyr::filter(cgc_tsg == TRUE |
-                  ncg_tsg == TRUE) |>
+  dplyr::filter(ncg_tsg == TRUE) |>
   dplyr::select(symbol, entrezgene, name, gene_biotype,
-                cgc_tsg, ncg_tsg, cancermine_cit_links_tsg, 
+                ncg_tsg, cancermine_cit_links_tsg, 
                 ncbi_function_summary) |>
   dplyr::rename(support_cancermine = cancermine_cit_links_tsg)
 
@@ -109,11 +108,10 @@ tsg_table
 ## Cancer Gene Census (CGC) or Network of Cancer Genes (NCG),
 ## - show literature support from CancerMine
 oncogene <- gene_basic$records |>
-  dplyr::filter(cgc_oncogene == TRUE |
-                  ncg_oncogene == TRUE) |>
+  dplyr::filter(ncg_oncogene == TRUE) |>
   dplyr::select(symbol, entrezgene, 
                 name, gene_biotype,
-                cgc_tsg, ncg_tsg, 
+                ncg_oncogene,
                 cancermine_cit_links_oncogene, 
                 ncbi_function_summary) |>
   dplyr::rename(support_cancermine = 
@@ -144,7 +142,6 @@ oncogene_table
 ```{r cancer_driver, echo = T, eval = T, results = "hide"}
 
 ## Get predicted cancer driver genes - as indicated from either
-## - Cancer Gene Census (CGC) - tier1/tier2
 ## - Network of Cancer Genes (NCG) - canonical drivers
 ## - IntOGen mutational driver catalogue
 ## - TCGA's PanCancer driver prediction (Bailey et al., Cell, 2018)
@@ -152,20 +149,18 @@ oncogene_table
 ##  Rank hits by how many sources that contribute to classification
 ##
 cancer_driver <- gene_basic$records |>
-  dplyr::filter(cgc_driver_tier1 == TRUE |
-                cgc_driver_tier2 == TRUE |
-                intogen_driver == TRUE |
+  dplyr::filter(intogen_driver == TRUE |
                 ncg_driver == TRUE |
                 tcga_driver == TRUE) |>
   dplyr::mutate(driver_score = 0) |>
-  dplyr::mutate(driver_score = dplyr::if_else(
-    cgc_driver_tier1 == T, 
-    driver_score + 2,
-    as.numeric(driver_score))) |>
-  dplyr::mutate(driver_score = dplyr::if_else(
-    cgc_driver_tier2 == T, 
-    driver_score + 1,
-    as.numeric(driver_score))) |>
+  # dplyr::mutate(driver_score = dplyr::if_else(
+  #   cgc_driver_tier1 == T, 
+  #   driver_score + 2,
+  #   as.numeric(driver_score))) |>
+  # dplyr::mutate(driver_score = dplyr::if_else(
+  #   cgc_driver_tier2 == T, 
+  #   driver_score + 1,
+  #   as.numeric(driver_score))) |>
   dplyr::mutate(driver_score = dplyr::if_else(
     intogen_driver == T, 
     driver_score + 1,
@@ -180,10 +175,7 @@ cancer_driver <- gene_basic$records |>
     as.numeric(driver_score))) |>
   dplyr::select(symbol, entrezgene, 
                 name, gene_biotype,
-                cgc_driver_tier1,
-                cgc_driver_tier2,
                 intogen_driver,
-                #intogen_phenotype,
                 intogen_role,
                 ncg_driver,
                 ncg_phenotype,
