@@ -9,7 +9,7 @@ __Which human genes are implicated in tumor development__?
 -   [IntOGen](https://www.intogen.org/download) - compendium of mutational cancer driver genes
 -   [Network of Cancer Genes](http://ncg.kcl.ac.uk/) - collection of curated cancer genes
 -   [CancerMine](http://bionlp.bcgsc.ca/cancermine/) - text-mined predictions of tumor suppressor genes, proto-oncogenes and cancer drivers
--   [Cancer Gene Census](https://cancer.sanger.ac.uk/census) - manually curated resource on cancer genes (soma and germline)
+-   [CanVar-UK](https://canvaruk.org/) - cancer predisposition genes
 -   [DNA repair genes](https://www.mdanderson.org/documents/Labs/Wood-Laboratory/human-dna-repair-genes.html) - collection of genes involved in DNA repair
 -   [Genomics England PanelApp](https://panelapp.genomicsengland.co.uk/) - collections of cancer gene panels used in clinical diagnostics
 -   [TSO500 targets](https://emea.illumina.com/products/by-brand/trusight-oncology/tso-500-portfolio.html) - cancer genes targeted by Illumina's TSO500 gene panel
