@@ -1,3 +1,9 @@
+# Version 1.1.5
+
+- Updated NCBI gene info (2024-08-24)
+- Added information on mechanism of inheritance for more cancer 
+predisposition genes (from ClinGen)
+
 # Version 1.1.2
 
 - GENCODE v48 (to be used for VEP v114)

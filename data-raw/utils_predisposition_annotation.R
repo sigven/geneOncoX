@@ -560,7 +560,27 @@ get_curated_predisposition_genes <- function(gene_info = NULL) {
   return(curated_predisposition_genes)
 }
 
-get_moi_clingen <- function(gene_info = NULL){
+get_moi_clingen <- function(gene_info = NULL,
+                            cancer_phenotypes = FALSE){
+  
+  
+  clingen_gene_curation <- 
+    readr::read_tsv(
+      file = file.path(
+        "data-raw",
+        "predisposition",
+        "clingen",
+        "clingen_gene_curation_list.tsv"
+      ),
+      show_col_types = F, skip = 5, guess_max = 3000
+    ) |>
+    janitor::clean_names() |>
+    dplyr::select(
+      gene_id,
+      haploinsufficiency_description,
+      haploinsufficiency_score,
+    ) |>
+    dplyr::rename(entrezgene = gene_id)
   
   clingene_disease_validity <- 
     readr::read_csv(
@@ -573,16 +593,7 @@ get_moi_clingen <- function(gene_info = NULL){
         janitor::clean_names() |> 
         dplyr::filter(!startsWith(gene_symbol, "++")) |> 
         dplyr::rename(moi_clingen = moi, symbol = gene_symbol) |>
-    dplyr::filter(
-      stringr::str_detect(
-        tolower(disease_label), 
-        paste0(
-          "tumor|cancer|neoplasm|carcinoma|sarcoma|leukemia|lymphoma|",
-          "melanoma|medulloblastoma|neuroblastoma|myeloma|glioma|",
-          "cholangiocar|lynch|fraumeni|dicer|neurofibromatosis|",
-          "retinoblastoma|schwannoma")
-      )
-    ) |> 
+    
     dplyr::rename(hgnc_id = gene_id_hgnc) |> 
     dplyr::group_by(symbol, hgnc_id) |> 
     dplyr::summarise(
@@ -593,6 +604,10 @@ get_moi_clingen <- function(gene_info = NULL){
       classification = paste(unique(sort(classification)), collapse=";"),
       .groups = "drop") |>
     dplyr::ungroup() |>
+    dplyr::mutate(moi_clingen = dplyr::if_else(
+      moi_clingen == "AD;AR" | moi_clingen == "AR;AD",
+      "AD/AR", as.character(moi_clingen))
+    ) |>
     dplyr::filter(
       classification != "Refuted" &
         classification != "No Known Disease Relationship" &
@@ -604,9 +619,37 @@ get_moi_clingen <- function(gene_info = NULL){
       ),
       by = c("symbol"), relationship = "many-to-many"
     ) |>
+    dplyr::filter(!is.na(entrezgene)) |>
     dplyr::select(symbol, entrezgene, disease_label, 
                   disease_id_mondo, moi_clingen) |>
+    dplyr::distinct () |>
+    dplyr::left_join(clingen_gene_curation,
+      by = "entrezgene", 
+      relationship = "many-to-many"
+    ) |>
+    dplyr::mutate(
+      mod_clingen = dplyr::if_else(
+        haploinsufficiency_score > 1,
+        "LoF", 
+        as.character(NA)
+      )
+    ) |>
+    dplyr::select(-c("symbol")) |>
     dplyr::distinct()
+  
+  if(cancer_phenotypes == T){
+    clingene_disease_validity <- clingene_disease_validity |>
+      dplyr::filter(
+        stringr::str_detect(
+          tolower(disease_label), 
+          paste0(
+            "tumor|cancer|neoplasm|carcinoma|sarcoma|leukemia|lymphoma|",
+            "melanoma|medulloblastoma|neuroblastoma|myeloma|glioma|",
+            "cholangiocar|lynch|fraumeni|dicer|neurofibromatosis|",
+            "retinoblastoma|schwannoma")
+          )
+        )
+  }
   
   return(clingene_disease_validity)
   
@@ -724,6 +767,10 @@ get_predisposition_genes <- function(gene_info = NULL,
 
   mod_moi_predisposition <- get_moi_mod_maxwell2016(
     gene_info = gene_info)
+  
+  clingen_moi <- get_moi_clingen(
+    gene_info = gene_info
+  )
 
   cpg_collections[["PANEL_APP"]] <- as.data.frame(
     gene_panels$records |>
@@ -858,11 +905,20 @@ get_predisposition_genes <- function(gene_info = NULL,
       dplyr::left_join(
         mod_moi_predisposition, 
         by = "entrezgene", multiple = "all") |>
-      dplyr::rename(mechanism_of_disease = mod_maxwell) |>
-      dplyr::mutate(moi = dplyr::if_else(
-        nchar(moi) == 0 & !is.na(moi_maxwell),
-        moi_maxwell,
-        as.character(moi)
+      dplyr::left_join(
+        clingen_moi, 
+        by = "entrezgene", multiple = "all") |>
+      #dplyr::rename(mechanism_of_disease = mod_maxwell) |>
+      dplyr::mutate(mechanism_of_disease = dplyr::case_when(
+        !is.na(mod_maxwell) & nchar(mod_maxwell) > 0 ~ mod_maxwell,
+        (is.na(mod_maxwell) | nchar(mod_maxwell) == 0) & !is.na(mod_clingen) ~ mod_clingen,
+        TRUE ~ as.character(NA)
+      )) |>
+      dplyr::mutate(moi = dplyr::case_when(
+        nchar(moi) == 0 & !is.na(moi_maxwell) ~ moi_maxwell,
+        nchar(moi) == 0 & is.na(moi_clingen) & is.na(moi_maxwell) ~ as.character(NA),
+        nchar(moi) == 0 & is.na(moi_maxwell) & !is.na(moi_clingen) ~ moi_clingen,
+        TRUE ~ as.character(moi)
       )) |>
       dplyr::mutate(predisp_syndrome_cui = dplyr::if_else(
         nchar(predisp_syndrome_cui) == 0,
@@ -878,7 +934,11 @@ get_predisposition_genes <- function(gene_info = NULL,
         nchar(moi) == 0, as.character(NA), as.character(moi)
       )) |>
       dplyr::rename(predisp_cancer_cui = susceptibility_cui) |>
-      dplyr::select(-moi_maxwell) |>
+      dplyr::select(-c("moi_maxwell","moi_clingen",
+                       "mod_maxwell","mod_clingen",
+                       "disease_label","disease_id_mondo",
+                       "haploinsufficiency_description",
+                       "haploinsufficiency_score")) |>
       dplyr::mutate(predisp_source = dplyr::if_else(
         stringr::str_detect(predisp_source, "CURATED_OTHER") &
           stringr::str_detect(predisp_source, "&"),

@@ -59,49 +59,6 @@ gene_alias$records <- get_gene_aliases_ncbi(
 
 
 gene_summary <- get_function_summary_ncbi(gene_df = gene_info)
-
-# cgc_all <- get_cancer_gene_census(
-#   origin = "all", 
-#   cgc_version = 
-#     metadata$basic[metadata$basic$source_abbreviation == "cgc","source_version"])
-# cgc_som <- get_cancer_gene_census(
-#   origin = "somatic",
-#   cgc_version = 
-#     metadata$basic[metadata$basic$source_abbreviation == "cgc","source_version"])
-# cgc_gl <- get_cancer_gene_census(
-#   origin = "germline",
-#   cgc_version = 
-#     metadata$basic[metadata$basic$source_abbreviation == "cgc","source_version"])
-# 
-# cgc_som_gl <- cgc_som |>
-#   dplyr::full_join(
-#     cgc_gl,
-#     by = c(
-#       "cgc_moi",
-#       "cgc_tsg",
-#       "cgc_hallmark",
-#       "cgc_tier",
-#       "entrezgene",
-#       "cgc_oncogene"
-#     )
-#   ) |>
-#   dplyr::mutate(cgc_somatic = dplyr::if_else(
-#     is.na(cgc_somatic),
-#     as.logical(FALSE),
-#     as.logical(cgc_somatic)
-#   )) |>
-#   dplyr::mutate(cgc_germline = dplyr::if_else(
-#     is.na(cgc_germline),
-#     as.logical(FALSE),
-#     as.logical(cgc_germline)
-#   )) |>
-#   dplyr::select(-cgc_moi)
-# 
-# cgc <- cgc_all |>
-#   dplyr::left_join(
-#     cgc_som_gl, by = c("entrezgene","cgc_hallmark","cgc_tier"))
-
-
 intogen_drivers <- get_intogen_driver_genes(gene_info = gene_info)
 fp_drivers <- get_curated_fp_cancer_genes(gene_info = gene_info)
 ncg <- get_network_of_cancer_genes()
@@ -123,8 +80,6 @@ gene_basic$records <- gene_info |>
   dplyr::select(-ensembl_gene_id) |>
   dplyr::left_join(gene_summary,
                    by = "entrezgene", multiple = "all") |>
-  # dplyr::left_join(cgc,
-  #                  by = "entrezgene", multiple = "all") |>
   dplyr::left_join(ncg,
                    by = "entrezgene", multiple = "all") |>
   dplyr::left_join(intogen_drivers,
@@ -162,36 +117,7 @@ gene_basic$records <- gene_info |>
     as.integer(0),
     as.integer(cancermine_n_cit_driver)
   )) |>
-  # dplyr::mutate(cgc_somatic = dplyr::if_else(
-  #   is.na(cgc_somatic),
-  #   as.logical(FALSE),
-  #   as.logical(cgc_somatic)
-  # )) |>
-  # dplyr::mutate(cgc_driver_tier1 = dplyr::if_else(
-  #   is.na(cgc_driver_tier1),
-  #   as.logical(FALSE),
-  #   as.logical(cgc_driver_tier1)
-  # )) |>
-  # dplyr::mutate(cgc_driver_tier2 = dplyr::if_else(
-  #   is.na(cgc_driver_tier2),
-  #   as.logical(FALSE),
-  #   as.logical(cgc_driver_tier2)
-  # )) |>
-  # dplyr::mutate(cgc_germline = dplyr::if_else(
-  #   is.na(cgc_germline),
-  #   as.logical(FALSE),
-  #   as.logical(cgc_germline)
-  # )) |>
-  # dplyr::mutate(cgc_tsg = dplyr::if_else(
-  #   is.na(cgc_tsg),
-  #   as.logical(FALSE),
-  #   as.logical(cgc_tsg)
-  # )) |>
-  # dplyr::mutate(cgc_oncogene = dplyr::if_else(
-  #   is.na(cgc_oncogene),
-  #   as.logical(FALSE),
-  #   as.logical(cgc_oncogene)
-  # )) |>
+  
   dplyr::mutate(ncg_tsg = dplyr::if_else(
     is.na(ncg_tsg),
     as.logical(FALSE),
@@ -273,7 +199,7 @@ for(vbump in c('major','minor','patch')){
 
 bump_version_level <- "patch"
 #version_bump <- version_bumps[[bump_version_level]]
-version_bump <- "1.1.4"
+version_bump <- "1.1.5"
 
 gd_records <- list()
 db_id_ref <- data.frame()
