@@ -1,3 +1,7 @@
+# Version 1.1.7
+
+- Fix missing MANE Select and MANE Plus Clinical annotations
+
 # Version 1.1.6
 
 - Updated CancerMine (v51, August 2025)

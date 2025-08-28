@@ -44,9 +44,9 @@ get_transcript_appris_annotation <-
 gencode_get_transcripts <-
   function(build = "grch38",
            append_regulatory_region = TRUE,
-           gencode_version = 47,
-           ensembl_version = 113,
-           uniprot_version = "2024_06",
+           gencode_version = 48,
+           ensembl_version = 114,
+           uniprot_version = "2025_03",
            gene_info = NULL,
            gene_alias = NULL) {
     gencode_ftp_url <-
@@ -527,8 +527,7 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
       relationship = "many-to-many") |>
     dplyr::left_join(
        refseq_data, 
-       by = c("entrezgene" = "entrezgene", 
-              "refseq_mrna" = "rs_transcript_id_stripped")) |>
+       by = c("refseq_mrna" = "rs_transcript_id_stripped")) |>
     dplyr::mutate(
        refseq_transcript_id = dplyr::if_else(
          is.na(rs_transcript_id) & !is.na(refseq_mrna),
@@ -1101,9 +1100,6 @@ get_refseq_map <- function(build = "grch37"){
   
   refseq_map_grch38 <- read_gtf(remote_urls[['grch38']]) |> 
     dplyr::filter(type == "transcript" & transcript_biotype == "mRNA") |>
-    dplyr::mutate(entrezgene = stringr::str_replace_all(
-      .data$db_xref, "GeneID:",""
-    )) |>
     dplyr::rename(rs_transcript_id = transcript_id) |>
     dplyr::filter(
       !stringr::str_detect(rs_transcript_id, "\\.[0-9]{1,}_[0-9]$")
@@ -1133,7 +1129,6 @@ get_refseq_map <- function(build = "grch37"){
     dplyr::select(
       c("rs_transcript_id", 
         "rs_transcript_id_stripped",
-        "entrezgene",
         "transcript_mane_select", 
         "transcript_mane_plus_clinical"
       )) |>
@@ -1141,13 +1136,13 @@ get_refseq_map <- function(build = "grch37"){
   
   mane_select_map <- refseq_map_grch38 |>
     dplyr::filter(!is.na(transcript_mane_select)) |>
-    dplyr::select(entrezgene, transcript_mane_select) |>
+    dplyr::select(transcript_mane_select) |>
     dplyr::mutate(mane_select = TRUE) |>
     dplyr::distinct()
   
   mane_plus_clinical_map <- refseq_map_grch38 |>
     dplyr::filter(!is.na(transcript_mane_plus_clinical)) |>
-    dplyr::select(entrezgene, transcript_mane_plus_clinical) |>
+    dplyr::select(transcript_mane_plus_clinical) |>
     dplyr::mutate(mane_plus_clinical = TRUE) |>
     dplyr::distinct()
   
@@ -1156,14 +1151,13 @@ get_refseq_map <- function(build = "grch37"){
   
   if(build == "grch37"){
     refseq_map_grch37 <- read_gtf(remote_urls[['grch37']]) |> 
-      dplyr::filter(type == "transcript" & transcript_biotype == "mRNA") |>
-      dplyr::mutate(entrezgene = stringr::str_replace_all(
-        .data$db_xref, "GeneID:",""
-      )) |>
+      dplyr::filter(.data$type == "transcript" & 
+                      .data$transcript_biotype == "mRNA") |>
       dplyr::rename(rs_transcript_id = transcript_id,
                     rs_select = tag) |>
       dplyr::filter(
-        !stringr::str_detect(rs_transcript_id, "\\.[0-9]{1,}_[0-9]$")
+        !stringr::str_detect(
+          .data$rs_transcript_id, "\\.[0-9]{1,}_[0-9]$")
       ) |>
       dplyr::mutate(refseq_select = dplyr::if_else(
         !is.na(.data$rs_select), TRUE, FALSE
@@ -1176,16 +1170,14 @@ get_refseq_map <- function(build = "grch37"){
       dplyr::select(
         c("rs_transcript_id", 
           "rs_transcript_id_stripped",
-          "entrezgene", "refseq_select")) |>
+          "refseq_select")) |>
       dplyr::left_join(
         mane_select_map,
-        by = c("entrezgene" = "entrezgene",
-        "rs_transcript_id" = "transcript_mane_select")
+        c("rs_transcript_id" = "transcript_mane_select")
       ) |>
       dplyr::left_join(
         mane_plus_clinical_map,
-        by = c("entrezgene" = "entrezgene",
-        "rs_transcript_id" = "transcript_mane_plus_clinical")
+        c("rs_transcript_id" = "transcript_mane_plus_clinical")
       ) |>
       dplyr::mutate(
         transcript_mane_select = dplyr::if_else(
