@@ -669,7 +669,7 @@ get_network_of_cancer_genes <- function(ncg_version = "7.1") {
   return(ncg)
 }
 
-get_cancermine_genes <- function(cancermine_version = "50") {
+get_cancermine_genes <- function(cancermine_version = "51") {
   cancermine_sentences_fname <-
     paste0(
       "data-raw/cancermine/cancermine_sentences.v",
@@ -690,8 +690,7 @@ get_cancermine_genes <- function(cancermine_version = "50") {
     read.table(
       file = gzfile(cancermine_sentences_fname),
       header = TRUE, comment.char = "", quote = "",
-      sep = "\t", stringsAsFactors = FALSE
-    ) |>
+      sep = "\t", stringsAsFactors = FALSE) |>
       dplyr::filter(predictprob >= 0.8) |>
       ## some entries wrongly captured, are in
       ## fact mentions of anti-sense non-coding genes
@@ -700,6 +699,7 @@ get_cancermine_genes <- function(cancermine_version = "50") {
           formatted_sentence, "-<b>AS1|b>-AS1"
         )
       ) |>
+      dplyr::mutate(pmid = as.character(pmid)) |>
       dplyr::group_by(role, gene_entrez_id, pmid) |>
       dplyr::summarise(doid = paste(
         unique(cancer_id),
@@ -716,6 +716,7 @@ get_cancermine_genes <- function(cancermine_version = "50") {
       sep = "\t", header = FALSE, quote = "",
       comment.char = "", stringsAsFactors = FALSE) |>
       magrittr::set_colnames(c("pmid", "citation", "citation_link")) |>
+      dplyr::mutate(pmid = as.character(pmid)) |>
       # dplyr::mutate(
       #   citation = stringi::stri_enc_toascii(citation)) |>
       # dplyr::mutate(
@@ -725,7 +726,9 @@ get_cancermine_genes <- function(cancermine_version = "50") {
   }
 
   pmids <- pmids |>
-    dplyr::inner_join(all_citations, by = c("pmid"), multiple = "all")
+    dplyr::inner_join(
+      all_citations, by = c("pmid"), 
+      relationship = "many-to-many")
 
   pmids_oncogene <- as.data.frame(
     pmids |>

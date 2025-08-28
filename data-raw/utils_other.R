@@ -1,3 +1,122 @@
+#' A function that splits an array into chunks of equal size
+chunk <- function(x,n) split(x, factor(sort(rank(x)%%n)))
+
+#' A function that returns a citation with first author, journal and year for a PubMed ID
+#'
+#' @param pmid An array of Pubmed IDs
+#' @param raw_db_dir base directory
+#' @param chunk_size Size of PMID chunks
+#'
+#' @export
+#'
+#' @return citation PubMed citation, with first author, journal and year
+#'
+get_citations_pubmed <- function(
+    pmid,
+    raw_db_dir = NULL,
+    chunk_size = 100){
+  
+  ## set logging layout
+  lgr::lgr$appenders$console$set_layout(
+    lgr::LayoutFormat$new(timestamp_fmt = "%Y-%m-%d %T"))
+  
+  literature_vault_fname <- file.path(
+    raw_db_dir,
+    "literature_vault",
+    "literature_vault.rds")
+  
+  pmid_df <- data.frame('pmid' = pmid)
+  all_citations <- data.frame()
+  literature_vault <- data.frame()
+  
+  if(file.exists(literature_vault_fname)){
+    lgr::lgr$info("Checking cached literature vault")
+    literature_vault <- readRDS(literature_vault_fname) |>
+      dplyr::filter(!is.na(.data$pmid)) |>
+      dplyr::distinct()
+    
+    missing_pmids <- pmid_df |>
+      dplyr::anti_join(literature_vault, by = "pmid")
+    
+    all_citations <- literature_vault |>
+      dplyr::semi_join(pmid_df, by = "pmid") |>
+      dplyr::distinct()
+    
+    lgr::lgr$info(
+      paste0('Found ', nrow(all_citations),
+             " PMIDs in cached literature vault - missing ", nrow(missing_pmids)))
+    
+    pmid <- missing_pmids$pmid
+  }
+  
+  ## make chunk of maximal 400 PMIDs from input array (limit by EUtils)
+  pmid_chunks <- chunk(
+    pmid, ceiling(length(pmid)/chunk_size))
+  
+  
+  if(length(pmid_chunks) == 0){
+    lgr::lgr$info("No PMIDs to process")
+    return(all_citations)
+  }
+  
+  j <- 0
+  
+  lgr::lgr$info(
+    paste0('Retrieving PubMed citations for PMID list, total length: ',
+           length(pmid)))
+  while (j < length(pmid_chunks)) {
+    pmid_chunk <- pmid_chunks[[as.character(j)]]
+    lgr::lgr$info(
+      paste0('Processing chunk ',j,' with ',length(pmid_chunk),' PMIDS'))
+    pmid_string <- paste(pmid_chunk,collapse = " ")
+    res <- RISmed::EUtilsGet(
+      RISmed::EUtilsSummary(
+        pmid_string, type = "esearch", db = "pubmed", retmax = 5000)
+    )
+    year <- RISmed::YearPubmed(res)
+    authorlist <- RISmed::Author(res)
+    pmid_list <- RISmed::PMID(res)
+    i <- 1
+    first_author <- c()
+    while (i <= length(authorlist)) {
+      if (length(authorlist[[i]]) == 5) {
+        first_author <- c(
+          first_author,
+          paste(authorlist[[i]][1,]$LastName," et al.",sep = ""))
+      } else{
+        first_author <- c(
+          first_author, as.character("Unknown et al.")
+        )
+      }
+      i <- i + 1
+    }
+    journal <- RISmed::ISOAbbreviation(res)
+    citations <- data.frame(
+      'pmid' = as.integer(pmid_list),
+      'citation' = paste(
+        first_author, year, journal, sep = ", "),
+      stringsAsFactors = F)
+    citations$citation_link <- paste0(
+      '<a href=\'https://www.ncbi.nlm.nih.gov/pubmed/',
+      citations$pmid,'\' target=\'_blank\'>',
+      citations$citation,'</a>')
+    all_citations <- dplyr::bind_rows(
+      all_citations, citations) |>
+      dplyr::filter(!is.na(pmid)) |>
+      dplyr::distinct()
+    
+    literature_vault <- dplyr::bind_rows(
+      literature_vault, citations
+    )
+    saveRDS(literature_vault, file = literature_vault_fname)
+    j <- j + 1
+  }
+  
+  return(all_citations)
+  
+}
+
+
 get_cpic_genes <- function(update = T,
                            gene_info = NULL){
   datestamp <- Sys.Date()

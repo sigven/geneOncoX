@@ -1,3 +1,8 @@
+# Version 1.1.6
+
+- Updated CancerMine (v51, August 2025)
+- Curated information on mechanism of disease for LZTR1, RTEL1, CTC1
+
 # Version 1.1.5
 
 - Updated NCBI gene info (2024-08-24)

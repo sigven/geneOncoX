@@ -920,6 +920,13 @@ get_predisposition_genes <- function(gene_info = NULL,
         nchar(moi) == 0 & is.na(moi_maxwell) & !is.na(moi_clingen) ~ moi_clingen,
         TRUE ~ as.character(moi)
       )) |>
+      dplyr::mutate(mechanism_of_disease = dplyr::case_when(
+        ## manually curated - evidence for LoF as mechanism of disease
+        .data$entrezgene == 8216 ~ "LoF", #LZTR1
+          .data$entrezgene == 80169 ~ "LoF", #CTC1
+          .data$entrezgene == 51750 ~ "LoF", #RTEL1
+        TRUE ~ as.character(.data$entrezgene)
+      )) |>
       dplyr::mutate(predisp_syndrome_cui = dplyr::if_else(
         nchar(predisp_syndrome_cui) == 0,
         as.character(NA),
