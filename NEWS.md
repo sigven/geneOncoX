@@ -1,3 +1,7 @@
+# Version 1.1.8
+
+- Bug in mechanism-of-disease fixed
+
 # Version 1.1.7
 
 - Fix missing MANE Select and MANE Plus Clinical annotations
