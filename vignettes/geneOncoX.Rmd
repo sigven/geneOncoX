@@ -34,7 +34,7 @@ library(geneOncoX)
 ```{r install, echo = T, eval = F}
 
 if (!("remotes" %in% installed.packages())) {
-install.packages("remotes")
+  install.packages("remotes")
 }
 remotes::install_github('sigven/geneOncoX')
 ```
