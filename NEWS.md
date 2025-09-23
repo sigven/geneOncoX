@@ -1,3 +1,10 @@
+# Version 1.2.0
+
+- GENCODE v49 (to be used for VEP v115)
+- Updated cancer rank based on OTP v25.09
+- ACMG secondary findings v3.3 (June 2025)
+- Updated NCBI gene info (2025-09-23)
+
 # Version 1.1.8
 
 - Bug in mechanism-of-disease fixed

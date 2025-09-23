@@ -179,7 +179,7 @@ rm(dbnsfp_annotations)
 rm(ncg)
 #rm(cgc_all)
 rm(tcga_drivers)
-#rm(cgc_som_gl)
+rm(cpic)
 rm(f1cdx)
 
 
