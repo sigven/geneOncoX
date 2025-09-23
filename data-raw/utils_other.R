@@ -415,10 +415,13 @@ get_gene_aliases_ncbi <- function(gene_info,
         designation_substring,"\\)$","")) |>
     dplyr::filter(
         nchar(designation_substring) > 4)
-  
+ 
+ 
   more_alias_candidates <- valid_aliases |> 
     dplyr::left_join(
-      other_designations, relationship = "many-to-many") |> 
+      other_designations,
+      by = "entrezgene",
+      relationship = "many-to-many") |> 
     dplyr::mutate(
       substring_distance = stringdist::stringdist(
         tolower(alias),tolower(designation_substring))) |> 
