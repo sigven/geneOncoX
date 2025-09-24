@@ -1,3 +1,7 @@
+# Version 1.2.1
+
+- Fixed bug in OTP-rank dataset
+
 # Version 1.2.0
 
 - GENCODE v49 (to be used for VEP v115)
