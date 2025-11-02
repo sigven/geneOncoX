@@ -1,3 +1,7 @@
+# Version 1.2.3
+
+- Updatd NCBI gene info (2025-11-02)
+
 # Version 1.2.1
 
 - Fixed bug in OTP-rank dataset

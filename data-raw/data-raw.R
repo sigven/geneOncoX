@@ -199,7 +199,7 @@ for(vbump in c('major','minor','patch')){
 
 bump_version_level <- "minor"
 #version_bump <- version_bumps[[bump_version_level]]
-version_bump <- "1.2.1"
+version_bump <- "1.2.3"
 
 gd_records <- list()
 db_id_ref <- data.frame()
@@ -213,8 +213,7 @@ db[["predisposition"]] <- gene_predisposition
 gene_panels$records <- gene_panels$records |>
   dplyr::left_join(
     dplyr::select(
-      gene_info, entrezgene, gene_biotype
-    ),
+      gene_info, entrezgene, gene_biotype),
     by = "entrezgene"
   ) |>
   dplyr::select(
