@@ -87,7 +87,9 @@ get_panel_app_genes <-
           df$gepa_panel_id
         )
       all_panels <- dplyr::bind_rows(all_panels, df)
+      Sys.sleep(10)
       i <- i + 1
+      
     }
 
 
