@@ -816,12 +816,13 @@ get_dna_repair_genes <- function(gene_info = NULL) {
   return(dna_repair_all)
 }
 
-get_dbnsfp_gene_annotations <- function() {
+get_dbnsfp_gene_annotations <- function(version = "5.3") {
   lgr::lgr$info(
     "Retrieving gene damage scores/OMIM annotation from dbNSFP_gene"
   )
   dbnsfp_gene <- read.table(
-    file = gzfile(file.path("data-raw", "dbnsfp", "dbNSFP5.2_gene.gz")),
+    file = gzfile(
+      file.path("data-raw", "dbnsfp", glue::glue("dbNSFP{version}_gene.gz"))),
     sep = "\t",
     header = TRUE, stringsAsFactors = FALSE,
     na.strings = c(".", ""), comment.char = "",
