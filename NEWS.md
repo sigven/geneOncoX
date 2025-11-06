@@ -1,6 +1,11 @@
+# Version 1.2.4
+
+- Updated dbNSFP (v5.3)
+- Added CDK12 as curated CPG (weak evidence)
+
 # Version 1.2.3
 
-- Updatd NCBI gene info (2025-11-02)
+- Updated NCBI gene info (2025-11-02)
 
 # Version 1.2.1
 
