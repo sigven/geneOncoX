@@ -3,7 +3,7 @@ pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   geneOncoX: geneOncoX.html
-last_built: 2025-11-02T18:45Z
+last_built: 2025-11-06T11:19Z
 urls:
   reference: https://sigven.github.io/geneOncoX/reference
   article: https://sigven.github.io/geneOncoX/articles
