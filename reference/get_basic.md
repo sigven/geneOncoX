@@ -1,0 +1,244 @@
+# Get basic cancer-relevant gene annotations
+
+Downloads and returns a dataset that combines multiple human cancer gene
+annotations,i.e. from IntOGen, CancerMine, Network of Cancer Genes,
+Cancer Gene Census, NCBI, dbNSFP etc. The dataset comes as a `list`
+object, with two elements:
+
+- `metadata` - a data frame with metadata regarding annotation resources
+  used
+
+- `records` - a data frame with gene annotations (one record per gene)
+
+## Usage
+
+``` r
+get_basic(cache_dir = NA, force_download = FALSE)
+```
+
+## Arguments
+
+- cache_dir:
+
+  Local directory for data download
+
+- force_download:
+
+  Logical indicating if local cache should be overwritten (set to TRUE
+  to re-download if file exists in cache)
+
+## Value
+
+**metadata** - A data frame with 10 rows and 6 columns:
+
+- *source* - gene annotation source
+
+- *annotation_data* - type of annotations used
+
+- *url* - URL of annotation resource
+
+- *citation* - publication to cite for annotation source (citation;
+  PMID)
+
+- *version* - version used
+
+- *abbreviation* - abbreviation used in column names of records
+
+**records** - A data frame with 108,648 rows and 65 columns:
+
+- *entrezgene* - NCBI Entrez identifier
+
+- *symbol* - primary gene symbol
+
+- *gene_biotype* - type of gene (ncRNA, protein-coding, or pseudo)
+
+- *name* - gene name
+
+- *other_genename_designations* - other gene name designations
+
+- *hgnc_id* - HGNC gene identifier
+
+- *ncbi_function_summary* - gene function summary (NCBI Gene)
+
+- *cgc_hallmark* - Annotated with cancer gene hallmarks(s) by Cancer
+  Gene Census (CGC)
+
+- *cgc_tier* - Cancer Gene Census tier (TIER1/TIER2)
+
+- *cgc_driver_tier1* - Logical indicating if gene is part of Cancer Gene
+  Census - TIER1
+
+- *cgc_driver_tier2* - Logical indicating if gene is part of Cancer Gene
+  Census - TIER2
+
+- *cgc_tsg* - tumor suppressor gene (Cancer Gene Census)
+
+- *cgc_oncogene* - proto-oncogene (Cancer Gene Census)
+
+- *cgc_somatic* - logical indicating whether the cancer relevance of
+  this gene relates to the soma (Cancer Gene Census)
+
+- *cgc_phenotype_somatic* - cancer phenotypes relevant for somatic
+  mutations of this gene (Cancer Gene Census)
+
+- *cgc_germline* - logical indicating whether the cancer relevance of
+  this gene relates to the germline (Cancer Gene Census)
+
+- *cgc_phenotype_germline* - cancer phenotypes relevant for germline
+  mutations of this gene (Cancer Gene Census)
+
+- *ncg_driver* - canonical cancer driver gene according to Network of
+  Cancer Genes (NCG)
+
+- *ncg_tsg* - tumor suppressor gene (NCG)
+
+- *ncg_oncogene* - proto-oncogene (NCG)
+
+- *ncg_phenotype* - cancer phenotypes relevant for this gene (NCG)
+
+- *ncg_pmid* - supporting literature identifiers (PMIDs, NCG)
+
+- *intogen_role* - cancer driver role (IntOGen)
+
+- *intogen_phenotype* - cancer phenotypes relevant for this gene
+  (IntOGen)
+
+- *intogen_driver* - logical indicatin if gene is predicted as cancer
+  driver by IntOGen
+
+- *bailey2018_fp_driver* - logical indicating whether this gene is
+  likely a false positive driver gene (Bailey et al., Cell, 2018)
+
+- *woods_dnarepair_class* - class of DNA repair (DNA repair database,
+  Woods et al.)
+
+- *woods_dnarepair_activity* - type of DNA repair activity involved (DNA
+  repair database, Woods et al.)
+
+- *illumina_tso500* - gene is part of Illumina's TSO500 panel
+  (SNV_INDEL, CNA_GAIN, CNA_LOSS, RNA_FUSION)
+
+- *foundation_one_f1cdx* - gene is part of Foundation One's F1CDx panel
+  (SNV_INDEL, CNA, FUSION, PROMOTER)
+
+- *cpic_pgx* - gene related to pharmacogenomics (CPIC, antineoplastic
+  drugs)
+
+- *sanchezvega2018_signaling_pathway* - curated signalling pathways
+  (Sanchez-Vega et al., Cell, 2018)
+
+- *cancermine_pmid_driver* - PMIDs that support (from text mining) a
+  role for this gene as a driver (CancerMine)
+
+- *cancermine_pmid_oncogene* - PMIDs that support (from text mining) a
+  role for this gene as a proto-oncogene (CancerMine)
+
+- *cancermine_pmid_tsg* - PMIDs that support (from text mining) a role
+  for this gene as a tumor suppressor gene (CancerMine)
+
+- *cancermine_doid_driver* - cancer phenotypes relevant for the given
+  role (Disease Ontology identifiers, CancerMine)
+
+- *cancermine_doid_oncogene* - cancer phenotypes relevant for the given
+  role (Disease Ontology identifiers, CancerMine)
+
+- *cancermine_doid_tsg* - cancer phenotypes relevant for the given role
+  (Disease Ontology identifiers, CancerMine)
+
+- *cancermine_n_cit_driver* - number of citations (PMIDs) that support a
+  role for this as a driver (CancerMine)
+
+- *cancermine_n_cit_oncogene* - number of citations (PMIDs) that support
+  a role for this as a proto-oncogene (CancerMine)
+
+- *cancermine_n_cit_tsg* - number of citations (PMIDs) that support a
+  role for this as a tumor suppressor (CancerMine)
+
+- *cancermine_cit_tsg* - citations for cancer driver support (all with
+  prob \> 0.8, CancerMine)
+
+- *cancermine_cit_oncogene* - citations for proto-oncogene support (all
+  with prob \> 0.8, max 50, CancerMine)
+
+- *cancermine_cit_driver* - citations for tumor suppressor gene support
+  (all with prob \> 0.8, CancerMine)
+
+- *cancermine_cit_links_driver* - citation links for cancer driver
+  support (50 most recent, CancerMine)
+
+- *cancermine_cit_links_oncogene* - citation links for proto-oncogene
+  support (50 most recent, CancerMine)
+
+- *cancermine_cit_links_tsg* - citation links for tumor suppressor gene
+  support (50 most recent, CancerMine)
+
+- *mim_id* - MIM gene id (from HGNC)
+
+- *mim_phenotype_id* - MIM (ids) of the phenotype the gene caused or
+  associated with (dbNSFP, from Uniprot)
+
+- *prob_haploinsuffiency* - Estimated probability of haploinsufficiency
+  of the gene (from doi:10.1371/journal.pgen.1001154) (dbNSFP)
+
+- *gene_indispensability_score* - A probability prediction of the gene
+  being essential. From doi:10.1371/journal.pcbi.1002886 (dbNSFP)
+
+- *gene_indispensability_pred* - Essential ("E") or loss-of-function
+  tolerant ("N") based on gene_indispensability_score (dbNSFP)
+
+- *essential_gene_crispr* - Essential ("E") or Non-essential
+  phenotype-changing ("N") based on large scale CRISPR experiments. from
+  doi: 10.1126/science.aac7041 (dbNSFP)
+
+- *essential_gene_crispr2* - Essential ("E"), context-Specific essential
+  ("S"), or Non-essential phenotype-changing ("N") based on large scale
+  CRISPR experiments. from http://dx.doi.org/10.1016/j.cell.2015.11.015
+  (dbNSFP)
+
+- *prob_gnomad_lof_intolerant* - the probability of being
+  loss-of-function intolerant (intolerant of both heterozygous and
+  homozygous lof variants) based on gnomAD 2.1 data (dbNSFP)
+
+- *prob_gnomad_lof_intolerant_hom* - the probability of being intolerant
+  of homozygous, but not heterozygous lof variants based on gnomAD 2.1
+  data (dbNSFP)
+
+- *prob_gnomad_lof_tolerant_null* - the probability of being tolerant of
+  both heterozygous and homozygous lof variants based on gnomAD 2.1 data
+  (dbNSFP)
+
+- *prob_exac_lof_intolerant* - the probability of being loss-of-function
+  intolerant (intolerant of both heterozygous and homozygous lof
+  variants) based on ExAC r0.3 data (dbNSFP)
+
+- *prob_exac_lof_intolerant_hom* - the probability of being intolerant
+  of homozygous, but not heterozygous lof variants based on ExAC r0.3
+  data (dbNSFP)
+
+- *prob_exac_lof_tolerant_null* - the probability of being tolerant of
+  both heterozygous and homozygous lof variants based on ExAC r0.3 data
+  (dbNSFP)
+
+- *prob_exac_nontcga_lof_intolerant* - the probability of being
+  loss-of-function intolerant (intolerant of both heterozygous and
+  homozygous lof variants) based on ExAC r0.3 nonTCGA subset (dbNSFP)
+
+- *prob_exac_nontcga_lof_intolerant_hom* - the probability of being
+  intolerant of homozygous, but not heterozygous lof variants based on
+  ExAC 0.3 nonTCGA subset (dbNSFP)
+
+- *prob_exac_nontcga_lof_tolerant_null* - the probability of being
+  tolerant of both heterozygous and homozygous lof variants based on
+  ExAC r0.3 nonTCGA subset (dbNSFP)
+
+- *dbnsfp_function_description* - gene function description
+  (dbNSFP/UniProtKB)
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+library(geneOncoX)
+gene_basic <- get_basic(cache_dir = tempdir())
+} # }
+```
