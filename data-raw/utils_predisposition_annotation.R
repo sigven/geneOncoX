@@ -15,6 +15,14 @@ get_panel_app_genes <-
         "ge_panelapp",
         "all_cancer_panels.txt"
       )
+    
+    panels2 <- as.data.frame(
+        readr::read_tsv(
+          file = panel_id_file,
+          show_col_types = F) 
+    )
+      #janitor::clean_names())
+    
     panels <- read.table(
       file = panel_id_file, header = TRUE, sep = "\t",
       stringsAsFactors = FALSE, quote = ""
@@ -87,7 +95,7 @@ get_panel_app_genes <-
           df$gepa_panel_id
         )
       all_panels <- dplyr::bind_rows(all_panels, df)
-      Sys.sleep(10)
+      Sys.sleep(5)
       i <- i + 1
       
     }

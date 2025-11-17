@@ -1,3 +1,7 @@
+# Version 1.2.5
+
+- Fix bug in predisposition gene retrieval from PanelApp
+
 # Version 1.2.4
 
 - Updated dbNSFP (v5.3)
