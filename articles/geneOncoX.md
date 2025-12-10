@@ -35,7 +35,7 @@ gene_basic <- get_basic(cache_dir = download_dir)
 
 ## Number of records
 nrow(gene_basic$records)
-#> [1] 65233
+#> [1] 65302
 
 ## Show metadata for underlying resources
 gene_basic$metadata
@@ -79,7 +79,7 @@ gene_basic$metadata
 #> 1                Lever et al., Nat Methods, 2019; 31110280 v51 (August 2025)
 #> 2               Repana et al., Genome Biol, 2019; 30606230              v7.2
 #> 3  Martínez-Jiménez et al., Nat Rev Cancer, 2020; 32778778        2024.09.20
-#> 4          Brown et al., Nucleic Acids Res, 2015; 25355515        2025-11-17
+#> 4          Brown et al., Nucleic Acids Res, 2015; 25355515        2025-12-10
 #> 5                      Bailey et al., Cell, 2018; 29625053              <NA>
 #> 6                Sanchez-Vega et al., Cell, 2018; 29625050              <NA>
 #> 7                                                     <NA>              <NA>
@@ -321,7 +321,7 @@ gene_predisposition$metadata
 #> 7                     https://canvaruk.org/
 #>                                   source_citation source_version
 #> 1        Martin et al., Nat Genet, 2019; 31676867       v1 (API)
-#> 2 Brown et al., Nucleic Acids Res, 2015; 25355515     2025-11-17
+#> 2 Brown et al., Nucleic Acids Res, 2015; 25355515     2025-12-10
 #> 3              Huang et al., Cell, 2018; 29625052           <NA>
 #> 4  Maxwell et al., Am J Hum Genet, 2016; 27153395           <NA>
 #> 5                                            <NA>       20251106
@@ -432,7 +432,7 @@ gene_alias <- get_alias(cache_dir = download_dir)
 
 ## number of gene synonyms that are ambiguous
 nrow(dplyr::filter(gene_alias$records, ambiguous == TRUE))
-#> [1] 7136
+#> [1] 7142
 
 ## show structure of alias records
 head(gene_alias$records)
@@ -513,7 +513,7 @@ gene_gencode$metadata
 #> 1    Frankish et al., Nucleic Acids Res, 2021; 33270111             49
 #> 2  Cunningham et al., Nucleic Acids Res, 2022; 34791404            115
 #> 3 UniProt Consortium, Nucleic Acids Res, 2021; 33237286        2025_03
-#> 4    Rodriguez et al, Nucleic Acids Res, 2022; 34755885     2025-11-17
+#> 4    Rodriguez et al, Nucleic Acids Res, 2022; 34755885     2025-12-10
 #>   source_abbreviation        source_license
 #> 1             gencode      Free/open access
 #> 2             ensembl EMBL-EBI terms of use
@@ -652,22 +652,22 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] geneOncoX_1.2.5
+#> [1] geneOncoX_1.2.6
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] jsonlite_2.0.0    dplyr_1.1.4       compiler_4.5.2    crayon_1.5.3     
 #>  [5] Rcpp_1.1.0        tidyselect_1.2.1  stringr_1.6.0     jquerylib_0.1.4  
-#>  [9] systemfonts_1.3.1 textshaping_1.0.4 yaml_2.3.10       fastmap_1.2.0    
+#>  [9] systemfonts_1.3.1 textshaping_1.0.4 yaml_2.3.11       fastmap_1.2.0    
 #> [13] plyr_1.8.9        R6_2.6.1          generics_0.1.4    curl_7.0.0       
 #> [17] knitr_1.50        htmlwidgets_1.6.4 tibble_3.3.0      desc_1.4.3       
 #> [21] bslib_0.9.0       pillar_1.11.1     rlang_1.1.6       DT_0.34.0        
 #> [25] stringi_1.8.7     cachem_1.1.0      lgr_0.5.0         xfun_0.54        
 #> [29] fs_1.6.6          sass_0.4.10       cli_3.6.5         pkgdown_2.2.0    
-#> [33] withr_3.0.2       magrittr_2.0.4    crosstalk_1.2.2   digest_0.6.38    
+#> [33] withr_3.0.2       magrittr_2.0.4    crosstalk_1.2.2   digest_0.6.39    
 #> [37] lifecycle_1.0.4   vctrs_0.6.5       evaluate_1.0.5    gargle_1.6.0     
 #> [41] glue_1.8.0        ragg_1.5.0        googledrive_2.1.2 rmarkdown_2.30   
 #> [45] purrr_1.2.0       httr_1.4.7        tools_4.5.2       pkgconfig_2.0.3  
-#> [49] htmltools_0.5.8.1
+#> [49] htmltools_0.5.9
 ```
 
   
