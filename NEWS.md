@@ -1,3 +1,8 @@
+# Version 1.2.6
+
+- Updated NCBI gene info (2025-12-10)
+- Updated Open Targets Platform cancer gene ranks (v25.12)
+
 # Version 1.2.5
 
 - Fix bug in predisposition gene retrieval from PanelApp

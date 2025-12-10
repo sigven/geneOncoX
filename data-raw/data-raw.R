@@ -199,7 +199,7 @@ for(vbump in c('major','minor','patch')){
 
 bump_version_level <- "patch"
 #version_bump <- version_bumps[[bump_version_level]]
-version_bump <- "1.2.5"
+version_bump <- "1.2.6"
 
 gd_records <- list()
 db_id_ref <- data.frame()
@@ -426,7 +426,7 @@ while(ensembl_iter < 1){
 gene_otp_rank <- list()
 gene_otp_rank[["metadata"]] <- metadata$otp_rank
 gene_otp_rank[["records"]] <- readRDS(
-  file="~/project_data/packages/package__oncoEnrichR/db/output/v1.6.0/otdb_v1.6.0.rds")$gene_rank 
+  file="~/project_data/packages/package__oncoEnrichR/db/output/v1.6.1/otdb_v1.6.1.rds")$gene_rank 
 
 
 ens2entrez <- 
