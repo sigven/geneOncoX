@@ -10,13 +10,13 @@
 Source:
 [`DESCRIPTION`](https://github.com/sigven/geneOncoX/blob/main/DESCRIPTION)
 
-Nakken S (2025). *geneOncoX: Human gene annotations for the oncology
-domain*. R package version 1.2.6, <https://sigven.github.io/geneOncoX>.
+Nakken S (2026). *geneOncoX: Human gene annotations for the oncology
+domain*. R package version 1.2.7, <https://sigven.github.io/geneOncoX>.
 
     @Manual{,
       title = {geneOncoX: Human gene annotations for the oncology domain},
       author = {Sigve Nakken},
-      year = {2025},
-      note = {R package version 1.2.6},
+      year = {2026},
+      note = {R package version 1.2.7},
       url = {https://sigven.github.io/geneOncoX},
     }
