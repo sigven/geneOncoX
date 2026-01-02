@@ -1,3 +1,7 @@
+# Version 1.2.7
+
+- Updated NCBI gene info (2026-01-02)
+
 # Version 1.2.6
 
 - Updated NCBI gene info (2025-12-10)

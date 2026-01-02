@@ -43,8 +43,10 @@ gene_info <- get_gene_info_ncbi() |>
 gene_panels <- list()
 gene_panels$metadata <- metadata[["panels"]]
 gene_panels$records <- dplyr::bind_rows(
-  get_panel_app_genes(gene_info = gene_info, build = "grch37"),
-  get_panel_app_genes(gene_info = gene_info, build = "grch38")
+  get_panel_app_genes(
+    gene_info = gene_info, build = "grch37"),
+  get_panel_app_genes(
+    gene_info = gene_info, build = "grch38")
 )
 
 
@@ -53,24 +55,34 @@ gene_alias <- list()
 gene_alias$metadata <- metadata[["alias"]]
 gene_alias$records <- get_gene_aliases_ncbi(
   gene_info = gene_info,
-  path_data_raw = file.path(here::here(), "data-raw")
+  path_data_raw = file.path(
+    here::here(), "data-raw")
 )
 
 
 
-gene_summary <- get_function_summary_ncbi(gene_df = gene_info)
-intogen_drivers <- get_intogen_driver_genes(gene_info = gene_info)
-fp_drivers <- get_curated_fp_cancer_genes(gene_info = gene_info)
+gene_summary <- get_function_summary_ncbi(
+  gene_df = gene_info)
+intogen_drivers <- get_intogen_driver_genes(
+  gene_info = gene_info)
+fp_drivers <- get_curated_fp_cancer_genes(
+  gene_info = gene_info)
 ncg <- get_network_of_cancer_genes()
 tcga_drivers <- get_tcga_driver_genes()
-f1cdx <- get_f1cdx(gene_info = gene_info)
-cpic <- get_cpic_genes(gene_info = gene_info)
-tso500 <- get_tso500(gene_info = gene_info, gene_alias = gene_alias)
-dna_repair <- get_dna_repair_genes(gene_info = gene_info)
+f1cdx <- get_f1cdx(
+  gene_info = gene_info)
+cpic <- get_cpic_genes(
+  gene_info = gene_info)
+tso500 <- get_tso500(
+  gene_info = gene_info, 
+  gene_alias = gene_alias)
+dna_repair <- get_dna_repair_genes(
+  gene_info = gene_info)
 cancermine_genes <- get_cancermine_genes(
   cancermine_version = "51"
 )
-signaling_genes <- get_signaling_pathway_genes(gene_info = gene_info)
+signaling_genes <- get_signaling_pathway_genes(
+  gene_info = gene_info)
 dbnsfp_annotations <- get_dbnsfp_gene_annotations()
 
 gene_basic <- list()
@@ -165,9 +177,6 @@ gene_predisposition[["records"]] <-
 
 
 ## clean up
-#rm(cgc_gl)
-#rm(cgc)
-#rm(cgc_som)
 rm(intogen_drivers)
 rm(fp_drivers)
 rm(dna_repair)
@@ -177,7 +186,6 @@ rm(tso500)
 rm(gene_summary)
 rm(dbnsfp_annotations)
 rm(ncg)
-#rm(cgc_all)
 rm(tcga_drivers)
 rm(cpic)
 rm(f1cdx)
@@ -199,7 +207,7 @@ for(vbump in c('major','minor','patch')){
 
 bump_version_level <- "patch"
 #version_bump <- version_bumps[[bump_version_level]]
-version_bump <- "1.2.6"
+version_bump <- "1.2.7"
 
 gd_records <- list()
 db_id_ref <- data.frame()
@@ -426,7 +434,7 @@ while(ensembl_iter < 1){
 gene_otp_rank <- list()
 gene_otp_rank[["metadata"]] <- metadata$otp_rank
 gene_otp_rank[["records"]] <- readRDS(
-  file="~/project_data/packages/package__oncoEnrichR/db/output/v1.6.1/otdb_v1.6.1.rds")$gene_rank 
+  file="~/project_data/packages/package__oncoEnrichR/db/output/v1.6.2/otdb_v1.6.2.rds")$gene_rank 
 
 
 ens2entrez <- 
@@ -440,15 +448,6 @@ gene_otp_rank[["records"]] <- gene_otp_rank[["records"]] |>
   dplyr::select(entrezgene, dplyr::everything())
 
 db[['otp_rank']] <- gene_otp_rank
-
-
-# rm(gene_alias)
-# rm(gene_basic)
-# rm(gene_panels)
-# rm(gene_predisposition)
-# rm(gene_gencode)
-
-# googledrive::drive_auth_configure(api_key = Sys.getenv("GD_KEY"))
 
 for (elem in c(
   "basic", "predisposition",
