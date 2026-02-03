@@ -1,3 +1,8 @@
+# Version 1.2.8
+
+- Addes SRSF2 as curated CPG
+- Updated NCBI gene info (2026-02-03)
+
 # Version 1.2.7
 
 - Updated NCBI gene info (2026-01-02)
