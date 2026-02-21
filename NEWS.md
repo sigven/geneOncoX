@@ -1,3 +1,10 @@
+# Version 1.3.0
+
+- Updated NCBI gene info (2026-02-21)
+- Prioritized and limited literature links from CancerMine (TSG, OncoGene and 
+Driver associations) according to journal impact
+
+
 # Version 1.2.8
 
 - Addes SRSF2 as curated CPG

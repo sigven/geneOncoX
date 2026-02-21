@@ -1247,8 +1247,8 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         .data$oncogene == TRUE,
         paste0(
           "Oncogenic role (NCG): ",
-          "<a href='http://ncg.kcl.ac.uk/query.php?gene_name=",
-          .data$entrezgene, "' target='_blank'>",
+          "<a href='http://network-cancer-genes.org/query.php?gene_name=",
+          .data$symbol, "' target='_blank'>",
           .data$ncg_phenotype, "</a>"
         ),
         ""
@@ -1257,8 +1257,8 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         .data$tsg == TRUE,
         paste0(
           "Tumor suppressive role (NCG): ",
-          "<a href='http://ncg.kcl.ac.uk/query.php?gene_name=",
-          .data$entrezgene, "' target='_blank'>",
+          "<a href='http://http://network-cancer-genes.org/query.php?gene_name=",
+          .data$symbol, "' target='_blank'>",
           .data$ncg_phenotype, "</a>"
         ),
         ""
@@ -1267,8 +1267,8 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         .data$driver == TRUE,
         paste0(
           "Cancer driver role (NCG): ",
-          "<a href='http://ncg.kcl.ac.uk/query.php?gene_name=",
-          .data$entrezgene, "' target='_blank'>",
+          "<a href='http://network-cancer-genes.org/query.php?gene_name=",
+          .data$symbol, "' target='_blank'>",
           .data$ncg_phenotype, "</a>"
         ),
         ""

@@ -79,7 +79,8 @@ tso500 <- get_tso500(
 dna_repair <- get_dna_repair_genes(
   gene_info = gene_info)
 cancermine_genes <- get_cancermine_genes(
-  cancermine_version = "51"
+  cancermine_version = "51",
+  num_links_per_role = 15
 )
 signaling_genes <- get_signaling_pathway_genes(
   gene_info = gene_info)
@@ -207,7 +208,7 @@ for(vbump in c('major','minor','patch')){
 
 bump_version_level <- "patch"
 #version_bump <- version_bumps[[bump_version_level]]
-version_bump <- "1.2.8"
+version_bump <- "1.3.0"
 
 gd_records <- list()
 db_id_ref <- data.frame()

@@ -526,7 +526,7 @@ get_cancer_gene_census <- function(
   return(cosmic_cgc)
 }
 
-get_network_of_cancer_genes <- function(ncg_version = "7.1") {
+get_network_of_cancer_genes <- function(ncg_version = "7.2") {
   ncg <- read.table(
     file = file.path(
       "data-raw", "ncg", "ncg.tsv"
@@ -669,7 +669,13 @@ get_network_of_cancer_genes <- function(ncg_version = "7.1") {
   return(ncg)
 }
 
-get_cancermine_genes <- function(cancermine_version = "51") {
+get_cancermine_genes <- function(cancermine_version = "51",
+                                 num_links_per_role = 15) {
+  
+  sjr_impact_fname <- paste0(
+    "data-raw/cancermine/scimagojr_2024.csv"
+  )
+  
   cancermine_sentences_fname <-
     paste0(
       "data-raw/cancermine/cancermine_sentences.v",
@@ -686,12 +692,34 @@ get_cancermine_genes <- function(cancermine_version = "51") {
       cancermine_version, ".tsv.gz"
     )
 
+  journal_impact <- 
+    suppressMessages(readr::read_delim(
+      file=sjr_impact_fname, 
+      show_col_types = F, 
+      guess_max = 100000, delim = ";")) |> 
+    dplyr::select(Title, SJR) |> 
+    dplyr::mutate(SJR = stringr::str_replace(SJR,",",".")) |> 
+    dplyr::rename(journal = "Title") |> 
+    dplyr::mutate(journal_impact = as.numeric(SJR)) |>
+    dplyr::mutate(journal_lc = tolower(journal)) |>
+    dplyr::select(journal_impact, journal_lc) |>
+    dplyr::filter(!is.na(journal_impact)) |>
+    dplyr::group_by(journal_lc) |>
+    dplyr::filter(dplyr::n() == 1) |>
+    dplyr::ungroup()
+  
   pmids <- as.data.frame(
     read.table(
       file = gzfile(cancermine_sentences_fname),
       header = TRUE, comment.char = "", quote = "",
       sep = "\t", stringsAsFactors = FALSE) |>
-      dplyr::filter(predictprob >= 0.8) |>
+      #dplyr::filter(predictprob >= 0.8) |>
+      dplyr::filter(
+        subsection %in% 
+          c("background", "conclusion", "introduction",
+            "discussion", "results","conclusions",
+            "None","summary")
+      ) |>
       ## some entries wrongly captured, are in
       ## fact mentions of anti-sense non-coding genes
       dplyr::filter(
@@ -699,8 +727,35 @@ get_cancermine_genes <- function(cancermine_version = "51") {
           formatted_sentence, "-<b>AS1|b>-AS1"
         )
       ) |>
+      dplyr::mutate(journal = stringr::str_replace(
+        .data$journal, "&", "and"
+      )) |>
+      dplyr::mutate(
+        journal2 = 
+          stringr::str_replace(
+            .data$journal, " \\(.+\\)","")
+      ) |> 
+      dplyr::mutate(journal2 = stringr::str_replace(
+        .data$journal2, "( )?: .+$","")) |>
+      dplyr::mutate(journal2 = stringr::str_replace(
+        .data$journal2, "\\. "," "
+      )) |>
+      dplyr::mutate(journal2 = stringr::str_replace(
+        .data$journal2, "^The ",""
+      )) |>
+      dplyr::mutate(journal2 = stringr::str_replace(
+        .data$journal2, "Genes, chromosomes",
+        "Genes chromosomes"
+      )) |>
+      dplyr::mutate(journal_lc = tolower(journal2)) |>
+      dplyr::select(-c("journal2")) |>
+      dplyr::left_join(
+        journal_impact, by = "journal_lc", 
+        relationship = "many-to-one"
+      ) |>
       dplyr::mutate(pmid = as.character(pmid)) |>
-      dplyr::group_by(role, gene_entrez_id, pmid) |>
+      dplyr::group_by(role, gene_entrez_id, pmid, 
+                      journal, journal_impact, year) |>
       dplyr::summarise(doid = paste(
         unique(cancer_id),
         collapse = ","
@@ -728,23 +783,50 @@ get_cancermine_genes <- function(cancermine_version = "51") {
   pmids <- pmids |>
     dplyr::inner_join(
       all_citations, by = c("pmid"), 
-      relationship = "many-to-many")
+      relationship = "many-to-many") |>
+    dplyr::mutate(
+      pmid = as.integer(pmid)
+    )
+
+  
+  citation_links_oncogene <- 
+    as.data.frame(
+      pmids |>
+        dplyr::filter(role == "Oncogene") |>
+        dplyr::arrange(entrezgene, 
+                       dplyr::desc(journal_impact)) |>
+        dplyr::group_by(entrezgene) |>
+        dplyr::slice_head(n = num_links_per_role) |>
+        dplyr::ungroup() |>
+        dplyr::arrange(
+          entrezgene, 
+          dplyr::desc(pmid)
+        ) |>
+        dplyr::group_by(entrezgene) |>
+        dplyr::summarise(
+          citations_oncogene = paste(
+            citation,
+            collapse = "; "
+          ),
+          citation_links_oncogene = paste(
+            unique(citation_link),
+            collapse = ", "
+          ), .groups = "drop"
+        )
+    )
 
   pmids_oncogene <- as.data.frame(
     pmids |>
       dplyr::filter(role == "Oncogene") |>
-      dplyr::arrange(entrezgene, desc(pmid)) |>
+      dplyr::arrange(entrezgene, 
+                     dplyr::desc(pmid)) |> 
       dplyr::group_by(entrezgene) |>
       dplyr::summarise(
         pmids_oncogene = paste(pmid, collapse = ";"),
-        citations_oncogene = paste(
-          citation,
-          collapse = "; "
-        ),
-        citation_links_oncogene = paste(
-          head(citation_link, 50),
-          collapse = ", "
-        ),
+        #citations_oncogene = paste(
+        #  citation,
+        #  collapse = "; "
+        #),
         .groups = "drop"
       ) |>
       dplyr::mutate(n_citations_oncogene = as.integer(
@@ -760,9 +842,39 @@ get_cancermine_genes <- function(cancermine_version = "51") {
         n_citations_oncogene >= 15,
         "HC",
         as.character(oncogene_cancermine)
-      ))
+      )) |>
+      dplyr::left_join(
+        citation_links_oncogene, by = "entrezgene", 
+        relationship = "one-to-one"
+      )
   )
 
+  citation_links_tsgene <- 
+    as.data.frame(
+      pmids |>
+        dplyr::filter(role == "Tumor_Suppressor") |>
+        dplyr::arrange(entrezgene, 
+                       dplyr::desc(journal_impact)) |>
+        dplyr::group_by(entrezgene) |>
+        dplyr::slice_head(n = num_links_per_role) |>
+        dplyr::ungroup() |>
+        dplyr::arrange(
+          entrezgene, 
+          dplyr::desc(pmid)
+        ) |>
+        dplyr::group_by(entrezgene) |>
+        dplyr::summarise(
+          citations_tsgene = paste(
+            citation,
+            collapse = "; "
+          ),
+          citation_links_tsgene = paste(
+            unique(citation_link),
+            collapse = ", "
+          ), .groups = "drop"
+        )
+    )
+  
   pmids_tsgene <- as.data.frame(
     pmids |>
       dplyr::filter(role == "Tumor_Suppressor") |>
@@ -770,13 +882,10 @@ get_cancermine_genes <- function(cancermine_version = "51") {
       dplyr::group_by(entrezgene) |>
       dplyr::summarise(
         pmids_tsgene = paste(unique(pmid), collapse = ";"),
-        citations_tsgene = paste(
-          citation,
-          collapse = "; "
-        ),
-        citation_links_tsgene = paste(head(
-          citation_link, 50
-        ), collapse = ", "),
+        #citations_tsgene = paste(
+        #  citation,
+        #  collapse = "; "
+        #),
         .groups = "drop"
       ) |>
       dplyr::ungroup() |>
@@ -793,8 +902,37 @@ get_cancermine_genes <- function(cancermine_version = "51") {
         n_citations_tsgene >= 15,
         "HC",
         as.character(tumor_suppressor_cancermine)
-      ))
+      )) |>
+      dplyr::left_join(
+        citation_links_tsgene, by = "entrezgene",
+        relationship = "many-to-one"
+      )
   )
+  
+  
+  citation_links_cdriver <- 
+    as.data.frame(
+      pmids |>
+        dplyr::filter(role == "Driver") |>
+        dplyr::arrange(entrezgene, 
+                       dplyr::desc(journal_impact)) |>
+        dplyr::group_by(entrezgene) |>
+        dplyr::slice_head(n = num_links_per_role) |>
+        dplyr::ungroup() |>
+        dplyr::arrange(
+          entrezgene, 
+          dplyr::desc(pmid)
+        ) |>
+        dplyr::group_by(entrezgene) |>
+        dplyr::summarise(
+          citations_cdriver = paste(
+            citation, collapse = "; "),
+          citation_links_cdriver = paste(
+            unique(citation_link),
+            collapse = ", "
+          ), .groups = "drop"
+        )
+    )
 
   pmids_cdriver <- as.data.frame(
     pmids |>
@@ -803,11 +941,7 @@ get_cancermine_genes <- function(cancermine_version = "51") {
       dplyr::group_by(entrezgene) |>
       dplyr::summarise(
         pmids_cdriver = paste(pmid, collapse = ";"),
-        citations_cdriver = paste(citation, collapse = "; "),
-        citation_links_cdriver = paste(
-          head(citation_link, 50),
-          collapse = ", "
-        ),
+        #citations_cdriver = paste(citation, collapse = "; "),
         .groups = "drop"
       ) |>
       dplyr::mutate(n_citations_cdriver = as.integer(
@@ -823,7 +957,11 @@ get_cancermine_genes <- function(cancermine_version = "51") {
         n_citations_cdriver >= 10,
         "HC",
         as.character(cancer_driver_cancermine)
-      ))
+      )) |>
+      dplyr::left_join(
+        citation_links_cdriver, by = "entrezgene",
+        relationship = "many-to-one"
+      )
   )
 
 
@@ -843,10 +981,14 @@ get_cancermine_genes <- function(cancermine_version = "51") {
       dplyr::rename(entrezgene = gene_entrez_id) |>
       dplyr::group_by(entrezgene) |>
       dplyr::summarise(
-        doid_oncogene = paste(unique(cancer_id), collapse = ","),
+        doid_oncogene = paste(
+          unique(cancer_id), collapse = ","),
         .groups = "drop"
       ) |>
-      dplyr::inner_join(pmids_oncogene, by = "entrezgene", multiple = "all") |>
+      dplyr::inner_join(
+        pmids_oncogene, 
+        by = "entrezgene", 
+        multiple = "all") |>
       dplyr::distinct()
   )
 
@@ -869,7 +1011,9 @@ get_cancermine_genes <- function(cancermine_version = "51") {
         collapse = ","
       ), .groups = "drop") |>
       dplyr::inner_join(
-        pmids_tsgene, by = "entrezgene", multiple = "all") |>
+        pmids_tsgene, 
+        by = "entrezgene", 
+        multiple = "all") |>
       dplyr::distinct()
   )
   n_hc_tsgene <- tsgene |>
@@ -890,8 +1034,10 @@ get_cancermine_genes <- function(cancermine_version = "51") {
         unique(cancer_id),
         collapse = ","
       ), .groups = "drop") |>
-      dplyr::inner_join(pmids_cdriver, 
-                        by = "entrezgene", multiple = "all") |>
+      dplyr::inner_join(
+        pmids_cdriver, 
+        by = "entrezgene", 
+        multiple = "all") |>
       dplyr::distinct()
   )
   n_hc_cdriver <- cdriver |>
