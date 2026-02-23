@@ -1249,7 +1249,8 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
           "Oncogenic role (NCG): ",
           "<a href='http://network-cancer-genes.org/query.php?gene_name=",
           .data$symbol, "' target='_blank'>",
-          .data$ncg_phenotype, "</a>"
+          "YES</a>"
+          #.data$ncg_phenotype, "</a>"
         ),
         ""
       ),
@@ -1257,9 +1258,10 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         .data$tsg == TRUE,
         paste0(
           "Tumor suppressive role (NCG): ",
-          "<a href='http://http://network-cancer-genes.org/query.php?gene_name=",
+          "<a href='http://network-cancer-genes.org/query.php?gene_name=",
           .data$symbol, "' target='_blank'>",
-          .data$ncg_phenotype, "</a>"
+          "YES</a>"
+          #.data$ncg_phenotype, "</a>"
         ),
         ""
       ),
@@ -1269,7 +1271,8 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
           "Cancer driver role (NCG): ",
           "<a href='http://network-cancer-genes.org/query.php?gene_name=",
           .data$symbol, "' target='_blank'>",
-          .data$ncg_phenotype, "</a>"
+          "YES</a>"
+          #.data$ncg_phenotype, "</a>"
         ),
         ""
       )
@@ -1293,85 +1296,6 @@ assign_cancer_gene_roles <- function(gox_basic = NULL,
         )
     ) |>
     dplyr::distinct()
-  
-  
-  ### Cancer Gene Census: Proto-oncogenes,
-  ### tumor suppressor genes and cancer drivers (all somatic + germline)
-  
-  # tsg_oncogene_driver[["CGC"]] <- gox_basic$records |>
-  #   dplyr::mutate(oncogene = dplyr::if_else(
-  #     .data$cgc_oncogene == TRUE,
-  #     TRUE, FALSE
-  #   )) |>
-  #   dplyr::mutate(tsg = dplyr::if_else(
-  #     .data$cgc_tsg == TRUE,
-  #     TRUE, FALSE
-  #   )) |>
-  #   dplyr::mutate(driver = dplyr::if_else(
-  #     .data$cgc_driver_tier1 == TRUE |
-  #       .data$cgc_driver_tier2 == TRUE,
-  #     TRUE, FALSE
-  #   )) |>
-  #   dplyr::mutate(hallmark = dplyr::if_else(
-  #     .data$cgc_hallmark == TRUE,
-  #     TRUE, FALSE
-  #   )) |>
-  #   dplyr::mutate(
-  #     links_oncogene = dplyr::if_else(
-  #       .data$oncogene == TRUE,
-  #       paste0(
-  #         "Oncogenic role (CGC): ",
-  #         "<a href='https://cancer.sanger.ac.uk/census",
-  #         "' target='_blank'>",
-  #         "YES (TIER ",
-  #         .data$cgc_tier, ")</a>"
-  #       ),
-  #       ""
-  #     ),
-  #     links_tsg = dplyr::if_else(
-  #       .data$tsg == TRUE,
-  #       paste0(
-  #         "Tumor suppressive role (CGC): ",
-  #         "<a href='https://cancer.sanger.ac.uk/census",
-  #         "' target='_blank'>",
-  #         "YES (TIER ",
-  #         .data$cgc_tier, ")</a>"
-  #       ),
-  #       ""
-  #     ),
-  #     links_driver = dplyr::if_else(
-  #       .data$driver == TRUE,
-  #       paste0(
-  #         "Cancer driver role (CGC): ",
-  #         "<a href='https://cancer.sanger.ac.uk/census",
-  #         "' target='_blank'>",
-  #         "YES (TIER ",
-  #         .data$cgc_tier, ")</a>"
-  #       ),
-  #       ""
-  #     )
-  #   ) |>
-  #   dplyr::mutate(source = dplyr::if_else(
-  #     .data$cgc_tier == 1,
-  #     "CGC_TIER1",
-  #     "CGC_TIER2"
-  #   )) |>
-  #   dplyr::select(
-  #     c("entrezgene",
-  #       "oncogene",
-  #       "tsg",
-  #       "driver",
-  #       "hallmark",
-  #       "links_driver",
-  #       "links_oncogene",
-  #       "links_tsg",
-  #       "source")
-  #   ) |>
-  #   dplyr::filter(
-  #     .data$oncogene == TRUE |
-  #       .data$tsg == TRUE |
-  #       .data$driver == TRUE) |>
-  #   dplyr::distinct()
   
   ### IntOGen: Predicted cancer driver genes
   
