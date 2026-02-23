@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 1.3.1
+
+- Shorten links to NCG
+
 ## Version 1.3.0
 
 - Updated NCBI gene info (2026-02-21)
