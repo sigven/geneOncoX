@@ -41,12 +41,128 @@ get_transcript_appris_annotation <-
   }
 
 
+gencode_get_exons <- function(
+    build = "grch38"){
+  
+  chrom_names <- NULL
+  if(build == "grch38"){
+    suppressMessages(
+      library(BSgenome.Hsapiens.UCSC.hg38))
+    chrom_names <- 
+      head(
+        BSgenome::seqnames(
+          GenomeInfoDb::seqinfo(
+            x = BSgenome.Hsapiens.UCSC.hg38)), 24)
+  }
+  if(build == "grch37"){
+    suppressMessages(
+      library(BSgenome.Hsapiens.UCSC.hg19))
+    chrom_names <- 
+      head(
+        BSgenome::seqnames(
+          GenomeInfoDb::seqinfo(
+            x = BSgenome.Hsapiens.UCSC.hg19)), 24)
+  }
+  
+  
+  
+  remote_gtf_all <-
+    paste0(
+      gencode_ftp_url, "release_", gencode_version, "/",
+      "gencode.v", gencode_version, 
+      ".chr_patch_hapl_scaff",
+      ".annotation.gtf.gz"
+    )
+  
+  remote_gtf <-
+    paste0(
+      gencode_ftp_url, "release_", gencode_version, "/",
+      "gencode.v", gencode_version, 
+      ".annotation.gtf.gz"
+    )
+  
+  #https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_45/gencode.v45.chr_patch_hapl_scaff.annotation.gtf.gz
+  
+  options(timeout = 10000000)
+  gencode_gtf_all <- read_gtf(remote_gtf_all)
+  
+  canonical_exons <- gencode_gtf_all |> 
+    dplyr::filter(
+      type == "exon" & 
+        gene_type == "protein_coding" & 
+        transcript_type == "protein_coding") |>
+    dplyr::filter(
+      transcript_type == "protein_coding",
+      tag %in% c("GENCODE_Primary", "CCDS", "basic")
+    ) |>
+    dplyr::mutate(
+      exon_number = as.integer(exon_number)
+    )
+  
+  # Per-gene transcript count — needed to correctly label exons in
+  # genes with only one canonical transcript (all exons => constitutive)
+  transcripts_per_gene <- canonical_exons |>
+    dplyr::mutate(
+      gene_id = stringr::str_replace(gene_id, "\\.[0-9]+$", ""),
+    ) |>
+    dplyr::group_by(gene_name, gene_id, strand) |>
+    dplyr::summarise(
+      n_canonical_transcripts = dplyr::n_distinct(transcript_id),
+      .groups = "drop"
+    )
+
+  all_canonical_protein_coding_exons <- canonical_exons |>
+    dplyr::filter(chrom %in% chrom_names) |>
+    dplyr::mutate(
+      gene_id = stringr::str_replace(gene_id, "\\.[0-9]+$", ""),
+    ) |>
+    dplyr::group_by(chrom, gene_name, gene_id, exon_number, strand) |>
+    dplyr::summarise(
+      start              = min(start),
+      end                = max(end),
+      n_transcripts_with_exon = dplyr::n_distinct(transcript_id),
+      exon_id                 = paste(unique(exon_id), collapse = ";"),
+      .groups = "drop"
+    ) |>
+    dplyr::left_join(
+      transcripts_per_gene, 
+      by = c("gene_name","gene_id","strand")) |>
+    dplyr::arrange(gene_name, exon_number) |>
+    dplyr::mutate(
+      exon_type = dplyr::case_when(
+        n_canonical_transcripts == 1     ~ "constitutive",
+        n_transcripts_with_exon >= 2 ~ "constitutive",
+        .default                     = "alternative"
+      )
+    ) |>
+    dplyr::mutate(
+      name = paste(
+        gene_name, gene_id, 
+        n_canonical_transcripts,
+        n_transcripts_with_exon,
+        paste("exon", exon_number, sep = "_"),
+        exon_type,
+        sep = "|"
+      )) |>
+    dplyr::mutate(
+      score = 1000
+    ) |>
+    dplyr::select(
+      chrom, 
+      start, 
+      end,
+      name,
+      score,
+      strand
+    )
+}
+
 gencode_get_transcripts <-
   function(build = "grch38",
            append_regulatory_region = TRUE,
-           gencode_version = 48,
-           ensembl_version = 114,
-           uniprot_version = "2025_03",
+           gencode_version = 49,
+           ensembl_version = 115,
+           uniprot_version = "2026_01",
            gene_info = NULL,
            gene_alias = NULL) {
     gencode_ftp_url <-

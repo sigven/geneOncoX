@@ -1,3 +1,7 @@
+# Version 1.3.2
+
+- minor curations of CpG list - mechanisms of disease
+
 # Version 1.3.1
 
 - Shorten links to NCG

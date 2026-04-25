@@ -120,33 +120,90 @@ get_citations_pubmed <- function(
 get_cpic_genes <- function(update = T,
                            gene_info = NULL){
   datestamp <- Sys.Date()
-  remote_url <-
-    paste0(
-      "https://files.cpicpgx.org/data/report/current/",
-      "pair/cpic_gene-drug_pairs.xlsx"
-    )
-  cpic_genes_oncology <- data.frame()
-  if (RCurl::url.exists(remote_url)) {
-    cpic_genes <- openxlsx2::read_xlsx(file=remote_url, col_names = T)
-    colnames(cpic_genes) <- 
-      c('symbol','drug_name','drug_rxnorm_id',
-        'atc_id','guideline','cpic_level',
-        'cpic_level_status',
-        'pharmgkb_evidence_level', 
-        'pgx_on_fda_label','pmids')
-    cpic_genes_oncology <- cpic_genes |>
-      dplyr::filter(
-        stringr::str_detect(atc_id,"^L|, L")
-      ) |>
-      dplyr::mutate(cpic_entry = paste(
-        cpic_level,
-        stringr::str_replace_all(atc_id, ", ", "&"),
-        sep=":")) |>
-      dplyr::group_by(symbol) |>
-      dplyr::summarise(
-        cpic_pgx_oncology = paste(sort(cpic_entry), collapse=";"), 
-        .groups="drop")
-  }
+  
+  ## Get all gene-drug pairs
+  pairs <- jsonlite::fromJSON(httr::content(
+    httr::GET("https://api.cpicpgx.org/v1/pair_view"),
+    as = "text"
+  ))
+  
+  # Get all drugs with ATC codes
+  drugs <- jsonlite::fromJSON(httr::content(
+    httr::GET("https://api.cpicpgx.org/v1/drug"),
+    as = "text"
+  ))
+  
+  # atcid is a list-column (array field) - unnest and filter for L (antineoplastic)
+  drugs_atc <- drugs |>
+    dplyr::select(drugid, name, atcid) |>
+    tidyr::unnest(atcid) |>            # atcid is an array
+    dplyr::filter(startsWith(atcid, "L"))     # ATC L = antineoplastic & immunomodulating
+  
+  cpic_genes_oncology <- pairs |>
+    dplyr::inner_join(
+      drugs_atc, by = "drugid", 
+      relationship = "many-to-many") |>
+    janitor::clean_names() |>
+    dplyr::select(-c("name")) |>
+    dplyr::mutate(
+      drug_rxnorm_id = stringr::str_replace(
+        drugid,"RxNorm:",""
+      )
+    ) |>
+    dplyr::rename(
+      symbol = genesymbol,
+      drug_name = drugname,
+      cpic_level = cpiclevel,
+      atc_id = atcid,
+      guideline = guidelineurl,
+      guideline_name = guidelinename,
+      clinpgx_level = clinpgxlevel,
+      atc_id = atcid
+    ) |>
+    dplyr::select(
+      symbol, drug_name, 
+      drug_rxnorm_id,
+      atc_id, guideline, 
+      guideline_name, 
+      cpic_level,
+      clinpgx_level, pmids
+    ) |>
+    dplyr::mutate(cpic_entry = paste(
+      cpic_level,
+      stringr::str_replace_all(atc_id, ", ", "&"),
+      sep=":")) |>
+    dplyr::group_by(symbol) |>
+    dplyr::summarise(
+      cpic_pgx_oncology = paste(sort(cpic_entry), collapse=";"), 
+      .groups="drop")
+  
+  # remote_url <-
+  #   paste0(
+  #     "https://files.cpicpgx.org/data/report/current/",
+  #     "pair/cpic_gene-drug_pairs.xlsx"
+  #   )
+  # cpic_genes_oncology <- data.frame()
+  # if (RCurl::url.exists(remote_url)) {
+  #   cpic_genes <- openxlsx2::read_xlsx(file=remote_url, col_names = T)
+  #   colnames(cpic_genes) <- 
+  #     c('symbol','drug_name','drug_rxnorm_id',
+  #       'atc_id','guideline','cpic_level',
+  #       'cpic_level_status',
+  #       'pharmgkb_evidence_level', 
+  #       'pgx_on_fda_label','pmids')
+  #   cpic_genes_oncology <- cpic_genes |>
+  #     dplyr::filter(
+  #       stringr::str_detect(atc_id,"^L|, L")
+  #     ) |>
+  #     dplyr::mutate(cpic_entry = paste(
+  #       cpic_level,
+  #       stringr::str_replace_all(atc_id, ", ", "&"),
+  #       sep=":")) |>
+  #     dplyr::group_by(symbol) |>
+  #     dplyr::summarise(
+  #       cpic_pgx_oncology = paste(sort(cpic_entry), collapse=";"), 
+  #       .groups="drop")
+  # }
   cpic_genes_oncology <- cpic_genes_oncology |>
     dplyr::inner_join(
       dplyr::select(gene_info, symbol, entrezgene), 

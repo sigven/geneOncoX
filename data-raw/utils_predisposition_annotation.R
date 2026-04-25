@@ -931,10 +931,24 @@ get_predisposition_genes <- function(gene_info = NULL,
         TRUE ~ as.character(moi)
       )) |>
       dplyr::mutate(mechanism_of_disease = dplyr::case_when(
-        ## manually curated - evidence for LoF as mechanism of disease
+        ## manually curated - evidence for LoF/GoF (or dual) 
+        ## as mechanism of disease
         .data$entrezgene == 8216 ~ "LoF", #LZTR1
           .data$entrezgene == 80169 ~ "LoF", #CTC1
           .data$entrezgene == 51750 ~ "LoF", #RTEL1
+          .data$entrezgene == 5426 ~ "GoF", #POLE
+        .data$entrezgene == 5424 ~ "GoF", #POLD1
+        .data$entrezgene == 54894 ~ "LoF", #RNF43
+        .data$entrezgene == 1991 ~ "GoF", #ELANE
+        # KRAS + BRAF
+        .data$entrezgene == 3845 ~ "GoF", #KRAS
+        .data$entrezgene == 673 ~ "GoF", #BRAF
+        .data$entrezgene == 8493 ~ "GoF", #PPM1D
+        .data$entrezgene == 5644 ~ "GoF", #PRSS1
+        # TERT + STAT3
+        .data$entrezgene == 7015 ~ "GoF/LoF", #TERT
+        .data$entrezgene == 6774 ~ "GoF/LoF", #STAT3
+          
         TRUE ~ as.character(.data$mechanism_of_disease)
       )) |>
       dplyr::mutate(predisp_syndrome_cui = dplyr::if_else(
