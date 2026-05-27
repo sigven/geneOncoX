@@ -36,7 +36,6 @@ Ovarian cancer pertinent cancer susceptibility	117
 Parathyroid Cancer	86
 Prostate cancer pertinent cancer susceptibility	17
 Renal cancer pertinent cancer susceptibility	154
-Rhabdoid tumour predisposition	600
 Sarcoma cancer susceptibility	217
 Sarcoma susceptibility	734
 Thyroid cancer pertinent cancer susceptibility	421
