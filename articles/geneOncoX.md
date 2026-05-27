@@ -10,6 +10,7 @@ higher installed
 
 ``` r
 
+
 if (!("remotes" %in% installed.packages())) {
   install.packages("remotes")
 }
@@ -26,6 +27,7 @@ annotations, including how to retrieve tumor suppressor genes,
 proto-oncogenes, and predicted cancer driver genes.
 
 ``` r
+
 library(geneOncoX)
 
 ## load the data
@@ -35,7 +37,7 @@ gene_basic <- get_basic(cache_dir = download_dir)
 
 ## Number of records
 nrow(gene_basic$records)
-#> [1] 65406
+#> [1] 65412
 
 ## Show metadata for underlying resources
 gene_basic$metadata
@@ -79,7 +81,7 @@ gene_basic$metadata
 #> 1                Lever et al., Nat Methods, 2019; 31110280 v51 (August 2025)
 #> 2               Repana et al., Genome Biol, 2019; 30606230              v7.2
 #> 3  Martínez-Jiménez et al., Nat Rev Cancer, 2020; 32778778        2024.09.20
-#> 4          Brown et al., Nucleic Acids Res, 2015; 25355515        2026-04-25
+#> 4          Brown et al., Nucleic Acids Res, 2015; 25355515        2026-05-27
 #> 5                      Bailey et al., Cell, 2018; 29625053              <NA>
 #> 6                Sanchez-Vega et al., Cell, 2018; 29625050              <NA>
 #> 7                                                     <NA>              <NA>
@@ -120,6 +122,7 @@ gene_basic$metadata
 
 ``` r
 
+
 ## Get tumor suppressor genes - as indicated from either
 ## Network of Cancer Genes (NCG)
 ## - show literature support from CancerMine
@@ -149,6 +152,7 @@ tsg_table <- DT::datatable(
 ### Get classified proto-oncogenes
 
 ``` r
+
 
 ## Get proto-oncogenes - as indicated from either
 ## Cancer Gene Census (CGC) or Network of Cancer Genes (NCG),
@@ -182,6 +186,7 @@ oncogene_table <- DT::datatable(
 ### Get predicted cancer driver genes
 
 ``` r
+
 
 ## Get predicted cancer driver genes - as indicated from either
 ## - Network of Cancer Genes (NCG) - canonical drivers
@@ -254,6 +259,7 @@ other/user-curated entries.
 
 ``` r
 
+
 ## load the data
 gene_predisposition <- get_predisposition(cache_dir = download_dir)
 
@@ -321,7 +327,7 @@ gene_predisposition$metadata
 #> 7                     https://canvaruk.org/
 #>                                   source_citation source_version
 #> 1        Martin et al., Nat Genet, 2019; 31676867       v1 (API)
-#> 2 Brown et al., Nucleic Acids Res, 2015; 25355515     2026-04-25
+#> 2 Brown et al., Nucleic Acids Res, 2015; 25355515     2026-05-27
 #> 3              Huang et al., Cell, 2018; 29625052           <NA>
 #> 4  Maxwell et al., Am J Hum Genet, 2016; 27153395           <NA>
 #> 5                                            <NA>       20260203
@@ -354,6 +360,7 @@ This shows how to retrieve genes from cancer gene panels defined in
 Genomics England PanelApp.
 
 ``` r
+
 
 ## load the data
 gene_panels <- get_panels(cache_dir = download_dir)
@@ -413,8 +420,7 @@ gene_freq
 #> 40                           Bladder cancer pertinent cancer susceptibility   4
 #> 41            Upper gastrointestinal cancer pertinent cancer susceptibility   4
 #> 42                                 Melanoma pertinent cancer susceptibility   3
-#> 43                                                Familial rhabdoid tumours   2
-#> 44         Inherited susceptibility to acute lymphoblastoid leukaemia (ALL)   2
+#> 43         Inherited susceptibility to acute lymphoblastoid leukaemia (ALL)   2
 ```
 
   
@@ -427,12 +433,13 @@ This shows how to retrieve ambiguous and unambiguous gene aliases
 
 ``` r
 
+
 ## load the data
 gene_alias <- get_alias(cache_dir = download_dir)
 
 ## number of gene synonyms that are ambiguous
 nrow(dplyr::filter(gene_alias$records, ambiguous == TRUE))
-#> [1] 6737
+#> [1] 6739
 
 ## show structure of alias records
 head(gene_alias$records)
@@ -461,6 +468,7 @@ This shows how to retrieve GENCODE transcripts for `grch37` and
 `grch38`.
 
 ``` r
+
 
 ## load the data
 gene_gencode <- get_gencode(cache_dir = download_dir)
@@ -513,7 +521,7 @@ gene_gencode$metadata
 #> 1    Frankish et al., Nucleic Acids Res, 2021; 33270111             49
 #> 2  Cunningham et al., Nucleic Acids Res, 2022; 34791404            115
 #> 3 UniProt Consortium, Nucleic Acids Res, 2021; 33237286        2026_01
-#> 4    Rodriguez et al, Nucleic Acids Res, 2022; 34755885     2026-04-25
+#> 4    Rodriguez et al, Nucleic Acids Res, 2022; 34755885     2026-05-27
 #>   source_abbreviation        source_license
 #> 1             gencode      Free/open access
 #> 2             ensembl EMBL-EBI terms of use
@@ -532,6 +540,7 @@ gene_gencode$metadata
 ## Get DNA repair genes
 
 ``` r
+
 
 ## load the data
 gene_dna_repair <- gene_basic$records |>
@@ -597,6 +606,7 @@ dna_repair_class_freq
 
 ``` r
 
+
 ## load the data
 gene_tso500 <- gene_basic$records |>
   dplyr::filter(!is.na(illumina_tso500))
@@ -628,6 +638,7 @@ illumina_tso500_variant_freq
 ## Session Info
 
 ``` r
+
 # set eval = FALSE if you don't want this info (useful for reproducibility) 
 # to appear
 sessionInfo()
@@ -652,15 +663,15 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] geneOncoX_1.3.2
+#> [1] geneOncoX_1.3.3
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] jsonlite_2.0.0    dplyr_1.2.1       compiler_4.6.0    crayon_1.5.3     
-#>  [5] Rcpp_1.1.1-1      tidyselect_1.2.1  stringr_1.6.0     jquerylib_0.1.4  
+#>  [5] Rcpp_1.1.1-1.1    tidyselect_1.2.1  stringr_1.6.0     jquerylib_0.1.4  
 #>  [9] systemfonts_1.3.2 textshaping_1.0.5 yaml_2.3.12       fastmap_1.2.0    
 #> [13] plyr_1.8.9        R6_2.6.1          generics_0.1.4    curl_7.1.0       
 #> [17] knitr_1.51        htmlwidgets_1.6.4 tibble_3.3.1      desc_1.4.3       
-#> [21] bslib_0.10.0      pillar_1.11.1     rlang_1.2.0       DT_0.34.0        
+#> [21] bslib_0.11.0      pillar_1.11.1     rlang_1.2.0       DT_0.34.0        
 #> [25] stringi_1.8.7     cachem_1.1.0      lgr_0.5.2         xfun_0.57        
 #> [29] fs_2.1.0          sass_0.4.10       otel_0.2.0        cli_3.6.6        
 #> [33] withr_3.0.2       pkgdown_2.2.0     magrittr_2.0.5    crosstalk_1.2.2  
@@ -675,8 +686,7 @@ sessionInfo()
 
 ## References
 
-Bailey, Matthew H, Collin Tokheim, Eduard Porta-Pardo, Sohini Sengupta,
-Denis Bertrand, Amila Weerasinghe, Antonio Colaprico, et al. 2018.
+Bailey, Matthew H, Collin Tokheim, Eduard Porta-Pardo, et al. 2018.
 “Comprehensive Characterization of Cancer Driver Genes and Mutations.”
 *Cell* 173 (2): 371–385.e18.
 <http://dx.doi.org/10.1016/j.cell.2018.02.060>.
@@ -692,22 +702,18 @@ Functional Predictions and Annotations for Human Nonsynonymous and
 Splice-Site SNVs.” *Genome Med.* 12 (1): 103.
 <http://dx.doi.org/10.1186/s13073-020-00803-9>.
 
-Martin, Antonio Rueda, Eleanor Williams, Rebecca E Foulger, Sarah Leigh,
-Louise C Daugherty, Olivia Niblock, Ivone U S Leong, et al. 2019.
+Martin, Antonio Rueda, Eleanor Williams, Rebecca E Foulger, et al. 2019.
 “PanelApp Crowdsources Expert Knowledge to Establish Consensus
 Diagnostic Gene Panels.” *Nat. Genet.* 51 (November): 1560–65.
 <http://dx.doi.org/10.1038/s41588-019-0528-2>.
 
-Martı́nez-Jiménez, Francisco, Ferran Muiños, Inés Sentı́s, Jordi Deu-Pons,
-Iker Reyes-Salazar, Claudia Arnedo-Pac, Loris Mularoni, et al. 2020. “A
+Martı́nez-Jiménez, Francisco, Ferran Muiños, Inés Sentı́s, et al. 2020. “A
 Compendium of Mutational Cancer Driver Genes.” *Nat. Rev. Cancer* 20
 (10): 555–72. <https://www.nature.com/articles/s41568-020-0290-x>.
 
-Repana, Dimitra, Joel Nulsen, Lisa Dressler, Michele Bortolomeazzi,
-Santhilata Kuppili Venkata, Aikaterini Tourna, Anna Yakovleva, Tommaso
-Palmieri, and Francesca D Ciccarelli. 2019. “The Network of Cancer Genes
-(NCG): A Comprehensive Catalogue of Known and Candidate Cancer Genes
-from Cancer Sequencing Screens.” *Genome Biol.* 20 (1): 1.
+Repana, Dimitra, Joel Nulsen, Lisa Dressler, et al. 2019. “The Network
+of Cancer Genes (NCG): A Comprehensive Catalogue of Known and Candidate
+Cancer Genes from Cancer Sequencing Screens.” *Genome Biol.* 20 (1): 1.
 <http://dx.doi.org/10.1186/s13059-018-1612-0>.
 
 Sondka, Zbyslaw, Sally Bamford, Charlotte G Cole, Sari A Ward, Ian
