@@ -1,5 +1,11 @@
 # Changelog
 
+## Version 1.4.1
+
+- Updated NCBI gene info (2026-09-27)
+- OTP cancer gene ranks updated (v26.09)
+- Updated GENCODE to v50
+
 ## Version 1.3.2
 
 - minor curations of CpG list - mechanisms of disease

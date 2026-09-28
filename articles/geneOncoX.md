@@ -37,7 +37,7 @@ gene_basic <- get_basic(cache_dir = download_dir)
 
 ## Number of records
 nrow(gene_basic$records)
-#> [1] 65429
+#> [1] 65455
 
 ## Show metadata for underlying resources
 gene_basic$metadata
@@ -81,7 +81,7 @@ gene_basic$metadata
 #> 1                Lever et al., Nat Methods, 2019; 31110280 v51 (August 2025)
 #> 2               Repana et al., Genome Biol, 2019; 30606230              v7.2
 #> 3  Martínez-Jiménez et al., Nat Rev Cancer, 2020; 32778778        2024.09.20
-#> 4          Brown et al., Nucleic Acids Res, 2015; 25355515        2026-08-03
+#> 4          Brown et al., Nucleic Acids Res, 2015; 25355515        2026-09-28
 #> 5                      Bailey et al., Cell, 2018; 29625053              <NA>
 #> 6                Sanchez-Vega et al., Cell, 2018; 29625050              <NA>
 #> 7                                                     <NA>              <NA>
@@ -327,7 +327,7 @@ gene_predisposition$metadata
 #> 7                     https://canvaruk.org/
 #>                                   source_citation source_version
 #> 1        Martin et al., Nat Genet, 2019; 31676867       v1 (API)
-#> 2 Brown et al., Nucleic Acids Res, 2015; 25355515     2026-08-03
+#> 2 Brown et al., Nucleic Acids Res, 2015; 25355515     2026-09-28
 #> 3              Huang et al., Cell, 2018; 29625052           <NA>
 #> 4  Maxwell et al., Am J Hum Genet, 2016; 27153395           <NA>
 #> 5                                            <NA>       20260203
@@ -439,7 +439,7 @@ gene_alias <- get_alias(cache_dir = download_dir)
 
 ## number of gene synonyms that are ambiguous
 nrow(dplyr::filter(gene_alias$records, ambiguous == TRUE))
-#> [1] 6739
+#> [1] 6745
 
 ## show structure of alias records
 head(gene_alias$records)
@@ -521,7 +521,7 @@ gene_gencode$metadata
 #> 1    Frankish et al., Nucleic Acids Res, 2021; 33270111             50
 #> 2  Cunningham et al., Nucleic Acids Res, 2022; 34791404            116
 #> 3 UniProt Consortium, Nucleic Acids Res, 2021; 33237286        2026_02
-#> 4    Rodriguez et al, Nucleic Acids Res, 2022; 34755885     2026-08-03
+#> 4    Rodriguez et al, Nucleic Acids Res, 2022; 34755885     2026-09-27
 #>   source_abbreviation        source_license
 #> 1             gencode      Free/open access
 #> 2             ensembl EMBL-EBI terms of use
@@ -644,7 +644,7 @@ illumina_tso500_variant_freq
 sessionInfo()
 #> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.4 LTS
+#> Running under: Ubuntu 24.04.5 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -663,21 +663,21 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] geneOncoX_1.4.0
+#> [1] geneOncoX_1.4.1
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] jsonlite_2.0.0    dplyr_1.2.1       compiler_4.6.1    crayon_1.5.3     
 #>  [5] Rcpp_1.1.2        tidyselect_1.2.1  stringr_1.6.0     jquerylib_0.1.4  
 #>  [9] systemfonts_1.3.2 textshaping_1.0.5 yaml_2.3.12       fastmap_1.2.0    
-#> [13] plyr_1.8.9        R6_2.6.1          generics_0.1.4    curl_7.1.0       
-#> [17] knitr_1.51        htmlwidgets_1.6.4 tibble_3.3.1      desc_1.4.3       
-#> [21] bslib_0.11.0      pillar_1.11.1     rlang_1.3.0       DT_0.34.0        
-#> [25] stringi_1.8.7     cachem_1.1.0      lgr_0.5.2         xfun_0.60        
+#> [13] plyr_1.8.9        R6_2.6.1          generics_0.1.4    curl_8.0.0       
+#> [17] knitr_1.52        htmlwidgets_1.6.4 tibble_3.3.1      desc_1.4.3       
+#> [21] bslib_0.12.0      pillar_1.11.1     rlang_1.3.0       DT_0.34.0        
+#> [25] stringi_1.8.9     cachem_1.1.0      lgr_0.5.2         xfun_0.61        
 #> [29] fs_2.1.0          sass_0.4.10       otel_0.2.0        cli_3.6.6        
 #> [33] withr_3.0.3       pkgdown_2.2.1     magrittr_2.0.5    crosstalk_1.2.2  
 #> [37] digest_0.6.39     lifecycle_1.0.5   vctrs_0.7.3       evaluate_1.0.5   
 #> [41] gargle_1.6.1      glue_1.8.1        ragg_1.5.2        googledrive_2.1.2
-#> [45] httr_1.4.8        rmarkdown_2.31    purrr_1.2.2       tools_4.6.1      
+#> [45] httr_1.4.9        rmarkdown_2.32    purrr_1.2.2       tools_4.6.1      
 #> [49] pkgconfig_2.0.3   htmltools_0.5.9
 ```
 
