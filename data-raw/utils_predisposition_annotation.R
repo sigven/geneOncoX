@@ -752,7 +752,8 @@ get_predisposition_genes <- function(gene_info = NULL,
     get_cpic_genes(gene_info = gene_info) |>
     dplyr::filter(entrezgene == 1806 |
                      entrezgene ==  7172 |
-                     entrezgene == 55270) |> ## DPYD, TPMT and NUDT15 for now
+                     entrezgene == 2539 |
+                     entrezgene == 55270) |> ## DPYD, G6PD, TPMT and NUDT15 for now
     dplyr::left_join(
       dplyr::select(gene_info, entrezgene, gene_biotype),
       by = "entrezgene") |>

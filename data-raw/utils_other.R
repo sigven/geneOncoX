@@ -137,7 +137,9 @@ get_cpic_genes <- function(update = T,
   drugs_atc <- drugs |>
     dplyr::select(drugid, name, atcid) |>
     tidyr::unnest(atcid) |>            # atcid is an array
-    dplyr::filter(startsWith(atcid, "L"))     # ATC L = antineoplastic & immunomodulating
+    dplyr::filter(
+      stringr::str_detect(atcid, "^(L|M|V|A)"))    # ATC L = antineoplastic & immunomodulating
+                                               #      A = 
   
   cpic_genes_oncology <- pairs |>
     dplyr::inner_join(
@@ -210,6 +212,10 @@ get_cpic_genes <- function(update = T,
       multiple = "all", by = "symbol"
     ) |>
     dplyr::select(-symbol) |>
+    dplyr::filter(
+      !stringr::str_detect(
+        cpic_pgx_oncology, "Retired")
+    ) |>
     dplyr::distinct()
   
   return(cpic_genes_oncology)
