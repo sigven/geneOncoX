@@ -37,7 +37,7 @@ gene_basic <- get_basic(cache_dir = download_dir)
 
 ## Number of records
 nrow(gene_basic$records)
-#> [1] 65455
+#> [1] 65515
 
 ## Show metadata for underlying resources
 gene_basic$metadata
@@ -81,7 +81,7 @@ gene_basic$metadata
 #> 1                Lever et al., Nat Methods, 2019; 31110280 v51 (August 2025)
 #> 2               Repana et al., Genome Biol, 2019; 30606230              v7.2
 #> 3  Martínez-Jiménez et al., Nat Rev Cancer, 2020; 32778778        2024.09.20
-#> 4          Brown et al., Nucleic Acids Res, 2015; 25355515        2026-09-28
+#> 4          Brown et al., Nucleic Acids Res, 2015; 25355515        2026-10-07
 #> 5                      Bailey et al., Cell, 2018; 29625053              <NA>
 #> 6                Sanchez-Vega et al., Cell, 2018; 29625050              <NA>
 #> 7                                                     <NA>              <NA>
@@ -267,7 +267,7 @@ gene_predisposition <- get_predisposition(cache_dir = download_dir)
 nrow(gene_predisposition$records |> dplyr::filter(
   !stringr::str_detect(cpg_source, "^(ACMG_SF|CPIX_PGX_ONCOLOGY)$")
 ))
-#> [1] 560
+#> [1] 561
 
 ## Get statistics regarding how reference sources on 
 ## cancer predisposition genes contribute
@@ -327,7 +327,7 @@ gene_predisposition$metadata
 #> 7                     https://canvaruk.org/
 #>                                   source_citation source_version
 #> 1        Martin et al., Nat Genet, 2019; 31676867       v1 (API)
-#> 2 Brown et al., Nucleic Acids Res, 2015; 25355515     2026-09-28
+#> 2 Brown et al., Nucleic Acids Res, 2015; 25355515     2026-10-07
 #> 3              Huang et al., Cell, 2018; 29625052           <NA>
 #> 4  Maxwell et al., Am J Hum Genet, 2016; 27153395           <NA>
 #> 5                                            <NA>       20260203
@@ -521,7 +521,7 @@ gene_gencode$metadata
 #> 1    Frankish et al., Nucleic Acids Res, 2021; 33270111             50
 #> 2  Cunningham et al., Nucleic Acids Res, 2022; 34791404            116
 #> 3 UniProt Consortium, Nucleic Acids Res, 2021; 33237286        2026_02
-#> 4    Rodriguez et al, Nucleic Acids Res, 2022; 34755885     2026-09-27
+#> 4    Rodriguez et al, Nucleic Acids Res, 2022; 34755885     2026-10-07
 #>   source_abbreviation        source_license
 #> 1             gencode      Free/open access
 #> 2             ensembl EMBL-EBI terms of use
@@ -663,7 +663,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] geneOncoX_1.4.1
+#> [1] geneOncoX_1.4.2
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] jsonlite_2.0.0    dplyr_1.2.1       compiler_4.6.1    crayon_1.5.3     
