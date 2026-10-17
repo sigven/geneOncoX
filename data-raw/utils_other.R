@@ -879,7 +879,7 @@ get_dna_repair_genes <- function(gene_info = NULL) {
   return(dna_repair_all)
 }
 
-get_dbnsfp_gene_annotations <- function(version = "5.3") {
+get_dbnsfp_gene_annotations <- function(version = "5.4") {
   lgr::lgr$info(
     "Retrieving gene damage scores/OMIM annotation from dbNSFP_gene"
   )
