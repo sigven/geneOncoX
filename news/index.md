@@ -2,6 +2,11 @@
 
 ## Version 1.4.2
 
+- Updated NCBI gene info (2026-10-17)
+- Updated gene information from dbNSFP (v5.4)
+
+## Version 1.4.2
+
 - Updated NCBI gene info (2026-10-07)
 - Added G6PD among pharmacogenomic genes
 

@@ -37,7 +37,7 @@ gene_basic <- get_basic(cache_dir = download_dir)
 
 ## Number of records
 nrow(gene_basic$records)
-#> [1] 65515
+#> [1] 65570
 
 ## Show metadata for underlying resources
 gene_basic$metadata
@@ -81,13 +81,13 @@ gene_basic$metadata
 #> 1                Lever et al., Nat Methods, 2019; 31110280 v51 (August 2025)
 #> 2               Repana et al., Genome Biol, 2019; 30606230              v7.2
 #> 3  Martínez-Jiménez et al., Nat Rev Cancer, 2020; 32778778        2024.09.20
-#> 4          Brown et al., Nucleic Acids Res, 2015; 25355515        2026-10-07
+#> 4          Brown et al., Nucleic Acids Res, 2015; 25355515        2026-10-17
 #> 5                      Bailey et al., Cell, 2018; 29625053              <NA>
 #> 6                Sanchez-Vega et al., Cell, 2018; 29625050              <NA>
 #> 7                                                     <NA>              <NA>
 #> 8                                                     <NA>              <NA>
 #> 9                    Woods et al., Science, 2001; 11181991              v1.1
-#> 10                  Liu et al., Genome Med, 2020; 33261662              v5.3
+#> 10                  Liu et al., Genome Med, 2020; 33261662              v5.4
 #> 11           Caudle et al.,Curr Drug Metab, 2014; 24479687              <NA>
 #>    source_abbreviation                         source_license
 #> 1           cancermine                                CC0 1.0
@@ -327,7 +327,7 @@ gene_predisposition$metadata
 #> 7                     https://canvaruk.org/
 #>                                   source_citation source_version
 #> 1        Martin et al., Nat Genet, 2019; 31676867       v1 (API)
-#> 2 Brown et al., Nucleic Acids Res, 2015; 25355515     2026-10-07
+#> 2 Brown et al., Nucleic Acids Res, 2015; 25355515     2026-10-17
 #> 3              Huang et al., Cell, 2018; 29625052           <NA>
 #> 4  Maxwell et al., Am J Hum Genet, 2016; 27153395           <NA>
 #> 5                                            <NA>       20260203
@@ -520,8 +520,8 @@ gene_gencode$metadata
 #>                                         source_citation source_version
 #> 1    Frankish et al., Nucleic Acids Res, 2021; 33270111             50
 #> 2  Cunningham et al., Nucleic Acids Res, 2022; 34791404            116
-#> 3 UniProt Consortium, Nucleic Acids Res, 2021; 33237286        2026_02
-#> 4    Rodriguez et al, Nucleic Acids Res, 2022; 34755885     2026-10-07
+#> 3 UniProt Consortium, Nucleic Acids Res, 2021; 33237286        2026_03
+#> 4    Rodriguez et al, Nucleic Acids Res, 2022; 34755885     2026-10-17
 #>   source_abbreviation        source_license
 #> 1             gencode      Free/open access
 #> 2             ensembl EMBL-EBI terms of use
@@ -663,16 +663,16 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] geneOncoX_1.4.2
+#> [1] geneOncoX_1.4.3
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] jsonlite_2.0.0    dplyr_1.2.1       compiler_4.6.1    crayon_1.5.3     
 #>  [5] Rcpp_1.1.2        tidyselect_1.2.1  stringr_1.6.0     jquerylib_0.1.4  
 #>  [9] systemfonts_1.3.2 textshaping_1.0.5 yaml_2.3.12       fastmap_1.2.0    
-#> [13] plyr_1.8.9        R6_2.6.1          generics_0.1.4    curl_8.0.0       
+#> [13] plyr_1.8.9        R6_2.6.1          generics_0.1.4    curl_8.1.0       
 #> [17] knitr_1.52        htmlwidgets_1.6.4 tibble_3.3.1      desc_1.4.3       
 #> [21] bslib_0.12.0      pillar_1.11.1     rlang_1.3.0       DT_0.34.0        
-#> [25] stringi_1.8.9     cachem_1.1.0      lgr_0.5.2         xfun_0.61        
+#> [25] stringi_1.8.9     cachem_1.1.0      lgr_0.5.2         xfun_0.62        
 #> [29] fs_2.1.0          sass_0.4.10       otel_0.2.0        cli_3.6.6        
 #> [33] withr_3.0.3       pkgdown_2.2.1     magrittr_2.0.5    crosstalk_1.2.2  
 #> [37] digest_0.6.39     lifecycle_1.0.5   vctrs_0.7.3       evaluate_1.0.5   
