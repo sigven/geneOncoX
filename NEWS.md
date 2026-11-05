@@ -1,3 +1,8 @@
+# Version 1.4.4
+
+- Updated NCBI gene info (2026-11-05)
+- CancerMine updated (v52, 2026-10-23)
+
 # Version 1.4.2
 
 - Updated NCBI gene info (2026-10-17)
