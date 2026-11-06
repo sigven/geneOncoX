@@ -1,4 +1,30 @@
 
+ensembl_cache_dir <- function() {
+  ## Relative to the working directory, same convention as
+  ## data-raw/gd_local/ elsewhere in this script - not here::here(),
+  ## which caches the project root from whatever the working directory
+  ## was when the 'here' package was first loaded in the session, and
+  ## can silently drift from the actual working directory afterwards.
+  cache_dir <- file.path("data-raw", "ensembl_cache")
+  if (!dir.exists(cache_dir)) {
+    dir.create(cache_dir, recursive = TRUE)
+  }
+  cache_dir
+}
+
+## Downloads 'remote_url' into data-raw/ensembl_cache/ (gitignored, kept
+## separate from data-raw/gd_local/ which holds the final files released
+## with geneOncoX) and returns the local path, skipping the download if
+## a cached copy already exists. GENCODE/Ensembl URLs are release-pinned,
+## so a cached file's content never goes stale for a given release.
+download_cached <- function(remote_url, filename = basename(remote_url)) {
+  local_path <- file.path(ensembl_cache_dir(), filename)
+  if (!file.exists(local_path)) {
+    utils::download.file(
+      remote_url, destfile = local_path, mode = "wb", quiet = TRUE)
+  }
+  local_path
+}
 
 get_transcript_appris_annotation <-
   function(build = "grch37") {
@@ -16,7 +42,10 @@ get_transcript_appris_annotation <-
     )
 
     appris <- readr::read_tsv(
-      file = remote_appris,
+      file = download_cached(
+        remote_appris,
+        filename = paste0("appris_data.principal.forENSEMBL_", build, ".txt")
+      ),
       show_col_types = F,
       col_names = F
     ) |>
@@ -160,9 +189,9 @@ gencode_get_exons <- function(
 gencode_get_transcripts <-
   function(build = "grch38",
            append_regulatory_region = TRUE,
-           gencode_version = 49,
-           ensembl_version = 115,
-           uniprot_version = "2026_01",
+           gencode_version = 50,
+           ensembl_version = 116,
+           uniprot_version = "2026_04",
            gene_info = NULL,
            gene_alias = NULL) {
     gencode_ftp_url <-
@@ -258,9 +287,12 @@ gencode_get_transcripts <-
       dplyr::distinct()
 
     ## Temporary fix: Need additional processing to get multiple tag-value
-    ## pairs in a proper fashion
+    ## pairs in a proper fashion. data.table::fread() can read straight
+    ## from a URL, but does its own download each call, bypassing the
+    ## read_gtf() cache above - go through download_cached() so this
+    ## reuses the same local copy instead of re-fetching the 100+MB file.
     gencode_gtf_fix <- as.data.frame(
-      data.table::fread(remote_gtf_all, skip = 5, verbose = F) |>
+      data.table::fread(download_cached(remote_gtf_all), skip = 5, verbose = F) |>
         dplyr::filter(V3 == "transcript")
     )
     tag_cols <- stringr::str_match_all(
@@ -335,17 +367,19 @@ gencode_get_transcripts <-
           stringsAsFactors = FALSE, row.names = NULL
         )
       }
+      ## pmax()/pmin() instead of rowwise()+max()/min() - vectorized,
+      ## same result, ~50x faster at this row count (rowwise() evaluates
+      ## one row at a time).
       gencode <- as.data.frame(
         gencode |>
-          dplyr::left_join(chromosome_lengths, 
+          dplyr::left_join(chromosome_lengths,
                            by = c("chrom"), multiple = "all") |>
-          dplyr::rowwise() |>
           dplyr::mutate(
             start = dplyr::if_else(
               startsWith(chrom,"chr") &
                 chrom != "chrM",
               as.integer(
-                max(1, transcript_start - 5001)
+                pmax(1, transcript_start - 5001)
               ),
               as.integer(transcript_start)
             ),
@@ -353,7 +387,7 @@ gencode_get_transcripts <-
               startsWith(chrom,"chr") &
                 chrom != "chrM",
               as.integer(
-                min(chrom_length, transcript_end + 5001)
+                pmin(chrom_length, transcript_end + 5001)
               ),
               as.integer(transcript_end)
             )
@@ -556,6 +590,144 @@ gencode_expand_basic <- function(gencode) {
 
 
 
+get_ensembl_gene_descriptions <- function(ensembl_version = 116,
+                                          build = "grch38") {
+  if (build == "grch37") {
+    ## GRCh37 is frozen/legacy and lives on a separate archive site
+    ## (ftp.ensembl.org/pub/grch37/...), not under /pub/release-<N>/ -
+    ## 'ensembl_version' doesn't apply there, and the archive's own
+    ## release number can change over time, so discover the current
+    ## GRCh37 GFF3 filename from its directory listing rather than
+    ## hardcoding a release.
+    index_url <-
+      "https://ftp.ensembl.org/pub/grch37/current/gff3/homo_sapiens/"
+    listing <- readLines(index_url, warn = FALSE)
+    fname <- stringr::str_extract(
+      listing,
+      "Homo_sapiens\\.GRCh37\\.[0-9]+\\.chr_patch_hapl_scaff\\.gff3\\.gz"
+    )
+    fname <- fname[!is.na(fname)][1]
+    remote_url <- paste0(index_url, fname)
+  } else {
+    remote_url <- paste0(
+      "https://ftp.ensembl.org/pub/release-", ensembl_version,
+      "/gff3/homo_sapiens/Homo_sapiens.GRCh38.",
+      ensembl_version, ".chr_patch_hapl_scaff.gff3.gz"
+    )
+  }
+
+  local_gz <- download_cached(remote_url)
+
+  ## Pull only 'gene' feature rows (column 3) before loading into R -
+  ## this file also carries every exon/CDS/UTR record, which we don't
+  ## need here.
+  gene_lines <- data.table::fread(
+    cmd = paste0(
+      "gzip -dc ", shQuote(local_gz), " | awk -F'\\t' '$3==\"gene\"'"
+    ),
+    header = FALSE, sep = "\t", quote = "", data.table = FALSE
+  )
+
+  gene_lines |>
+    dplyr::transmute(
+      ensembl_gene_id = stringr::str_match(
+        V9, "gene_id=([^;]+)")[, 2],
+      description = stringr::str_match(
+        V9, "description=([^;]+)")[, 2]
+    ) |>
+    dplyr::filter(!is.na(description)) |>
+    dplyr::mutate(
+      description = vapply(description, utils::URLdecode, character(1))
+    ) |>
+    dplyr::distinct(ensembl_gene_id, .keep_all = TRUE)
+}
+
+read_ensembl_tsv_xref <- function(ensembl_version = 116,
+                                  build = "grch38",
+                                  xref_type = "refseq") {
+  assembly <- if (build == "grch37") "GRCh37" else "GRCh38"
+  remote_url <- paste0(
+    "https://ftp.ensembl.org/pub/release-", ensembl_version,
+    "/tsv/homo_sapiens/Homo_sapiens.", assembly, ".",
+    ensembl_version, ".", xref_type, ".tsv.gz"
+  )
+  readr::read_tsv(
+    download_cached(remote_url), show_col_types = FALSE, progress = FALSE,
+    col_types = readr::cols(.default = "c")
+  )
+}
+
+## GRCh37's transcript-level RefSeq/UniProt cross-references have no
+## file-based equivalent to Ensembl's per-release TSV dumps used for
+## GRCh38 - the GRCh37 archive (ftp.ensembl.org/pub/grch37/) only
+## publishes 'ena', 'karyotype' and 'uniprot' TSVs, not 'refseq' or
+## 'entrez'. grch37.ensembl.org's live BioMart service is a dedicated,
+## standalone host though - it was never part of the www/asia/useast
+## mirror pool that was retiring/failing, so it's used here instead,
+## scoped only to build == "grch37".
+get_grch37_biomart_xrefs <- function() {
+  ensembl_mart_grch37 <- suppressWarnings(
+    biomaRt::useEnsembl(
+      biomart = "genes",
+      GRCh = "37",
+      dataset = "hsapiens_gene_ensembl"
+    )
+  )
+
+  xref1 <- suppressWarnings(biomaRt::getBM(
+    attributes = c("ensembl_transcript_id", "refseq_mrna", "ensembl_gene_id"),
+    mart = ensembl_mart_grch37
+  )) |>
+    dplyr::mutate(refseq_mrna = dplyr::if_else(
+      nchar(refseq_mrna) == 0, NA_character_, refseq_mrna)) |>
+    dplyr::filter(!is.na(refseq_mrna)) |>
+    dplyr::distinct()
+
+  refseq_mrna_map <- xref1 |>
+    dplyr::select(ensembl_gene_id, ensembl_transcript_id, refseq_mrna) |>
+    dplyr::distinct()
+
+  xref2 <- suppressWarnings(biomaRt::getBM(
+    attributes = c("ensembl_transcript_id", "uniprotswissprot", "refseq_peptide"),
+    mart = ensembl_mart_grch37
+  )) |>
+    dplyr::mutate(
+      uniprotswissprot = dplyr::if_else(
+        nchar(uniprotswissprot) == 0, NA_character_, uniprotswissprot),
+      refseq_peptide = dplyr::if_else(
+        nchar(refseq_peptide) == 0, NA_character_, refseq_peptide)
+    )
+
+  refseq_peptide_map <- xref2 |>
+    dplyr::filter(!is.na(refseq_peptide)) |>
+    dplyr::select(ensembl_transcript_id, refseq_peptide) |>
+    dplyr::distinct()
+
+  uniprot_swissprot_map <- xref2 |>
+    dplyr::filter(!is.na(uniprotswissprot)) |>
+    dplyr::transmute(ensembl_transcript_id, uniprot_acc = uniprotswissprot) |>
+    dplyr::distinct()
+
+  xref4 <- suppressWarnings(biomaRt::getBM(
+    attributes = c("ensembl_transcript_id", "refseq_ncrna"),
+    mart = ensembl_mart_grch37
+  )) |>
+    dplyr::mutate(refseq_ncrna = dplyr::if_else(
+      nchar(refseq_ncrna) == 0, NA_character_, refseq_ncrna))
+
+  refseq_ncrna_map <- xref4 |>
+    dplyr::filter(!is.na(refseq_ncrna)) |>
+    dplyr::select(ensembl_transcript_id, refseq_ncrna) |>
+    dplyr::distinct()
+
+  list(
+    refseq_mrna_map = refseq_mrna_map,
+    refseq_peptide_map = refseq_peptide_map,
+    refseq_ncrna_map = refseq_ncrna_map,
+    uniprot_swissprot_map = uniprot_swissprot_map
+  )
+}
+
 gencode_resolve_xrefs <- function(transcript_df = NULL,
                                   build = "grch38",
                                   ensembl_version = 114,
@@ -567,128 +739,137 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
       "ensembl_transcript_id",
       "ensembl_gene_id",
       "symbol"
-    ), 
+    ),
     quiet = TRUE,
     only_colnames = F
   ))
 
   options(timeout = 10000000)
-  ensembl_mart <- list()
-  if(ensembl_version == 114){
-    ensembl_mart[["grch38"]] <- suppressWarnings(
-      biomaRt::useEnsembl(
-        biomart = "genes",
-        dataset = "hsapiens_gene_ensembl",
-      )
-    )
-  }else{
-    ensembl_mart[["grch38"]] <- suppressWarnings(
-      biomaRt::useEnsembl(
-        biomart = "genes",
-        dataset = "hsapiens_gene_ensembl",
-        version = ensembl_version
-      )
-    )
-  }
-
-  if(build == "grch37"){
-    ensembl_mart[["grch37"]] <- suppressWarnings(
-      biomaRt::useEnsembl(
-        biomart = "genes",
-        GRCh = "37",
-        dataset = "hsapiens_gene_ensembl"
-      )
-    )
-  }
 
   refseq_data <- get_refseq_map(build = build)
-  
-  ensembl2entrez <- biomart_ensg2entrez(
-    build = build,
-    gene_info = gene_info,
-    ensembl_mart = ensembl_mart
-  )
-  
-  ensembl2entrez_hgnc <- ensembl2entrez 
-   
-  queryAttributes1 <- c(
-    "ensembl_transcript_id",
-    "refseq_mrna",
-    "ensembl_gene_id"
-  )
-  
-  queryAttributes2 <- c(
-    "ensembl_transcript_id",
-    "uniprotswissprot",
-    "refseq_peptide"
-  )
 
-  queryAttributes4 <- c(
-    "ensembl_transcript_id",
-    "refseq_ncrna"
-  )
-  
-  xref_biomart_1 <- suppressWarnings(biomaRt::getBM(
-    attributes = queryAttributes1,
-    mart = ensembl_mart[[build]])) |>
+  ## HGNC id and Entrez gene id come from NCBI's gene_info file (already
+  ## supplied as 'gene_info'). Gene description text is taken primarily
+  ## from Ensembl's own per-release GFF3 annotation (same underlying
+  ## field BioMart's 'description' attribute used to surface, just read
+  ## from a static file), falling back to gene_info's NCBI-sourced name
+  ## for genes Ensembl's GFF3 doesn't carry a description for.
+  ensembl_gene_descriptions <- get_ensembl_gene_descriptions(
+    ensembl_version = ensembl_version, build = build)
+
+  ensembl2entrez_hgnc <- gene_info |>
+    dplyr::filter(!is.na(ensembl_gene_id)) |>
+    dplyr::select(
+      ensembl_gene_id, hgnc_id, entrezgene,
+      description_ncbi = name
+    ) |>
+    dplyr::distinct() |>
+    dplyr::full_join(
+      ensembl_gene_descriptions, by = "ensembl_gene_id") |>
     dplyr::mutate(
-      refseq_mrna = dplyr::if_else(
-        nchar(refseq_mrna) == 0,
-        as.character(NA),
-        as.character(refseq_mrna)
+      description = dplyr::if_else(
+        is.na(description), description_ncbi, description
       )
     ) |>
+    dplyr::select(-description_ncbi) |>
+    dplyr::distinct()
+
+  ## Transcript-level cross-references (RefSeq mRNA/ncRNA/peptide,
+  ## UniProt SwissProt accession). For GRCh38 these come from Ensembl's
+  ## static, per-release TSV xref dumps
+  ## (ftp.ensembl.org/pub/release-<v>/tsv/homo_sapiens/) instead of the
+  ## live BioMart web service - a plain HTTPS file download, unaffected
+  ## by BioMart's mirror outages/retirement. GRCh37 has no such TSV
+  ## dumps at all, so it uses grch37.ensembl.org's BioMart instead (see
+  ## get_grch37_biomart_xrefs()).
+  if (build == "grch37") {
+    grch37_xrefs <- get_grch37_biomart_xrefs()
+    refseq_mrna_map <- grch37_xrefs$refseq_mrna_map
+    refseq_peptide_map <- grch37_xrefs$refseq_peptide_map
+    refseq_ncrna_map <- grch37_xrefs$refseq_ncrna_map
+    uniprot_swissprot_map <- grch37_xrefs$uniprot_swissprot_map
+  } else {
+    xref_refseq <- read_ensembl_tsv_xref(
+      ensembl_version = ensembl_version, build = build, xref_type = "refseq")
+    xref_uniprot <- read_ensembl_tsv_xref(
+      ensembl_version = ensembl_version, build = build, xref_type = "uniprot")
+
+    refseq_mrna_map <- xref_refseq |>
+      dplyr::filter(db_name == "RefSeq_mRNA") |>
+      dplyr::transmute(
+        ensembl_transcript_id = transcript_stable_id,
+        refseq_mrna = xref
+      ) |>
+      dplyr::distinct()
+
+    refseq_peptide_map <- xref_refseq |>
+      dplyr::filter(db_name == "RefSeq_peptide") |>
+      dplyr::transmute(
+        ensembl_transcript_id = transcript_stable_id,
+        refseq_peptide = xref
+      ) |>
+      dplyr::distinct()
+
+    refseq_ncrna_map <- xref_refseq |>
+      dplyr::filter(db_name == "RefSeq_ncRNA") |>
+      dplyr::transmute(
+        ensembl_transcript_id = transcript_stable_id,
+        refseq_ncrna = xref
+      ) |>
+      dplyr::distinct()
+
+    uniprot_swissprot_map <- xref_uniprot |>
+      dplyr::filter(db_name == "Uniprot/SWISSPROT") |>
+      dplyr::transmute(
+        ensembl_transcript_id = transcript_stable_id,
+        uniprot_acc = xref
+      ) |>
+      dplyr::distinct()
+  }
+
+  ## 'transcript_df' already covers every GENCODE/Ensembl transcript for
+  ## this assembly, so use its (gene, transcript) pairs as the backbone -
+  ## matching what an unfiltered BioMart getBM() call used to return -
+  ## rather than the (much smaller) set of transcripts that happen to
+  ## have a RefSeq match.
+  xref_biomart_1 <- transcript_df |>
+    dplyr::select(ensembl_gene_id, ensembl_transcript_id) |>
+    dplyr::distinct() |>
+    dplyr::left_join(
+      refseq_mrna_map, by = "ensembl_transcript_id") |>
     dplyr::left_join(
       ensembl2entrez_hgnc, by = "ensembl_gene_id",
       relationship = "many-to-many") |>
     dplyr::left_join(
-       refseq_data, 
+       refseq_data,
        by = c("refseq_mrna" = "rs_transcript_id_stripped")) |>
     dplyr::mutate(
        refseq_transcript_id = dplyr::if_else(
          is.na(rs_transcript_id) & !is.na(refseq_mrna),
          refseq_mrna,
          rs_transcript_id
-       ) 
+       )
     ) |>
     dplyr::select(-c("rs_transcript_id", "refseq_mrna")) |>
     dplyr::distinct()
-    
-  
-  xref_biomart_2 <- suppressWarnings(biomaRt::getBM(
-    attributes = queryAttributes2,
-    mart = ensembl_mart[[build]])) |>
-    dplyr::rename(uniprot_acc = uniprotswissprot) |>
-    dplyr::mutate(uniprot_acc = dplyr::if_else(
-      nchar(uniprot_acc) == 0,
-      as.character(NA),
-      uniprot_acc
-    )) |>
-    dplyr::mutate(refseq_peptide = dplyr::if_else(
-      nchar(refseq_peptide) == 0,
-      as.character(NA),
-      refseq_peptide
-    )) |>
-    dplyr::distinct()
 
-  xref_biomart_4 <- suppressWarnings(biomaRt::getBM(
-    attributes = queryAttributes4,
-    mart = ensembl_mart[[build]])) |>
-    dplyr::mutate(refseq_ncrna = dplyr::if_else(
-      nchar(refseq_ncrna) == 0,
-      as.character(NA),
-      refseq_ncrna
-    ))
-  
   xref_biomart <- xref_biomart_1 |>
     dplyr::left_join(
-      xref_biomart_2,
-      by = "ensembl_transcript_id", 
+      refseq_peptide_map,
+      by = "ensembl_transcript_id",
+      multiple = "all",
       relationship = "many-to-many"
     ) |>
     dplyr::left_join(
-      xref_biomart_4,
-      by = "ensembl_transcript_id", 
+      uniprot_swissprot_map,
+      by = "ensembl_transcript_id",
+      multiple = "all",
+      relationship = "many-to-many"
+    ) |>
+    dplyr::left_join(
+      refseq_ncrna_map,
+      by = "ensembl_transcript_id",
+      multiple = "all",
       relationship = "many-to-many"
     ) |>
     dplyr::distinct() |>
@@ -696,14 +877,14 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
       refseq_protein_id = refseq_peptide
     ) |>
     dplyr::mutate(refseq_transcript_id = dplyr::if_else(
-      is.na(refseq_transcript_id) & !is.na(refseq_ncrna), 
+      is.na(refseq_transcript_id) & !is.na(refseq_ncrna),
       as.character(refseq_ncrna),
       as.character(refseq_transcript_id)
     )) |>
     dplyr::select(-refseq_ncrna) |>
     dplyr::distinct()
-  
-  valid_entrez_recs <- xref_biomart |> 
+
+  valid_entrez_recs <- xref_biomart |>
     dplyr::filter(!is.na(entrezgene) & 
                     !is.na(hgnc_id)) |>
     dplyr::distinct()
@@ -712,11 +893,15 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
     dplyr::filter(is.na(entrezgene)) |> 
     dplyr::distinct()
   
-  invalid_entrez_recs <- xref_biomart |> 
-    dplyr::filter(!is.na(entrezgene) & is.na(hgnc_id)) |> 
-    dplyr::distinct() |> 
-    dplyr::semi_join(
-      valid_entrez_recs, by = "entrezgene") |> 
+  ## A gene with an Entrez id but no HGNC id (common for very recently
+  ## catalogued "uncharacterized LOC*" loci) has its entrezgene nulled
+  ## out below as untrustworthy - but the row itself (and its transcript-
+  ## level RefSeq/UniProt columns) is kept regardless of whether another
+  ## gene happens to share that Entrez id. Dropping unmatched rows here
+  ## used to silently delete their RefSeq/UniProt accessions too, which
+  ## has nothing to do with Entrez/HGNC trustworthiness.
+  invalid_entrez_recs <- xref_biomart |>
+    dplyr::filter(!is.na(entrezgene) & is.na(hgnc_id)) |>
     dplyr::distinct() |>
     dplyr::mutate(entrezgene = as.integer(NA))
   
@@ -1086,7 +1271,7 @@ gencode_resolve_xrefs <- function(transcript_df = NULL,
   return(gencode_transcripts_xref_final)
 }
 
-get_uniprot_map <- function(uniprot_version = "2024_06") {
+get_uniprot_map <- function(uniprot_version = "2026_04") {
   lgr::lgr$info("Retrieving UniProtKB annotation")
   withr::local_options(
     timeout = max(30000000, getOption("timeout")))
@@ -1098,9 +1283,15 @@ get_uniprot_map <- function(uniprot_version = "2024_06") {
       "HUMAN_9606_idmapping.dat.gz"
     )
 
+  ## readr::read_tsv() on a remote URL goes through vroom/curl, which
+  ## has its own connection timeout independent of options(timeout=) -
+  ## that option only applies to utils::download.file(). Downloading
+  ## first (via download_cached(), which uses download.file()) avoids
+  ## the ~10s curl connect-timeout this large file was hitting, and
+  ## caches the file for re-reads.
   idmapping_up_kb <- readr::read_tsv(
-    file = remote_idmapping_dat_fname,
-    col_names = FALSE, quote = "", 
+    file = download_cached(remote_idmapping_dat_fname),
+    col_names = FALSE, quote = "",
     show_col_types = FALSE
   ) |>
     dplyr::filter(X2 == "Ensembl_TRS" |
@@ -1325,149 +1516,6 @@ get_refseq_map <- function(build = "grch37"){
   
 }
 
-biomart_canonical_tsl <- function(build = "grch38",
-                                  ensembl_mart = NULL){
-  
-  queryAttributes <- c(
-    "ensembl_transcript_id",
-    "transcript_is_canonical",
-    "transcript_tsl")
-  
-  canonical_tsl <- biomaRt::getBM(
-    mart = ensembl_mart$grch38, 
-    attributes = queryAttributes) |>
-    dplyr::filter(
-      nchar(ensembl_transcript_id) > 0 & 
-        !is.na(ensembl_transcript_id)) |>
-    dplyr::mutate(transcript_is_canonical = as.logical(
-      transcript_is_canonical)) |>
-    dplyr::mutate(transcript_is_canonical = dplyr::if_else(
-      is.na(transcript_is_canonical),
-      FALSE,
-      as.logical(transcript_is_canonical)
-    ))
-  
-  return(canonical_tsl)
-}
-
-
-biomart_mane_select <- function(build = "grch38",
-                                ensembl_mart = NULL){
-  
-  queryAttributes <- c(
-    "entrezgene_id",
-    "transcript_mane_select"
-  )
-  
-  mane_select <- suppressWarnings(biomaRt::getBM(
-    mart = ensembl_mart$grch38, 
-    attributes = queryAttributes)) |>
-    dplyr::rename(entrezgene = entrezgene_id) |>
-    dplyr::mutate(entrezgene = as.character(entrezgene)) |>
-    dplyr::filter(nchar(entrezgene) > 0 & !is.na(entrezgene)) |>
-    dplyr::mutate(transcript_mane_select = dplyr::if_else(
-      nchar(transcript_mane_select) > 0, 
-      transcript_mane_select, 
-      NA_character_
-    )) |>
-    dplyr::filter(!is.na(transcript_mane_select))
-  
-  queryAttributes <- c(
-    "entrezgene_id",
-    "transcript_mane_plus_clinical"
-  )
-  
-  mane_plus_clinical <- biomaRt::getBM(
-    mart = ensembl_mart$grch38, 
-    attributes = queryAttributes) |>
-    dplyr::rename(entrezgene = entrezgene_id) |>
-    dplyr::mutate(entrezgene = as.character(entrezgene)) |>
-    dplyr::filter(nchar(entrezgene) > 0 & !is.na(entrezgene)) |>
-    dplyr::mutate(transcript_mane_plus_clinical = dplyr::if_else(
-      nchar(transcript_mane_plus_clinical) > 0, 
-      transcript_mane_plus_clinical, 
-      NA_character_
-    )) |>
-    dplyr::filter(!is.na(transcript_mane_plus_clinical))
-  
-  mane_all <- mane_select |>
-    dplyr::full_join(mane_plus_clinical, by = "entrezgene")
-  
-  return(mane_all)
-  
-}
-
-biomart_ensg2entrez <- function(build = "grch37",
-                                gene_info = NULL,
-                                ensembl_mart = NULL){
-  
-  queryAttributes <- c(
-    "ensembl_gene_id",
-    "hgnc_id",
-    "entrezgene_id",
-    "description"
-  )
-  
-  ensg2entrez_final <- data.frame()
-  ensg2entrez <- list()
-  ensg2entrez[[build]] <- suppressWarnings(biomaRt::getBM(
-    mart = ensembl_mart[[build]], 
-    attributes = queryAttributes)) |>
-    dplyr::rename(ensembl_gene_id = ensembl_gene_id,
-                  entrezgene = entrezgene_id) |>
-    dplyr::mutate(entrezgene = as.character(entrezgene)) |>
-    dplyr::filter(
-      nchar(entrezgene) > 0 & 
-        !is.na(entrezgene)) |>
-    dplyr::mutate(description = dplyr::if_else(
-      nchar(description) > 0, 
-      description, 
-      NA_character_
-    )) |>
-    dplyr::mutate(hgnc_id = as.character(
-      stringr::str_replace(hgnc_id,"HGNC:","")))
-  
-  gene_info_complete <- gene_info |>
-    dplyr::filter(!is.na(hgnc_id)) |>
-    dplyr::mutate(entrezgene = as.character(entrezgene))
-  
-  mappings_in_gene_info <- ensg2entrez[[build]] |>
-    dplyr::semi_join(
-      gene_info_complete, by = c("hgnc_id" = "hgnc_id",
-                                 "entrezgene" = "entrezgene"))
-  
-  other_mappings <- ensg2entrez[[build]] |>
-    dplyr::anti_join(
-      gene_info_complete, by = c("hgnc_id" = "hgnc_id",
-                                 "entrezgene" = "entrezgene")) |>
-    dplyr::anti_join(mappings_in_gene_info, by = "ensembl_gene_id")
-  
-  tmp_mappings <- dplyr::bind_rows(
-    mappings_in_gene_info,
-    other_mappings)
-  
-  other_mappings2 <- gene_info |> 
-    dplyr::mutate(entrezgene = as.character(entrezgene)) |> 
-    dplyr::select(hgnc_id, ensembl_gene_id, name, entrezgene) |> 
-    dplyr::rename(description = name) |>
-    dplyr::anti_join(tmp_mappings, 
-                     by = c("entrezgene" = "entrezgene")) |> 
-    dplyr::filter(!is.na(ensembl_gene_id)) |>
-    dplyr::distinct()
-  
-  tmp_mappings <- tmp_mappings |>
-    dplyr::anti_join(
-      dplyr::select(other_mappings2, ensembl_gene_id), 
-      by = "ensembl_gene_id") |>
-    dplyr::distinct()
-  
-  
-  return(dplyr::bind_rows(
-    tmp_mappings,
-    other_mappings2))
-  
-}
-
 sort_bed_regions <- function(unsorted_regions) {
   sorted_regions <- NULL
   all_regions <- NULL
@@ -1521,6 +1569,9 @@ sort_bed_regions <- function(unsorted_regions) {
 }
 
 read_gtf <- function(path, zero_based = TRUE) {
+  if (grepl("^https?://", path)) {
+    path <- download_cached(path)
+  }
   gtf <- rtracklayer::import(path)
   gtf <- as.data.frame(gtf)
   gtf <- dplyr::mutate_if(gtf, is.factor, as.character)

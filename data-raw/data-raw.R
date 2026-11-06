@@ -208,7 +208,7 @@ for(vbump in c('major','minor','patch')){
 
 bump_version_level <- "patch"
 #version_bump <- version_bumps[[bump_version_level]]
-version_bump <- "1.4.4"
+version_bump <- "1.4.5"
 
 gd_records <- list()
 db_id_ref <- data.frame()
@@ -292,18 +292,18 @@ while(ensembl_iter < 1){
         gene_alias = gene_alias
       )
       gene_gencode$records[["grch37"]] <- readRDS(
-        file = "data-raw/gd_local/gene_gencode_grch37_records.rds"
+        file = "data-raw/gd_local/gene_gencode_grch37.rds"
       )
       #   fname_gencode_cache
-      # gene_gencode$records[["grch37"]] <- gencode_get_transcripts(
-      #   build = "grch37",
-      #   gene_info = gene_info,
-      #   gencode_version = as.integer(19),
-      #   ensembl_version = ensembl_release,
-      #   uniprot_version = as.character(
-      #     metadata$gencode[3, ]$source_version),
-      #   gene_alias = gene_alias
-      # )
+      #gene_gencode$records[["grch37"]] <- gencode_get_transcripts(
+      #  build = "grch37",
+      #  gene_info = gene_info,
+      #  gencode_version = as.integer(19),
+      #  ensembl_version = ensembl_release,
+      #  uniprot_version = as.character(
+      #    metadata$gencode[3, ]$source_version),
+      #  gene_alias = gene_alias
+    #  )
       
       ## "Rescue" some UniProt identifiers from
       ## grch38 - missing/not found for grch37
