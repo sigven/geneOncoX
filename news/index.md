@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.4.5
+
+- Updated NCBI gene info (2026-11-06)
+- Updated UniProt KB - 2026_04
+
 ## Version 1.4.4
 
 - Updated NCBI gene info (2026-11-05)
